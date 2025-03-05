@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import loginImg from "../assets/loginimg.png";
-import logo from "../assets/logoirchad.png";
+import loginImg from "../../../public/assets/loginimg.png";
+// import logo from "../assets/logoirchad.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -22,7 +22,7 @@ export default function Login() {
       <div className="w-full xl:w-[48%] m-8 xl:m-0 flex flex-col justify-center items-center  bg-white px-[25px] sm:px-[50px] md:px-[107px] gap-[60px] xl:overflow-hidden xl:h-full z-20">
         <div className="flex justify-center w-full">
           <Image
-            src={logo}
+            src="/assets/logoirchad.png"
             alt="Login Image"
             quality={100}
             priority
