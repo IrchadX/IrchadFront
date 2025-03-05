@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { MdOutlineMail } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import Image from 'next/image';
 import loginImg from "../assets/loginimg.png";
@@ -16,7 +17,7 @@ export default function Login() {
   const router = useRouter();
 
   return (
-    <div className="flex h-screen bg-cover bg-no-repeat justify-center xl:bg-black" style={{ backgroundColor: "#fff", color: "#000" }}>
+    <div className="flex h-screen  justify-center" style={{ backgroundColor: "#fff", color: "#000" }}>
       <div className="w-full xl:w-[48%] m-8 xl:m-0 flex flex-col justify-center items-center  bg-white px-[25px] sm:px-[50px] md:px-[107px] gap-[60px] xl:overflow-hidden xl:h-full z-20" >
    <div className="flex justify-center w-full"> 
       <Image
@@ -30,10 +31,12 @@ export default function Login() {
   </div>
         {error && <div className="bg-red-100 text-red-700 px-4 py-3 rounded">{error}</div>}
         <form className="flex w-full flex-col gap-[25px]">
+
+          
           <input 
             className="bg-main/5 p-[15px] w-full rounded-[8px] border border-black/30" 
             type="email" 
-            placeholder="Adresse email" 
+            placeholder="example@email.com" 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
             required 
@@ -44,7 +47,7 @@ export default function Login() {
               type={passwordVisible ? "text" : "password"} 
               value={password} 
               onChange={(e) => setPassword(e.target.value)} 
-              placeholder="Mot de passe" 
+              placeholder="At least 8 characters" 
               required 
             />
             <span onClick={() => setPasswordVisible(!passwordVisible)}>
@@ -60,28 +63,32 @@ export default function Login() {
             /> 
             Se souvenir de moi
           </label>
-          <button 
-            type="submit" 
-            className="w-full bg-main p-[12px] text-white rounded-[12px] text-[20px]"
-          >
-            Se connecter
-          </button>
+          <button
+  type="submit"
+  className="w-full bg-main p-[12px] text-white rounded-[12px] text-[20px]"
+  style={{ boxShadow: "4px 4px 10px 0px rgba(58, 175, 169, 0.40) inset" }}
+>
+  Se connecter
+</button>
+
         </form>
       </div>
       
-      <div className="hidden xl:block xl:relative xl:py-[15px]  xl:w-[52%] flex justify-center items-center">
-  <Image
+      <div className="xl:flex xl:flex-col xl:relative xl:py-[10px] xl:pr-[10px] xl:w-[52%] flex justify-end items-center">
+ <Image
     src={loginImg}
     alt="Login Image"
     quality={100}
     priority
-    className="object-contain object-center block" 
+    className="object-contain object-center block w-auto h-auto"
     style={{
-      maxWidth: 'calc(100% - 10px)', 
-      maxHeight: 'calc(100% - 10px)' 
+        maxWidth: "calc(100% - 10px)",
+        maxHeight: "calc(100% - 30px)",
+        marginRight: "15px" 
     }}
-  />
+ />
 </div>
+
     </div>
   );
 }
