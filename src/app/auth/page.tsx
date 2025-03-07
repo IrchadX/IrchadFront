@@ -2,10 +2,11 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { TbLockPassword } from "react-icons/tb";
+import { MdOutlineMail } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import loginImg from "../../../public/assets/loginimg.png";
-// import logo from "../assets/logoirchad.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -13,7 +14,70 @@ export default function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    // For debugging
+    console.log("Attempting login with:", { email });
+
+    try {
+      const apiUrl = "http://localhost:3000/auth";
+      console.log("Sending request to:", apiUrl);
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+
+        credentials: "include",
+        mode: "cors",
+      });
+
+      console.log("Response status:", response.status);
+
+      let data;
+      try {
+        data = await response.json();
+        console.log("Response data:", data);
+      } catch (jsonError) {
+        console.error("Failed to parse JSON response:", jsonError);
+        const textResponse = await response.text();
+        console.log("Raw response:", textResponse);
+        throw new Error("Invalid response format from server");
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || `Error ${response.status}: Authentication failed`
+        );
+      }
+
+      localStorage.setItem("accessToken", data.access_token);
+      console.log("Token stored successfully");
+
+      localStorage.setItem("user", JSON.stringify(data.user));
+      console.log("User data stored successfully");
+
+      // if (rememberMe) {
+      //   localStorage.setItem("rememberUser", "true");
+      // }
+
+      console.log("Login successful, redirecting...");
+      router.push("/");
+    } catch (err) {
+      console.error("Login error:", err);
+      setError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div
@@ -30,65 +94,100 @@ export default function Login() {
             height={300}
           />
         </div>
+
         {error && (
           <div className="bg-red-100 text-red-700 px-4 py-3 rounded">
             {error}
           </div>
         )}
-        <form className="flex w-full flex-col gap-[25px]">
-          <input
-            className="bg-main/5 p-[15px] w-full rounded-[8px] border border-black/30"
-            type="email"
-            placeholder="Adresse email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <div className=" bg-main/5 flex p-[15px] w-full rounded-[8px] border  border-black/30 justify-between">
-            <input
-              className="bg-transparent border-transparent"
-              type={passwordVisible ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mot de passe"
-              required
-            />
-            <span onClick={() => setPasswordVisible(!passwordVisible)}>
-              <FontAwesomeIcon icon={passwordVisible ? faEyeSlash : faEye} />
-            </span>
+
+        <form
+          className="flex w-full flex-col gap-[25px]"
+          onSubmit={handleSubmit}>
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col justify-start gap-4">
+              <label className="text-black/90 font-futura font-semibold text-md">
+                Email
+              </label>
+
+              <div className="flex items-center bg-main/5 w-full rounded-[8px] border border-black/30 p-[15px]">
+                <MdOutlineMail className="text-gray-500 text-xl mr-3" />
+                <input
+                  className="bg-transparent w-full focus:outline-none"
+                  type="email"
+                  placeholder="example@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-start gap-4">
+              <label className="text-black/90 font-futura font-semibold text-md">
+                Mot de passe
+              </label>
+              <div className="bg-main/5 flex items-center p-[15px] w-full rounded-[8px] border border-black/30">
+                <TbLockPassword className="text-gray-500 text-xl mr-3" />
+
+                <input
+                  className="bg-transparent flex-1 focus:outline-none"
+                  type={passwordVisible ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="At least 8 characters"
+                  required
+                />
+
+                <span
+                  className="cursor-pointer"
+                  onClick={() => setPasswordVisible(!passwordVisible)}>
+                  <FontAwesomeIcon
+                    icon={passwordVisible ? faEyeSlash : faEye}
+                  />
+                </span>
+              </div>
+            </div>
+
+            {/* <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="rememberMe"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4 w-4"
+              />
+              <label htmlFor="rememberMe" className="text-sm text-gray-700">
+                Se souvenir de moi
+              </label>
+            </div> */}
           </div>
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              className="mr-2"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-            Se souvenir de moi
-          </label>
+
           <button
             type="submit"
-            className="w-full bg-main p-[12px] text-white rounded-[12px] text-[20px]">
-            Se connecter
+            className="w-full font-futura font-medium bg-main p-[12px] text-white rounded-[12px] text-[20px]"
+            disabled={isLoading}>
+            {isLoading ? "Chargement..." : "Se connecter"}
           </button>
         </form>
+
+        <h2 className="font-montserrat text-black text-[14px] font-regular">
+          Irchad © 2025. Tous droits réservés. Fièrement conçu par XCEED.
+        </h2>
       </div>
 
-      <div className="hidden xl:block xl:relative xl:py-[15px]  xl:w-[52%] flex justify-center items-center">
-        <div className="xl:flex xl:flex-col xl:relative xl:py-[10px] xl:pr-[10px] xl:w-[52%] flex justify-end items-center">
-          <Image
-            src={loginImg}
-            alt="Login Image"
-            quality={100}
-            priority
-            className="object-contain object-center block w-auto h-auto"
-            style={{
-              maxWidth: "calc(100% - 10px)",
-              maxHeight: "calc(100% - 30px)", // Account for 10px padding on top & bottom
-              marginRight: "15px", // Add 10px padding on the right side
-            }}
-          />
-        </div>
+      <div className="hidden xl:block xl:relative xl:py-[15px] xl:w-[52%] flex justify-center items-center">
+        <Image
+          src={loginImg}
+          alt="Login Image"
+          quality={100}
+          priority
+          className="object-contain object-center block"
+          style={{
+            maxWidth: "calc(100% - 10px)",
+            maxHeight: "calc(100% - 10px)",
+          }}
+        />
       </div>
     </div>
   );

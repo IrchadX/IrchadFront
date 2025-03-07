@@ -4,6 +4,7 @@ import Image from "next/image";
 
 const Header = () => {
   const pathname = usePathname();
+  const isAuthRoute = pathname.startsWith("/auth");
 
   const getTitle = () => {
     if (pathname.startsWith("/dashboard")) {
@@ -21,23 +22,27 @@ const Header = () => {
   };
 
   return (
-    <div className="bg-white py-6 xl:py-8 border-b-[#E6EFF5] border-b-[1px] font-futura lg:text-2xl xl:text-3xl sticky top-0 w-full text-black  grid grid-cols-[90%,5%,5%]">
-      <div>{getTitle()}</div>
-      <Image
-        src="/assets/layout/notif.png"
-        width={50}
-        height={50}
-        alt=""
-        className="xl:scale-100 scale-75 mx-auto"
-      />{" "}
-      <Image
-        src="/assets/layout/avatar.svg"
-        width={50}
-        height={50}
-        alt=""
-        className="xl:scale-100 scale-75 mx-auto"
-      />{" "}
-    </div>
+    <>
+      {!isAuthRoute && (
+        <div className="bg-white py-6 xl:py-8 border-b-[#E6EFF5] border-b-[1px] font-futura lg:text-2xl xl:text-3xl sticky top-0 w-full text-black  grid grid-cols-[90%,5%,5%]">
+          <div>{getTitle()}</div>
+          <Image
+            src="/assets/layout/notif.png"
+            width={50}
+            height={50}
+            alt=""
+            className="xl:scale-100 scale-75 mx-auto"
+          />{" "}
+          <Image
+            src="/assets/layout/avatar.svg"
+            width={50}
+            height={50}
+            alt=""
+            className="xl:scale-100 scale-75 mx-auto"
+          />{" "}
+        </div>
+      )}{" "}
+    </>
   );
 };
 
