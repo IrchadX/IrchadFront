@@ -13,6 +13,7 @@ module.exports = {
         black: "#17252A",
         secondary: "#3AAFA9",
         white: "#FCFFFE",
+        border: "rgba(224, 225, 226, 0.3)",
       },
       fontFamily: {
         futura: "var(--font-futura)",
