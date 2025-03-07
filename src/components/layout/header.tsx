@@ -8,13 +8,13 @@ const Header = () => {
   const getTitle = () => {
     if (pathname.startsWith("/dashboard")) {
       return "Tableau de bord";
-    } else if (pathname.startsWith("/users")) {
+    } else if (pathname.startsWith("/admin/users")) {
       return "Gestion des utilisateurs";
-    } else if (pathname.startsWith("/environment")) {
+    } else if (pathname.startsWith("/admin/environment")) {
       return "Gestion des environnements";
-    } else if (pathname.startsWith("/devices")) {
+    } else if (pathname.startsWith("/admin/devices")) {
       return "Gestion des dispositifs";
-    } else if (pathname.startsWith("/settings")) {
+    } else if (pathname.startsWith("/admin/settings")) {
       return "Paramètres";
     }
     return "Title goes in here";

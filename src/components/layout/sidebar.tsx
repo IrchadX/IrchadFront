@@ -22,7 +22,7 @@ const Sidebar = () => {
           {adminSidebarLinks.map((link, index) => (
             <div
               key={index}
-              className={`relative mb-2 flex gap-4 w-full font-medium p-4 rounded-lg transition-colors duration-200 `}>
+              className={`items-center relative mb-2 flex gap-4 w-full font-medium p-4 rounded-lg transition-colors duration-200 `}>
               {pathname.startsWith(link.href) && (
                 <Image
                   alt="active link indicator"
