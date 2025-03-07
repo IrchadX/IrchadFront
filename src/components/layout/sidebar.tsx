@@ -8,8 +8,8 @@ const Sidebar = () => {
 
   return (
     <aside className="text-white h-screen overflow-hidden lg:w-60 xl:w-64 p-2 hidden lg:flex flex-col items-center justify-center">
-      <div className="lg:text-md xl:text-lg h-[100%] bg-main w-full rounded-[15px] flex flex-col items-center py-4">
-        <div className="h-[20%] w-full">
+      <div className="lg:text-md  h-[100%] bg-main w-full rounded-[15px] flex flex-col items-center py-4">
+        <div className="h-[15%] w-full">
           <Image
             src="/assets/logo.svg"
             width={150}
@@ -18,7 +18,7 @@ const Sidebar = () => {
             className="mx-auto"
           />
         </div>
-        <div className="w-full h-[50%] flex flex-col justify-between items-center">
+        <div className="w-full h-[45%] flex flex-col justify-between items-center">
           {adminSidebarLinks.map((link, index) => (
             <div
               key={index}
@@ -45,7 +45,7 @@ const Sidebar = () => {
             </div>
           ))}
         </div>
-        <div className="h-[30%] flex flex-col items-center justify-end w-full">
+        <div className="h-[40%] flex flex-col items-center justify-end w-full">
           <div className="flex flex-col border-t-border border-t-[1px] py-6 mx-auto w-full">
             <div className="flex gap-2 mx-auto">
               <Image
