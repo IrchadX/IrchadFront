@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
+import Sidebar from "@/components/layout/sidebar";
+import Header from "@/components/layout/header";
 
 const futura = localFont({
   src: "../../public/fonts/futura/futur.ttf",
@@ -26,8 +28,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${futura.variable} ${montserrat.variable} antialiased font-montserrat`}>
-        {children}
+        className={`${futura.variable} ${montserrat.variable} antialiased font-montserrat bg-white`}>
+        <div className="flex min-h-screen">
+          <div className="h-screen overflow-hidden sticky top-0">
+            <Sidebar />
+          </div>
+
+          <div className="flex-1 flex flex-col px-8 xl:px-10">
+            <Header />
+            <main className="flex-1 overflow-y-auto ">{children}</main>
+          </div>
+        </div>
       </body>
     </html>
   );

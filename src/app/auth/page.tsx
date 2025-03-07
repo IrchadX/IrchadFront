@@ -6,7 +6,8 @@ import { TbLockPassword } from "react-icons/tb";
 import { MdOutlineMail } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import loginImg from "../../../public/assets/loginimg.png";
+import loginImg from "../assets/loginimg.png";
+import logo from "../assets/logoirchad.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
