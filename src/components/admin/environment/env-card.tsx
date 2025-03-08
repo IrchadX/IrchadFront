@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 interface EnvironmentCardProps {
   title: string;
@@ -30,13 +31,15 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
           />
         </div>
         <div className="w-[10%] flex items-end justify-end">
-          <Image
-            src="/assets/shared/open-arrow.svg"
-            width={30}
-            height={30}
-            alt="open arrow"
-            className="scale-150"
-          />
+          <Link href={`/admin/environments/${id}`}>
+            <Image
+              src="/assets/shared/open-arrow.svg"
+              width={30}
+              height={30}
+              alt="open arrow"
+              className="scale-150"
+            />
+          </Link>
         </div>
       </div>
       <p className="w-full text-start text-sm text-black-30">{address}</p>
