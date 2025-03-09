@@ -30,7 +30,7 @@ export default function RootLayout({
       <body
         className={`${futura.variable} ${montserrat.variable} antialiased font-montserrat bg-white`}>
         <div className="flex min-h-screen">
-          <div className="h-screen overflow-hidden sticky top-0">
+          <div className=" h-screen overflow-hidden sticky top-0">
             <Sidebar />
           </div>
 

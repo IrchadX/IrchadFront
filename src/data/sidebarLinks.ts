@@ -8,27 +8,27 @@ export interface SidebarLink {
 export const adminSidebarLinks: SidebarLink[] = [
   {
     name: "Tableau de Bord",
-    href: "/dashboard",
+    href: "/admin/dashboard",
     iconLink: "/assets/layout/dashboard.png",
   },
   {
     name: "Utilisateurs",
-    href: "/users",
+    href: "/admin/users",
     iconLink: "/assets/layout/users.png",
   },
   {
     name: "Environnements",
-    href: "/environments",
+    href: "/admin/environments",
     iconLink: "/assets/layout/envs.png",
   },
   {
     name: "Dispositifs",
-    href: "/devices",
+    href: "/admin/devices",
     iconLink: "/assets/layout/devices.png",
   },
   {
     name: "Paramètres",
-    href: "/settings",
+    href: "/admin/settings",
     iconLink: "/assets/layout/settings.png",
   },
 ];

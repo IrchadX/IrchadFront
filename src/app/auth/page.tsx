@@ -6,8 +6,7 @@ import { TbLockPassword } from "react-icons/tb";
 import { MdOutlineMail } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import loginImg from "../assets/loginimg.png";
-import logo from "../assets/logoirchad.png";
+import loginImg from "../../../public/assets/loginimg.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -27,7 +26,6 @@ export default function Login() {
     console.log("Attempting login with:", { email });
 
     try {
-     
       const apiUrl = "http://localhost:3000/auth";
       console.log("Sending request to:", apiUrl);
 
@@ -37,14 +35,13 @@ export default function Login() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-       
+
         credentials: "include",
         mode: "cors",
       });
 
       console.log("Response status:", response.status);
-      
-  
+
       let data;
       try {
         data = await response.json();
@@ -57,25 +54,23 @@ export default function Login() {
       }
 
       if (!response.ok) {
-        throw new Error(data.message || `Error ${response.status}: Authentication failed`);
+        throw new Error(
+          data.message || `Error ${response.status}: Authentication failed`
+        );
       }
 
-      
       localStorage.setItem("accessToken", data.access_token);
       console.log("Token stored successfully");
-      
-    
+
       localStorage.setItem("user", JSON.stringify(data.user));
       console.log("User data stored successfully");
-
 
       // if (rememberMe) {
       //   localStorage.setItem("rememberUser", "true");
       // }
 
-    
       console.log("Login successful, redirecting...");
-      router.push("/"); 
+      router.push("/");
     } catch (err) {
       console.error("Login error:", err);
       setError(err.message || "Something went wrong. Please try again.");
@@ -87,8 +82,7 @@ export default function Login() {
   return (
     <div
       className="flex h-screen bg-cover bg-no-repeat justify-center xl:bg-black"
-      style={{ backgroundColor: "#fff", color: "#000" }}
-    >
+      style={{ backgroundColor: "#fff", color: "#000" }}>
       <div className="w-full xl:w-[48%] m-8 xl:m-0 flex flex-col justify-center items-center  bg-white px-[25px] sm:px-[50px] md:px-[107px] gap-[60px] xl:overflow-hidden xl:h-full z-20">
         <div className="flex justify-center w-full">
           <Image
@@ -106,9 +100,11 @@ export default function Login() {
             {error}
           </div>
         )}
-        
-        <form className="flex w-full flex-col gap-[25px]" onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-8">      
+
+        <form
+          className="flex w-full flex-col gap-[25px]"
+          onSubmit={handleSubmit}>
+          <div className="flex flex-col gap-8">
             <div className="flex flex-col justify-start gap-4">
               <label className="text-black/90 font-futura font-semibold text-md">
                 Email
@@ -145,13 +141,14 @@ export default function Login() {
 
                 <span
                   className="cursor-pointer"
-                  onClick={() => setPasswordVisible(!passwordVisible)}
-                >
-                  <FontAwesomeIcon icon={passwordVisible ? faEyeSlash : faEye} />
+                  onClick={() => setPasswordVisible(!passwordVisible)}>
+                  <FontAwesomeIcon
+                    icon={passwordVisible ? faEyeSlash : faEye}
+                  />
                 </span>
               </div>
             </div>
-            
+
             {/* <div className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -165,19 +162,17 @@ export default function Login() {
               </label>
             </div> */}
           </div>
-           
+
           <button
             type="submit"
             className="w-full font-futura font-medium bg-main p-[12px] text-white rounded-[12px] text-[20px]"
-            disabled={isLoading}
-          >
+            disabled={isLoading}>
             {isLoading ? "Chargement..." : "Se connecter"}
           </button>
-          
         </form>
 
         <h2 className="font-montserrat text-black text-[14px] font-regular">
-        Irchad © 2025. Tous droits réservés. Fièrement conçu par XCEED.
+          Irchad © 2025. Tous droits réservés. Fièrement conçu par XCEED.
         </h2>
       </div>
 
