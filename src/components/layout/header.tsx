@@ -24,7 +24,7 @@ const Header = () => {
   return (
     <>
       {!isAuthRoute && (
-        <div className="bg-white py-6 xl:py-8 mb-4 border-b-[#E6EFF5] border-b-[1px] font-futura lg:text-2xl xl:text-3xl sticky top-0 w-full text-black  grid grid-cols-[90%,5%,5%]">
+        <div className="z-50 bg-white py-6 xl:py-8 mb-4 border-b-[#E6EFF5] border-b-[1px] font-futura lg:text-2xl xl:text-3xl sticky top-0 w-full text-black  grid grid-cols-[90%,5%,5%]">
           <div>{getTitle()}</div>
           <Image
             src="/assets/layout/notif.png"

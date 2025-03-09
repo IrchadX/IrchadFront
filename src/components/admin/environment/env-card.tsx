@@ -17,7 +17,7 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
   return (
     <div
       key={id}
-      className="lg:w-[250px] xl:w-[320px] p-3 border-[1px] border-black-10 bg-main-5 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center justify-center">
+      className="lg:w-[230px] xl:w-[300px] 2xl:w-[280px] p-3 border-[1px] border-black-10 bg-main-5 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center justify-center">
       <div className="flex w-full">
         <h3 className="font-bold w-[80%] text-start text-md xl:text-lg  text-black">
           {title}

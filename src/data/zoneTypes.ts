@@ -34,4 +34,11 @@ export const zoneTypes = [
     title: "Park Zone",
     dropdownOptions: ["Option A", "Option B", "Option C"],
   },
+  {
+    icon: "/assets/admin/environments/zone-icon.svg",
+    color: "#32CD32",
+    maxSpeed: "20 km/h",
+    title: "Park Zone",
+    dropdownOptions: ["Option A", "Option B", "Option C"],
+  },
 ];

@@ -24,7 +24,7 @@ const ZoneTypeCard: React.FC<ZoneTypeCardProps> = ({
       style={{
         backgroundColor: `rgba(${hexToRgb(color)}, 0.2)`,
       }}
-      className={`text-black text-md w-[350px] p-4 border-[1px] border-main-10 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center justify-center`}>
+      className={`text-sm xl:text-md text-black text-md w-[280px] xl:w-[300px] p-4 border-[1px] border-main-10 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center justify-center`}>
       <div className="w-full flex items-center space-x-4 pb-4">
         <div className="w-[10%]">
           <Image
