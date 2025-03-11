@@ -1,4 +1,4 @@
-"use client"; // Required for client-side interactivity
+"use client";
 
 import React, { useEffect, useState } from "react";
 import {
@@ -14,26 +14,27 @@ import { TextArea } from "@/components/shared/text-area";
 import Title from "@/components/shared/title";
 import { zoneTypes } from "@/data/zoneTypes";
 import { Button } from "@/components/shared/button";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface AddZoneCardProps {
-  handleSaveItem: any;
+  handleSaveItem: (item: any) => void;
   showValues: boolean;
   selectedItem: any;
-  setSelectedItem: (item: any) => void;
 }
 
 const AddZoneCard = ({
   showValues,
   selectedItem,
-  setSelectedItem,
   handleSaveItem,
 }: AddZoneCardProps) => {
-  console.log(selectedItem);
   const [nom, setNom] = useState(
     selectedItem?.properties?.nom || "Nom de la zone"
   );
   const [type, setType] = useState(selectedItem?.properties?.type || "");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState(
+    selectedItem?.properties?.description || "Description de la zone"
+  );
 
   useEffect(() => {
     if (selectedItem) {
@@ -57,10 +58,16 @@ const AddZoneCard = ({
     };
 
     handleSaveItem(updatedItem);
+    toast.success("Zone ajoutee");
+    setNom("");
+    setDescription("");
+    setType("");
+    console.log("Updated item:", updatedItem);
   };
 
   return (
     <div className="p-6 bg-main-20 rounded-lg shadow-md max-w-md mx-auto border-main-40 border">
+      <ToastContainer />
       <Title text="Créer une zone" lineLength="0" />
 
       {/* Nom */}

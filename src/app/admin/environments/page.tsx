@@ -7,12 +7,13 @@ import SearchInput from "@/components/shared/search-input";
 import FilterButton from "@/components/shared/filter-button";
 import { useState } from "react";
 import Link from "next/link";
+
 const Page = () => {
   const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   return (
-    <div>
+    <div className="">
       <div className="flex gap-2">
         <SearchInput />
         <FilterButton
@@ -22,7 +23,7 @@ const Page = () => {
           placeholder="Filter"
         />
       </div>
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-start mt-4">
         <Title text="Environnements" lineLength="100px" />
         <Link href="/admin/environments/create_environment" passHref>
           <ButtonSecondary

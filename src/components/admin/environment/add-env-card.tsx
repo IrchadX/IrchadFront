@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -17,14 +17,25 @@ import Image from "next/image";
 
 interface AddEnvCardProps {
   showValues: boolean;
+  environmentInfo: {
+    name: string;
+    address: string;
+    isPublic: boolean;
+    userId: string | null;
+  };
+  setEnvironmentInfo: (info: {
+    name: string;
+    address: string;
+    isPublic: boolean;
+    userId: string | null;
+  }) => void;
 }
 
-const AddEnvCard = ({ showValues }: AddEnvCardProps) => {
-  const [nom, setNom] = useState("Nom de l'environnement");
-  const [adresse, setAdresse] = useState("Adresse de l'environnement");
-  const [visibility, setVisibility] = useState("public");
-  const [selectedUser, setSelectedUser] = useState("");
-
+const AddEnvCard = ({
+  showValues,
+  environmentInfo,
+  setEnvironmentInfo,
+}: AddEnvCardProps) => {
   return (
     <div className="p-6 bg-white rounded-lg shadow-md max-w-md mx-auto border-main-40 border">
       <Title text="Informations" lineLength="0" />
@@ -32,13 +43,15 @@ const AddEnvCard = ({ showValues }: AddEnvCardProps) => {
       <div className="mb-4 gap-2">
         <Label htmlFor="nom">Nom</Label>
         {showValues ? (
-          <p className="mt-1 text-gray-700">{nom}</p>
+          <p className="mt-1 text-gray-700">{environmentInfo.name}</p>
         ) : (
           <Input
             id="nom"
             placeholder="Nom de l’envrionnement..."
-            value={nom}
-            onChange={(e) => setNom(e.target.value)}
+            value={environmentInfo.name}
+            onChange={(e) =>
+              setEnvironmentInfo({ ...environmentInfo, name: e.target.value })
+            }
           />
         )}
       </div>
@@ -47,14 +60,19 @@ const AddEnvCard = ({ showValues }: AddEnvCardProps) => {
       <div className="mb-4">
         <Label htmlFor="adresse">Adresse</Label>
         {showValues ? (
-          <p className="mt-1 text-gray-700">{adresse}</p>
+          <p className="mt-1 text-gray-700">{environmentInfo.address}</p>
         ) : (
           <TextArea
             id="adresse"
-            placeholder="Adresse de l’environnementx"
+            placeholder="Adresse de l’environnement"
             className="mt-1"
-            value={adresse}
-            onChange={(e) => setAdresse(e.target.value)}
+            value={environmentInfo.address}
+            onChange={(e) =>
+              setEnvironmentInfo({
+                ...environmentInfo,
+                address: e.target.value,
+              })
+            }
           />
         )}
       </div>
@@ -70,32 +88,39 @@ const AddEnvCard = ({ showValues }: AddEnvCardProps) => {
         />
         <div className="flex flex-col items-start justify-start">
           <Label>Visibilité</Label>
-
           <p className="mt-1 text-gray-700">
-            {visibility === "private" ? "Privé" : "Public"}
+            {environmentInfo.isPublic ? "Public" : "Privé"}
           </p>
         </div>
         <div className="flex items-center gap-2 mt-1">
           <Switch
             id="visibility"
-            checked={visibility === "private"}
+            checked={!environmentInfo.isPublic} // Switch is "on" when private
             onCheckedChange={(checked) =>
-              setVisibility(checked ? "private" : "public")
+              setEnvironmentInfo({
+                ...environmentInfo,
+                isPublic: !checked, // Invert the checked value for isPublic
+                userId: checked ? null : environmentInfo.userId, // Reset userId if public
+              })
             }
           />
-        </div>{" "}
+        </div>
       </div>
 
       {/* Utilisateur Dropdown (Visible only when visibility is private) */}
-      {visibility === "private" && (
+      {!environmentInfo.isPublic && (
         <div className="mb-4">
           <Label htmlFor="utilisateur">Utilisateur</Label>
           {showValues ? (
             <p className="mt-1 text-gray-700">
-              {selectedUser || "Aucun utilisateur sélectionné"}
+              {environmentInfo.userId || "Aucun utilisateur sélectionné"}
             </p>
           ) : (
-            <Select onValueChange={setSelectedUser} value={selectedUser}>
+            <Select
+              onValueChange={(value) =>
+                setEnvironmentInfo({ ...environmentInfo, userId: value })
+              }
+              value={environmentInfo.userId || ""}>
               <SelectTrigger className="mt-1">
                 <SelectValue placeholder="Sélectionnez un utilisateur" />
               </SelectTrigger>

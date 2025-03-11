@@ -14,18 +14,18 @@ import { TextArea } from "@/components/shared/text-area";
 import Title from "@/components/shared/title";
 import { Button } from "@/components/shared/button";
 import { poiCategories } from "@/data/poiCategories";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface AddPoiCardProps {
+  handleSaveItem: (item: any) => void;
   showValues: boolean;
   selectedItem: any;
-  handleSaveItem: any;
-  setSelectedItem: (item: any) => void;
 }
 
 const AddPoiCard = ({
   showValues,
   selectedItem,
-  setSelectedItem,
   handleSaveItem,
 }: AddPoiCardProps) => {
   const [nom, setNom] = useState(selectedItem?.properties?.nom || "Nom du POI");
@@ -36,7 +36,6 @@ const AddPoiCard = ({
     selectedItem?.properties?.description || "Description du POI"
   );
 
-  // Update form fields when selectedItem changes
   useEffect(() => {
     if (selectedItem) {
       setNom(selectedItem.properties?.nom || "Nom du POI");
@@ -58,11 +57,19 @@ const AddPoiCard = ({
       },
     };
 
-    handleSaveItem(updatedItem); // Save the updated item
+    handleSaveItem(updatedItem);
+    setNom("");
+    setCategorie("");
+    setDescription("");
+    toast.success("PoI ajoute");
+
+    console.log("Updated item:", updatedItem);
   };
 
   return (
     <div className="p-6 bg-main-20 rounded-lg shadow-md max-w-md mx-auto border-main-40 border">
+      <ToastContainer />
+
       <Title text="Créer un Point d'Intérêt" lineLength="0" />
 
       {/* Nom */}

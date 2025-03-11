@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -131,25 +133,21 @@ export default function EditableMap({
     console.log("Layers deleted:", remainingLayers);
   };
 
-  const handleSaveItem = (item) => {
-    // Save the item details to the state or send to an API
-    console.log("Item saved:", item);
-    setSelectedItem(null);
-  };
-
   return (
     <div className="font-montserrat">
+      <ToastContainer />
+
       <MapContainer
         center={[geoData.lat, geoData.lng]}
         zoom={18}
-        maxZoom={25}
+        maxZoom={22}
         style={{ height: "70vh", width: "800px" }}
         whenCreated={setMap}>
         <div
           style={{
             position: "absolute",
-            top: "10px",
-            left: "10px",
+            bottom: "10px",
+            left: "50px",
             zIndex: 1000,
             display: "flex",
             gap: "10px",
@@ -243,10 +241,10 @@ export default function EditableMap({
         </div>
 
         <TileLayer
-          maxNativeZoom={18}
+          maxNativeZoom={22}
           maxZoom={25}
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url="https://tile.thunderforest.com/neighbourhood/{z}/{x}/{y}.png?apikey=b4b184f6a33f425f9d9fdf1ce712e0af"
         />
         <FeatureGroup>
           {mapLayer.map((layer, index) => {
