@@ -42,11 +42,11 @@ export default function EditableMap({
   file,
   setIsPoiFormOpen = () => {},
   setIsZoneFormOpen = () => {},
+  setSelectedItem,
 }: any) {
   const [drawingMode, setDrawingMode] = useState(null);
   const [map, setMap] = useState(null);
   const [mapLayer, setMapLayer] = useState([]);
-  const [selectedItem, setSelectedItem] = useState(null);
 
   // Effect to update map layers when file or geoData changes
   useEffect(() => {
@@ -88,17 +88,11 @@ export default function EditableMap({
       return;
     }
 
-    // Prompt the user for metadata
-    const description = prompt("Enter a description:");
-    let image = "";
     if (drawingMode === "poi") {
-      image = prompt("Enter an image URL (optional):");
     }
 
     const properties = {
       type: drawingMode,
-      description,
-      image,
     };
 
     const newLayer = {
@@ -145,19 +139,6 @@ export default function EditableMap({
 
   return (
     <div className="font-montserrat">
-      <style>
-        {`
-          .leaflet-draw-actions {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 5px;
-          }
-          .leaflet-draw-actions a {
-            margin: 0 !important;
-          }
-        `}
-      </style>
       <MapContainer
         center={[geoData.lat, geoData.lng]}
         zoom={18}
@@ -412,63 +393,6 @@ export default function EditableMap({
           />
         </FeatureGroup>
       </MapContainer>
-
-      {selectedItem && (
-        <div
-          style={{
-            position: "absolute",
-            top: "10px",
-            right: "10px",
-            zIndex: 1000,
-            backgroundColor: "#fff",
-            padding: "20px",
-            borderRadius: "8px",
-            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-          }}>
-          <h2>Edit {selectedItem.properties.type}</h2>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSaveItem(selectedItem);
-            }}>
-            <label>
-              Description:
-              <input
-                type="text"
-                value={selectedItem.properties.description}
-                onChange={(e) =>
-                  setSelectedItem({
-                    ...selectedItem,
-                    properties: {
-                      ...selectedItem.properties,
-                      description: e.target.value,
-                    },
-                  })
-                }
-              />
-            </label>
-            {selectedItem.properties.type === "poi" && (
-              <label>
-                Image URL:
-                <input
-                  type="text"
-                  value={selectedItem.properties.image}
-                  onChange={(e) =>
-                    setSelectedItem({
-                      ...selectedItem,
-                      properties: {
-                        ...selectedItem.properties,
-                        image: e.target.value,
-                      },
-                    })
-                  }
-                />
-              </label>
-            )}
-            <button type="submit">Save</button>
-          </form>
-        </div>
-      )}
     </div>
   );
 }

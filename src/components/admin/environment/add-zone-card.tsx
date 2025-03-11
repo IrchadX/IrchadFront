@@ -1,6 +1,6 @@
 "use client"; // Required for client-side interactivity
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectTrigger,
@@ -16,23 +16,47 @@ import { zoneTypes } from "@/data/zoneTypes";
 import { Button } from "@/components/shared/button";
 
 interface AddZoneCardProps {
+  handleSaveItem: any;
   showValues: boolean;
+  selectedItem: any;
+  setSelectedItem: (item: any) => void;
 }
 
-const AddZoneCard = ({ showValues }: AddZoneCardProps) => {
-  const [nom, setNom] = useState("Nom de la zone");
-  const [type, setType] = useState("");
-  const [description, setDescription] = useState("Description de la zone");
+const AddZoneCard = ({
+  showValues,
+  selectedItem,
+  setSelectedItem,
+  handleSaveItem,
+}: AddZoneCardProps) => {
+  console.log(selectedItem);
+  const [nom, setNom] = useState(
+    selectedItem?.properties?.nom || "Nom de la zone"
+  );
+  const [type, setType] = useState(selectedItem?.properties?.type || "");
+  const [description, setDescription] = useState("");
+
+  useEffect(() => {
+    if (selectedItem) {
+      setNom(selectedItem.properties?.nom || "Nom de la zone");
+      setType(selectedItem.properties?.type || "");
+      setDescription(
+        selectedItem.properties?.description || "Description de la zone"
+      );
+    }
+  }, [selectedItem]);
 
   const handleSave = () => {
-    const zoneData = {
-      nom,
-      type,
-      description,
+    const updatedItem = {
+      ...selectedItem,
+      properties: {
+        ...selectedItem.properties,
+        nom,
+        type,
+        description,
+      },
     };
 
-    console.log("Saving zone data:", zoneData);
-    alert("Zone saved successfully!");
+    handleSaveItem(updatedItem);
   };
 
   return (
@@ -93,11 +117,11 @@ const AddZoneCard = ({ showValues }: AddZoneCardProps) => {
           />
         )}
       </div>
+
+      {/* Save Button (Only visible in edit mode) */}
       <div className="items-end flex justify-end">
-        {/* Save Button (Only visible in edit mode) */}
         {!showValues && (
           <Button variant="secondary" onClick={handleSave}>
-            {" "}
             Enregistrer
           </Button>
         )}

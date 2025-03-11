@@ -1,6 +1,6 @@
-"use client";
+"use client"; // Required for client-side interactivity
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectTrigger,
@@ -17,22 +17,48 @@ import { poiCategories } from "@/data/poiCategories";
 
 interface AddPoiCardProps {
   showValues: boolean;
+  selectedItem: any;
+  handleSaveItem: any;
+  setSelectedItem: (item: any) => void;
 }
 
-const AddPoiCard = ({ showValues }: AddPoiCardProps) => {
-  const [nom, setNom] = useState("Nom du POI");
-  const [categorie, setCategorie] = useState("");
-  const [description, setDescription] = useState("Description du POI");
+const AddPoiCard = ({
+  showValues,
+  selectedItem,
+  setSelectedItem,
+  handleSaveItem,
+}: AddPoiCardProps) => {
+  const [nom, setNom] = useState(selectedItem?.properties?.nom || "Nom du POI");
+  const [categorie, setCategorie] = useState(
+    selectedItem?.properties?.categorie || ""
+  );
+  const [description, setDescription] = useState(
+    selectedItem?.properties?.description || "Description du POI"
+  );
+
+  // Update form fields when selectedItem changes
+  useEffect(() => {
+    if (selectedItem) {
+      setNom(selectedItem.properties?.nom || "Nom du POI");
+      setCategorie(selectedItem.properties?.categorie || "");
+      setDescription(
+        selectedItem.properties?.description || "Description du POI"
+      );
+    }
+  }, [selectedItem]);
 
   const handleSave = () => {
-    const poiData = {
-      nom,
-      categorie,
-      description,
+    const updatedItem = {
+      ...selectedItem,
+      properties: {
+        ...selectedItem.properties,
+        nom,
+        categorie,
+        description,
+      },
     };
 
-    console.log("Saving POI data:", poiData);
-    alert("Point d'intérêt enregistré avec succès!");
+    handleSaveItem(updatedItem); // Save the updated item
   };
 
   return (
@@ -55,7 +81,7 @@ const AddPoiCard = ({ showValues }: AddPoiCardProps) => {
         )}
       </div>
 
-      {/* Categorie (Dropdown) */}
+      {/* Catégorie (Dropdown) */}
       <div className="mb-4">
         <Label htmlFor="categorie">Catégorie</Label>
         {showValues ? (
@@ -93,8 +119,9 @@ const AddPoiCard = ({ showValues }: AddPoiCardProps) => {
           />
         )}
       </div>
+
+      {/* Save Button (Only visible in edit mode) */}
       <div className="items-end flex justify-end">
-        {/* Save Button (Only visible in edit mode) */}
         {!showValues && (
           <Button variant="secondary" onClick={handleSave}>
             Enregistrer
