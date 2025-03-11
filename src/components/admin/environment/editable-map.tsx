@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 
@@ -37,10 +37,48 @@ const EditControl = dynamic(
   { ssr: false }
 );
 
-export default function EditableMap({ geoData }: any) {
+export default function EditableMap({
+  geoData,
+  file,
+  setIsPoiFormOpen = () => {},
+  setIsZoneFormOpen = () => {},
+}: any) {
   const [drawingMode, setDrawingMode] = useState(null);
   const [map, setMap] = useState(null);
   const [mapLayer, setMapLayer] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  // Effect to update map layers when file or geoData changes
+  useEffect(() => {
+    if (file) {
+      setMapLayer(
+        file.features.map((feature) => ({
+          type: feature.geometry.type.toLowerCase(),
+          geometry: feature.geometry,
+          properties: feature.properties,
+        }))
+      );
+    }
+  }, [file, geoData]);
+
+  useEffect(() => {}, [drawingMode]);
+
+  // Handle drawing mode selection
+  const handleDrawingMode = (mode) => {
+    if (drawingMode === mode) {
+      setDrawingMode(null);
+    } else {
+      setDrawingMode(mode);
+    }
+
+    if (mode === "poi") {
+      setIsPoiFormOpen(true);
+      setIsZoneFormOpen(false);
+    } else if (mode === "zone") {
+      setIsZoneFormOpen(true);
+      setIsPoiFormOpen(false);
+    }
+  };
 
   const _onCreate = (e) => {
     const { layerType, layer } = e;
@@ -70,8 +108,10 @@ export default function EditableMap({ geoData }: any) {
     };
 
     setMapLayer((prevLayers) => [...prevLayers, newLayer]);
+    setSelectedItem(newLayer);
     console.log("New layer added:", newLayer);
   };
+
   const _onEditPath = (e) => {
     const { layers } = e;
     const updatedLayers = mapLayer.map((layer) => {
@@ -97,142 +137,130 @@ export default function EditableMap({ geoData }: any) {
     console.log("Layers deleted:", remainingLayers);
   };
 
-  const handleExport = () => {
-    const geoJSON = {
-      type: "FeatureCollection",
-      features: mapLayer.map((layer) => ({
-        type: "Feature",
-        properties: layer.properties,
-        geometry: layer.geometry,
-      })),
-    };
-    const blob = new Blob([JSON.stringify(geoJSON)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "environment.geojson";
-    a.click();
-    URL.revokeObjectURL(url);
-    console.log("Exported GeoJSON:", geoJSON);
+  const handleSaveItem = (item) => {
+    // Save the item details to the state or send to an API
+    console.log("Item saved:", item);
+    setSelectedItem(null);
   };
 
-  const handleImport = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const geoJSON = JSON.parse(e.target.result);
-      setMapLayer(
-        geoJSON.features.map((feature) => ({
-          type: feature.geometry.type.toLowerCase(), // Ensure type is lowercase
-          geometry: feature.geometry,
-          properties: feature.properties,
-        }))
-      );
-      console.log("Imported GeoJSON:", geoJSON);
-    };
-    reader.readAsText(file);
-  };
   return (
-    <div>
-      <div
-        style={{
-          position: "absolute",
-          top: "10px",
-          left: "10px",
-          zIndex: 1000,
-          display: "flex",
-          gap: "10px",
-          alignItems: "center",
-          backgroundColor: "rgba(255, 255, 255, 0.8)",
-          padding: "10px",
-          borderRadius: "8px",
-          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-        }}>
-        {/* Dropdown for Drawing Mode */}
-        <select
-          onChange={(e) => setDrawingMode(e.target.value)}
-          style={{
-            margin: "5px",
-            padding: "8px 12px",
-            borderRadius: "6px",
-            border: "1px solid #ccc",
-            backgroundColor: "#fff",
-            color: "#333",
-            fontSize: "14px",
-            cursor: "pointer",
-            outline: "none",
-            transition: "border-color 0.3s ease",
-          }}
-          onMouseOver={(e) => (e.target.style.borderColor = "#666")}
-          onMouseOut={(e) => (e.target.style.borderColor = "#ccc")}>
-          <option value="">Select drawing mode</option>
-          <option value="zone">Draw Zone</option>
-          <option value="poi">Draw POI</option>
-          <option value="wall">Draw Wall</option>
-          <option value="door">Draw Door</option>
-          <option value="window">Draw Window</option>
-        </select>
-
-        {/* Export Button */}
-        <button
-          onClick={handleExport}
-          style={{
-            margin: "5px",
-            padding: "8px 16px",
-            borderRadius: "6px",
-            border: "none",
-            backgroundColor: "#4CAF50",
-            color: "#fff",
-            fontSize: "14px",
-            cursor: "pointer",
-            outline: "none",
-            transition: "background-color 0.3s ease, transform 0.2s ease",
-          }}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#45a049")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#4CAF50")}
-          onMouseDown={(e) => (e.target.style.transform = "scale(0.95)")}
-          onMouseUp={(e) => (e.target.style.transform = "scale(1)")}>
-          Export GeoJSON
-        </button>
-
-        {/* Import Button */}
-        <input
-          type="file"
-          accept=".geojson"
-          onChange={handleImport}
-          style={{ display: "none" }} // Hide the default file input
-          id="fileInput" // Add an ID for the label
-        />
-        <label
-          htmlFor="fileInput"
-          style={{
-            margin: "5px",
-            padding: "8px 16px",
-            borderRadius: "6px",
-            border: "none",
-            backgroundColor: "#2196F3",
-            color: "#fff",
-            fontSize: "14px",
-            cursor: "pointer",
-            outline: "none",
-            transition: "background-color 0.3s ease, transform 0.2s ease",
-          }}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#1e88e5")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#2196F3")}
-          onMouseDown={(e) => (e.target.style.transform = "scale(0.95)")}
-          onMouseUp={(e) => (e.target.style.transform = "scale(1)")}>
-          Import GeoJSON
-        </label>
-      </div>
-
+    <div className="font-montserrat">
+      <style>
+        {`
+          .leaflet-draw-actions {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+          }
+          .leaflet-draw-actions a {
+            margin: 0 !important;
+          }
+        `}
+      </style>
       <MapContainer
         center={[geoData.lat, geoData.lng]}
         zoom={18}
         maxZoom={25}
-        style={{ height: "100vh", width: "1000px" }}
+        style={{ height: "70vh", width: "800px" }}
         whenCreated={setMap}>
+        <div
+          style={{
+            position: "absolute",
+            top: "10px",
+            left: "10px",
+            zIndex: 1000,
+            display: "flex",
+            gap: "10px",
+            alignItems: "center",
+            padding: "10px",
+            borderRadius: "8px",
+            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+          }}>
+          {/* Zone Button */}
+          <button
+            onClick={() => {
+              handleDrawingMode("zone");
+            }}
+            style={{
+              padding: "8px 16px",
+              borderRadius: "6px",
+              border: "none",
+              backgroundColor: drawingMode === "zone" ? "#17252A" : "#17252A66",
+              color: drawingMode === "zone" ? "#fff" : "#17252A",
+              fontSize: "14px",
+              cursor: "pointer",
+              outline: "none",
+              transition: "background-color 0.3s ease, transform 0.2s ease",
+            }}
+            onMouseOver={(e) =>
+              (e.target.style.backgroundColor =
+                drawingMode === "zone" ? "#45a049" : "#ddd")
+            }
+            onMouseOut={(e) =>
+              (e.target.style.backgroundColor =
+                drawingMode === "zone" ? "#17252A" : "#17252A66")
+            }
+            onMouseDown={(e) => (e.target.style.transform = "scale(0.95)")}
+            onMouseUp={(e) => (e.target.style.transform = "scale(1)")}>
+            Zone
+          </button>
+
+          {/* POI Button */}
+          <button
+            onClick={() => handleDrawingMode("poi")}
+            style={{
+              padding: "8px 16px",
+              borderRadius: "6px",
+              border: "none",
+              backgroundColor: drawingMode === "poi" ? "#17252A" : "#17252A66",
+              color: drawingMode === "poi" ? "#fff" : "#17252A",
+              fontSize: "14px",
+              cursor: "pointer",
+              outline: "none",
+              transition: "background-color 0.3s ease, transform 0.2s ease",
+            }}
+            onMouseOver={(e) =>
+              (e.target.style.backgroundColor =
+                drawingMode === "poi" ? "#45a049" : "#ddd")
+            }
+            onMouseOut={(e) =>
+              (e.target.style.backgroundColor =
+                drawingMode === "poi" ? "#17252A" : "#17252A66")
+            }
+            onMouseDown={(e) => (e.target.style.transform = "scale(0.95)")}
+            onMouseUp={(e) => (e.target.style.transform = "scale(1)")}>
+            POI
+          </button>
+
+          {/* Wall Button */}
+          <button
+            onClick={() => handleDrawingMode("wall")}
+            style={{
+              padding: "8px 16px",
+              borderRadius: "6px",
+              border: "none",
+              backgroundColor: drawingMode === "wall" ? "#17252A" : "#17252A66",
+              color: drawingMode === "wall" ? "#fff" : "#17252A",
+              fontSize: "14px",
+              cursor: "pointer",
+              outline: "none",
+              transition: "background-color 0.3s ease, transform 0.2s ease",
+            }}
+            onMouseOver={(e) =>
+              (e.target.style.backgroundColor =
+                drawingMode === "wall" ? "#45a049" : "#ddd")
+            }
+            onMouseOut={(e) =>
+              (e.target.style.backgroundColor =
+                drawingMode === "wall" ? "#17252A" : "#17252A66")
+            }
+            onMouseDown={(e) => (e.target.style.transform = "scale(0.95)")}
+            onMouseUp={(e) => (e.target.style.transform = "scale(1)")}>
+            Wall
+          </button>
+        </div>
+
         <TileLayer
           maxNativeZoom={18}
           maxZoom={25}
@@ -296,7 +324,6 @@ export default function EditableMap({ geoData }: any) {
                 </Polyline>
               );
             } else if (layer.properties.type === "poi") {
-              // Handle POIs dynamically based on their geometry type
               switch (layer.type) {
                 case "point":
                   return (
@@ -371,7 +398,7 @@ export default function EditableMap({ geoData }: any) {
             return null;
           })}
           <EditControl
-            position="topright"
+            position="bottomleft"
             onEdited={_onEditPath}
             onCreated={_onCreate}
             onDeleted={_onDeleted}
@@ -385,6 +412,63 @@ export default function EditableMap({ geoData }: any) {
           />
         </FeatureGroup>
       </MapContainer>
+
+      {selectedItem && (
+        <div
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "10px",
+            zIndex: 1000,
+            backgroundColor: "#fff",
+            padding: "20px",
+            borderRadius: "8px",
+            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+          }}>
+          <h2>Edit {selectedItem.properties.type}</h2>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSaveItem(selectedItem);
+            }}>
+            <label>
+              Description:
+              <input
+                type="text"
+                value={selectedItem.properties.description}
+                onChange={(e) =>
+                  setSelectedItem({
+                    ...selectedItem,
+                    properties: {
+                      ...selectedItem.properties,
+                      description: e.target.value,
+                    },
+                  })
+                }
+              />
+            </label>
+            {selectedItem.properties.type === "poi" && (
+              <label>
+                Image URL:
+                <input
+                  type="text"
+                  value={selectedItem.properties.image}
+                  onChange={(e) =>
+                    setSelectedItem({
+                      ...selectedItem,
+                      properties: {
+                        ...selectedItem.properties,
+                        image: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </label>
+            )}
+            <button type="submit">Save</button>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
