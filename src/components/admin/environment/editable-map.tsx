@@ -353,7 +353,7 @@ export default function EditableMap({
             return null;
           })}
           <EditControl
-            position="topright"
+            position="bottomleft"
             onEdited={_onEditPath}
             onCreated={_onCreate}
             onDeleted={_onDeleted}
