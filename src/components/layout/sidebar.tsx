@@ -3,6 +3,8 @@ import { adminSidebarLinks } from "@/data/sidebarLinks";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import Link from "next/link";
+
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -51,9 +53,9 @@ const Sidebar = () => {
                     alt=""
                     className="lg:scale-50 xl:scale-75"
                   />
-                  <a href={link.href} className="hover:text-black">
+                  <Link  href={link.href} className="hover:text-black">
                     {link.name}
-                  </a>
+                  </Link >
                 </motion.div>
               ))}
             </div>
