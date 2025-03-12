@@ -28,6 +28,14 @@ export const columns: ColumnDef<Client>[] = [
     header: "Prénom",
   },
   {
+    accessorKey: "age",
+    header: "Âge",
+  },
+  {
+    accessorKey: "sex",
+    header: "Sexe",
+  },
+  {
     accessorKey: "city",
     header: "Ville",
   },
@@ -40,15 +48,11 @@ export const columns: ColumnDef<Client>[] = [
     header: "Email",
   },
   {
-    accessorKey: "helper",
-    header: "Aidant",
-  },
-  {
-    accessorKey: "phone_helper",
-    header: "Téléphone Aidant",
+    accessorKey: "userType",
+    header: "Type d'utilisateur",
   },
   {
     accessorKey: "registrationDate",
     header: "Date d'inscription",
   },
-]
+];

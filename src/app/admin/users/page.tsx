@@ -1,16 +1,12 @@
 "use client";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { Client, columns } from "@/components/admin/users/columns";
 import { DataTable } from "@/components/shared/data-table";
-import { clients } from "@/data/clients";
 import SearchInput from "@/components/shared/search-input";
 import FilterButton from "@/components/shared/filter-button";
-import { useState, useEffect } from "react";
 import { ButtonSecondary } from "@/components/shared/secondary-button";
-
-async function getData(): Promise<Client[]> {
-  return clients;
-}
+import { fetchUsers } from "@/data/users";
 
 export default function Page() {
   const [data, setData] = useState<Client[]>([]);
@@ -19,7 +15,7 @@ export default function Page() {
 
   useEffect(() => {
     async function fetchData() {
-      const result = await getData();
+      const result = await fetchUsers();
       setData(result);
     }
     fetchData();
@@ -38,12 +34,8 @@ export default function Page() {
           />
         </div>
         <div className="flex justify-between items-start">
-        <Link href={`/admin/users/add_user`}>
-            <ButtonSecondary
-              title="Ajouter"
-              onClick={() => {
-              }}
-            />
+          <Link href={`/admin/users/add_user`}>
+            <ButtonSecondary title="Ajouter" />
           </Link>
         </div>
       </div>

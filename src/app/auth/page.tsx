@@ -26,7 +26,7 @@ export default function Login() {
     console.log("Attempting login with:", { email });
 
     try {
-      const apiUrl = "http://localhost:3000/auth";
+      const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth`;
       console.log("Sending request to:", apiUrl);
 
       const response = await fetch(apiUrl, {
