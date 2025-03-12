@@ -32,3 +32,30 @@ export const adminSidebarLinks: SidebarLink[] = [
     iconLink: "/assets/layout/settings.png",
   },
 ];
+export const decideurSidebarLinks: SidebarLink[] = [
+  {
+    name: "Tableau de Bord",
+    href: "/decideur/dashboard",
+    iconLink: "/assets/layout/dashboard.png",
+  },
+  {
+    name: "Utilisateurs",
+    href: "/decideur/users",
+    iconLink: "/assets/layout/users.png",
+  },
+  {
+    name: "Fréquentation des zones",
+    href: "/decideur/environments",
+    iconLink: "/assets/layout/envs.png",
+  },
+  {
+    name: "Rapports",
+    href: "/decideur/devices",
+    iconLink: "/assets/layout/document.png",
+  },
+  {
+    name: "Paramètres",
+    href: "/decideur/settings",
+    iconLink: "/assets/layout/settings.png",
+  },
+];

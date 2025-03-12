@@ -1,0 +1,49 @@
+import React from "react";
+import Image from "next/image";
+
+const Metrics = () => {
+  const metrics = [
+    {
+      title: "Utilisateurs actifs",
+      value: "45",
+      textColor: "text-blue-500",
+      icon: "/assets/UserIIcon.png",
+    },
+    {
+      title: "Chiffre d'Affaires",
+      value: "10000 CA",
+      textColor: "text-yellow-500",
+      icon: "/assets/MoneyIcon.png",
+    },
+    {
+      title: "Compteur",
+      value: "1",
+      textColor: "text-pink-500",
+      icon: "/assets/AffaireIcon.png",
+    },
+    {
+      title: "Temps moyen",
+      value: "5 minutes",
+      textColor: "text-cyan-500",
+      icon: "/assets/MaintenanceIcon.png",
+    },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 p-3">
+      {metrics.map((metric, index) => (
+        <div key={index} className="bg-white shadow-md rounded-lg p-5 flex items-center hover:scale-95 transition-transform">
+          <div className="flex-shrink-0 mr-3">
+            <Image src={metric.icon} alt={metric.title} width={40} height={40} />
+          </div>
+          <div className="flex flex-col text-left leading-snug">
+            <p className="text-gray-500 text-sm">{metric.title}</p>
+            <p className={` ${metric.textColor} pt-2`}>{metric.value}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default Metrics;
