@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
 
   //user role is specified here for testing purposes
-  const userRole = "commercial";
+  const userRole = "admin";
 
   return (
     <html lang="en">
