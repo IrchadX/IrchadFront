@@ -1,14 +1,16 @@
 "use client";
-import { adminSidebarLinks } from "@/data/sidebarLinks";
+import { adminSidebarLinks, commercialSidebarLinks, SidebarLink } from "@/data/sidebarLinks";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
 
-const Sidebar = () => {
+const Sidebar = ({ userRole }: { userRole: string }) => {
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith("/auth");
+
+  const sidebarLinks : SidebarLink[] = userRole === "admin" ? adminSidebarLinks : userRole ==="commercial" ? commercialSidebarLinks : [];
 
   return (
     <>
@@ -28,7 +30,7 @@ const Sidebar = () => {
 
             {/* Sidebar Links */}
             <div className="w-full h-[45%] flex flex-col justify-between items-center">
-              {adminSidebarLinks.map((link, index) => (
+              {sidebarLinks.map((link, index) => (
                 <motion.div
                   key={index}
                   whileHover={{ scale: 1.05 }}
