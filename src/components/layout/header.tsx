@@ -17,6 +17,10 @@ const Header = () => {
       return "Gestion des dispositifs";
     } else if (pathname.startsWith("/admin/settings")) {
       return "Paramètres";
+    } else if (pathname.startsWith("/commercial/clients")) {
+      return "Gestion des clients";
+    } else if (pathname.startsWith("/commercial/sales")) {
+      return "Gestion des ventes";
     }
     return "Title goes in here";
   };
@@ -24,7 +28,7 @@ const Header = () => {
   return (
     <>
       {!isAuthRoute && (
-        <div className="bg-white py-6 xl:py-8 border-b-[#E6EFF5] border-b-[1px] font-futura lg:text-2xl xl:text-3xl sticky top-0 w-full text-black  grid grid-cols-[90%,5%,5%]">
+        <div className="z-50 bg-white py-6 xl:py-8 mb-4 border-b-[#E6EFF5] border-b-[1px] font-futura lg:text-2xl xl:text-3xl sticky top-0 w-full text-black  grid grid-cols-[90%,5%,5%]">
           <div>{getTitle()}</div>
           <Image
             src="/assets/layout/notif.png"

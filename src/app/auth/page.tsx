@@ -6,7 +6,7 @@ import { TbLockPassword } from "react-icons/tb";
 import { MdOutlineMail } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import loginImg from "../../../public/assets/loginimg.png";
+//import loginImg from "../../../public/assets/loginimg.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -17,7 +17,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
@@ -71,7 +71,7 @@ export default function Login() {
 
       console.log("Login successful, redirecting...");
       router.push("/");
-    } catch (err) {
+    } catch (err : any) {
       console.error("Login error:", err);
       setError(err.message || "Something went wrong. Please try again.");
     } finally {
@@ -178,7 +178,7 @@ export default function Login() {
 
       <div className="hidden xl:block xl:relative xl:py-[15px] xl:w-[52%] flex justify-center items-center">
         <Image
-          src={loginImg}
+          src="/assets/loginimg.png"
           alt="Login Image"
           quality={100}
           priority
