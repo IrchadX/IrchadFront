@@ -90,9 +90,6 @@ export default function EditableMap({
       return;
     }
 
-    if (drawingMode === "poi") {
-    }
-
     const properties = {
       type: drawingMode,
     };
@@ -158,9 +155,7 @@ export default function EditableMap({
           }}>
           {/* Zone Button */}
           <button
-            onClick={() => {
-              handleDrawingMode("zone");
-            }}
+            onClick={() => handleDrawingMode("zone")}
             style={{
               padding: "8px 16px",
               borderRadius: "6px",
@@ -171,17 +166,7 @@ export default function EditableMap({
               cursor: "pointer",
               outline: "none",
               transition: "background-color 0.3s ease, transform 0.2s ease",
-            }}
-            onMouseOver={(e) =>
-              (e.target.style.backgroundColor =
-                drawingMode === "zone" ? "#45a049" : "#ddd")
-            }
-            onMouseOut={(e) =>
-              (e.target.style.backgroundColor =
-                drawingMode === "zone" ? "#17252A" : "#17252A66")
-            }
-            onMouseDown={(e) => (e.target.style.transform = "scale(0.95)")}
-            onMouseUp={(e) => (e.target.style.transform = "scale(1)")}>
+            }}>
             Zone
           </button>
 
@@ -198,17 +183,7 @@ export default function EditableMap({
               cursor: "pointer",
               outline: "none",
               transition: "background-color 0.3s ease, transform 0.2s ease",
-            }}
-            onMouseOver={(e) =>
-              (e.target.style.backgroundColor =
-                drawingMode === "poi" ? "#45a049" : "#ddd")
-            }
-            onMouseOut={(e) =>
-              (e.target.style.backgroundColor =
-                drawingMode === "poi" ? "#17252A" : "#17252A66")
-            }
-            onMouseDown={(e) => (e.target.style.transform = "scale(0.95)")}
-            onMouseUp={(e) => (e.target.style.transform = "scale(1)")}>
+            }}>
             POI
           </button>
 
@@ -225,17 +200,7 @@ export default function EditableMap({
               cursor: "pointer",
               outline: "none",
               transition: "background-color 0.3s ease, transform 0.2s ease",
-            }}
-            onMouseOver={(e) =>
-              (e.target.style.backgroundColor =
-                drawingMode === "wall" ? "#45a049" : "#ddd")
-            }
-            onMouseOut={(e) =>
-              (e.target.style.backgroundColor =
-                drawingMode === "wall" ? "#17252A" : "#17252A66")
-            }
-            onMouseDown={(e) => (e.target.style.transform = "scale(0.95)")}
-            onMouseUp={(e) => (e.target.style.transform = "scale(1)")}>
+            }}>
             Wall
           </button>
         </div>
@@ -248,7 +213,7 @@ export default function EditableMap({
         />
         <FeatureGroup>
           {mapLayer.map((layer, index) => {
-            if (layer.type === "polygon" && layer.properties.type === "wall") {
+            if (layer.properties.type === "wall") {
               return (
                 <Polygon
                   key={index}
@@ -264,10 +229,7 @@ export default function EditableMap({
                   </Popup>
                 </Polygon>
               );
-            } else if (
-              layer.type === "linestring" &&
-              layer.properties.type === "door"
-            ) {
+            } else if (layer.properties.type === "door") {
               return (
                 <Polyline
                   key={index}
@@ -283,10 +245,7 @@ export default function EditableMap({
                   </Popup>
                 </Polyline>
               );
-            } else if (
-              layer.type === "linestring" &&
-              layer.properties.type === "window"
-            ) {
+            } else if (layer.properties.type === "window") {
               return (
                 <Polyline
                   key={index}
@@ -301,6 +260,23 @@ export default function EditableMap({
                     <p>{layer.properties.description}</p>
                   </Popup>
                 </Polyline>
+              );
+            } else if (layer.properties.type.startsWith("Zone ")) {
+              return (
+                <Polygon
+                  key={index}
+                  positions={layer.geometry.coordinates[0].map(([lng, lat]) => [
+                    lat,
+                    lng,
+                  ])}
+                  color="purple">
+                  <Popup>
+                    <strong>Zone</strong>
+                    <br />
+                    <p>{layer.properties.nom}</p>
+                    <p>{layer.properties.description}</p>
+                  </Popup>
+                </Polygon>
               );
             } else if (layer.properties.type === "poi") {
               switch (layer.type) {
@@ -333,7 +309,7 @@ export default function EditableMap({
                       positions={layer.geometry.coordinates.map(
                         ([lng, lat]) => [lat, lng]
                       )}
-                      color="purple">
+                      color="orange">
                       <Popup>
                         <strong>POI</strong>
                         <br />
@@ -355,7 +331,7 @@ export default function EditableMap({
                       positions={layer.geometry.coordinates[0].map(
                         ([lng, lat]) => [lat, lng]
                       )}
-                      color="orange">
+                      color="yellow">
                       <Popup>
                         <strong>POI</strong>
                         <br />
