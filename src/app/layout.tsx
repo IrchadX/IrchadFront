@@ -25,13 +25,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  //user role is specified here for testing purposes
+  const userRole = "commercial";
+
   return (
     <html lang="en">
       <body
         className={`${futura.variable} ${montserrat.variable} antialiased font-montserrat bg-white`}>
         <div className="flex min-h-screen">
           <div className=" h-screen overflow-hidden sticky top-0">
-            <Sidebar />
+            <Sidebar userRole={userRole} />
           </div>
 
           <div className="flex-1 flex flex-col px-8 xl:px-10">
