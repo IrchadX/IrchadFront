@@ -1,14 +1,14 @@
 import React from "react";
-import {ClientForm} from "@/components/commercial/clients/client_form";
+import {UserForm} from "@/components/admin/users/user_form";
 import Title from "@/components/shared/title";
 
-const AddClientPage: React.FC = () => {
+const AddUserPage: React.FC = () => {
   return (
     <div className="container mx-auto py-10">
       <Title text="Profil" lineLength="55px" />
-      <ClientForm />
+      <UserForm/>
     </div>
   );
 };
 
-export default AddClientPage;
+export default AddUserPage;
