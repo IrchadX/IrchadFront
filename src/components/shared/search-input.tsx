@@ -1,6 +1,6 @@
 "use client";
 import { Input } from "./input";
-import Image from "next/image";
+import { IoSearch } from "react-icons/io5";
 import { useState } from "react";
 const SearchInput = () => {
   const [value, setValue] = useState("");
@@ -12,12 +12,7 @@ const SearchInput = () => {
       value={value}
       onChange={(e) => setValue(e.target.value)}
       icon={
-        <Image
-          src="/assets/shared/search.png"
-          width={15}
-          height={15}
-          alt="search icon"
-        />
+        <IoSearch />
       }
     />
   );

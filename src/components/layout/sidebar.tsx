@@ -26,41 +26,37 @@ const Sidebar = () => {
 
             {/* Sidebar Links */}
             <div className="w-full h-[45%] flex flex-col justify-between items-center">
-              {adminSidebarLinks.map((link, index) => (
-                <motion.div
-                  key={index}
-                  whileHover={{ scale: 1.05 }}
-                  className={`items-center relative mb-2 flex gap-4 w-full font-medium p-4 rounded-lg transition-colors duration-200`}>
-                  {/* Active Link Indicator */}
-                  {pathname.startsWith(link.href) && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2">
-                      <Image
+      {adminSidebarLinks.map((link, index) => (
+        <motion.div
+          key={index}
+          whileHover={{ scale: 1.05 }}
+          className={`items-center relative mb-2 flex gap-4 w-full font-medium p-4 rounded-lg transition-colors duration-200`}
+        >
+          {/* Active Link Indicator */}
+          {pathname.startsWith(link.href) && (
+            <div className="absolute left-0 top-1/2 -translate-y-1/2">
+             <Image
                         alt="active link indicator"
                         src="/assets/layout/activeLink.svg"
                         width={260}
                         height={50}
                       />
-                    </div>
-                  )}
-
-                  {/* Link Icon and Name */}
-                  <Image
-                    src={link.iconLink}
-                    width={30}
-                    height={40}
-                    alt=""
-                    className="lg:scale-50 xl:scale-75"
-                  />
-                  <a href={link.href} className="hover:text-black">
-                    {link.name}
-                  </a>
-                </motion.div>
-              ))}
             </div>
+          )}
+
+          {/* Render React Icon Instead of Image */}
+          <link.Icon className="text-white w-8 h-8 lg:scale-50 xl:scale-75" />
+
+          {/* Link */}
+          <a href={link.href} className="hover:text-black">
+            {link.name}
+          </a>
+        </motion.div>
+      ))}
+    </div>
 
             {/* Logout Section */}
             <motion.div
-              whileHover={{ scale: 1.05 }}
               className="h-[40%] flex flex-col items-center justify-end w-full">
               <div className="flex flex-col border-t-border border-t-[1px] py-6 mx-auto w-full">
                 <div className="flex gap-2 mx-auto">

@@ -1,34 +1,38 @@
-// sidebarLinks.ts
+import { IconType } from "react-icons";
+import { FiUsers, FiSettings } from "react-icons/fi";
+import { MdDevices, MdOutlineDashboard } from "react-icons/md";
+import { TbWorld } from "react-icons/tb";
+
 export interface SidebarLink {
   name: string;
   href: string;
-  iconLink: string;
+  Icon: IconType;
 }
 
 export const adminSidebarLinks: SidebarLink[] = [
   {
     name: "Tableau de Bord",
     href: "/admin/dashboard",
-    iconLink: "/assets/layout/dashboard.png",
+    Icon: MdOutlineDashboard,
   },
   {
     name: "Utilisateurs",
     href: "/admin/users",
-    iconLink: "/assets/layout/users.png",
+    Icon: FiUsers,
   },
   {
     name: "Environnements",
     href: "/admin/environments",
-    iconLink: "/assets/layout/envs.png",
+    Icon: TbWorld,
   },
   {
     name: "Dispositifs",
     href: "/admin/devices",
-    iconLink: "/assets/layout/devices.png",
+    Icon: MdDevices,
   },
   {
     name: "Paramètres",
     href: "/admin/settings",
-    iconLink: "/assets/layout/settings.png",
+    Icon: FiSettings,
   },
 ];

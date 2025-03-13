@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
+import { IoFilter } from "react-icons/io5";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface FilterButtonProps {
@@ -43,12 +43,7 @@ const FilterButton = ({
           "flex gap-2 h-full text-neutral-600 items-center w-full bg-main-5 border-[1px] border-black-5 rounded-[6px] px-4 py-1 text-base shadow-sm transition-colors focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
           selectedOptions.length > 0 && "bg-main-10"
         )}>
-        <Image
-          src="/assets/shared/filter.png"
-          width={15}
-          height={15}
-          alt="filter icon"
-        />
+        <IoFilter />
         {selectedOptions.length > 0
           ? `${selectedOptions.length} selected`
           : placeholder}
