@@ -8,6 +8,8 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import { Button } from "@/components/shared/button";
 import { Calendar } from "@/components/shared/calendar";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
+
 
 import {
   Form,
@@ -25,6 +27,9 @@ import {
   PopoverTrigger,
 } from "@/components/shared/popover";
 
+const DEFAULT_COUNTRY = "DZ"; //for phone number validation
+
+
 const formSchema = z.object({
   last_name: z
     .string()
@@ -38,10 +43,10 @@ const formSchema = z.object({
     message: "Date de naissance invalide",
   }),
   sexe: z.string().nonempty("Le sexe est requis"),
-  phone: z
-    .string()
-    .nonempty("Le numéro de téléphone est requis")
-    .regex(/^\d{10}$/, "Le numéro de téléphone doit contenir 10 chiffres"),
+  phone: z.string().refine((value) => {
+    const phoneNumber = parsePhoneNumberFromString(value, DEFAULT_COUNTRY);
+    return phoneNumber && phoneNumber.isValid();
+  }, "Numéro de téléphone invalide"),
   email: z
     .string()
     .nonempty("L'adresse email est requise")
@@ -184,20 +189,28 @@ export function UserForm() {
                 )}
               />
 
+
               <FormField
                 control={form.control}
-                name="sexe"
+                name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium">Sexe</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium">Mot de passe</FormLabel>
                     <FormControl>
-                      <select
-                        className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
-                        {...field}>
-                        <option value="">sexe</option>
-                        <option value="man">Homme</option>
-                        <option value="woman">Femme</option>
-                      </select>
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Mot de passe"
+                          className="bg-gray-50 rounded-md border-gray-200 p-2 h-12"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+                          onClick={() => setShowPassword(!showPassword)}>
+                          {showPassword ? <FaEye /> : <FaEyeSlash />}
+                        </button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -263,25 +276,18 @@ export function UserForm() {
 
               <FormField
                 control={form.control}
-                name="password"
+                name="sexe"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium">Mot de passe</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium">Sexe</FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Mot de passe"
-                          className="bg-gray-50 rounded-md border-gray-200 p-2 h-12"
-                          {...field}
-                        />
-                        <button
-                          type="button"
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
-                          onClick={() => setShowPassword(!showPassword)}>
-                          {showPassword ? <FaEye /> : <FaEyeSlash />}
-                        </button>
-                      </div>
+                      <select
+                        className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
+                        {...field}>
+                        <option value="">sexe</option>
+                        <option value="man">Homme</option>
+                        <option value="woman">Femme</option>
+                      </select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
