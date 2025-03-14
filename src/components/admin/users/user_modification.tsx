@@ -1,16 +1,15 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-
+import { Input } from "@/components/shared/input";
 import { Button } from "@/components/shared/button";
 import { Calendar } from "@/components/shared/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/shared/popover";
+
 import { parsePhoneNumberFromString } from "libphonenumber-js";
-
-
 import {
   Form,
   FormControl,
@@ -19,26 +18,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/shared/form";
-import { Input } from "@/components/shared/input";
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/shared/popover";
 
 const DEFAULT_COUNTRY = "DZ"; //for phone number validation
 
-
 const formSchema = z.object({
-  last_name: z
-    .string()
-    .nonempty("Le nom est requis")
-    .regex(/^[a-zA-Z\s]*$/, "Le nom ne doit contenir que des lettres ou des espaces"),
-  first_name: z
-    .string()
-    .nonempty("Le prénom est requis")
-    .regex(/^[a-zA-Z\s]*$/, "Le prénom ne doit contenir que des lettres ou des espaces"),
+  last_name: z.string().nonempty("Le nom est requis"),
+  first_name: z.string().nonempty("Le prénom est requis"),
   birth_date: z.date().refine((date) => date <= new Date(), {
     message: "Date de naissance invalide",
   }),
@@ -51,48 +36,51 @@ const formSchema = z.object({
     .string()
     .nonempty("L'adresse email est requise")
     .email("L'adresse email doit être valide"),
-  password: z
-    .string()
-    .nonempty("Le mot de passe est requis")
-    .min(8, "Le mot de passe doit contenir au moins 8 caractères")
-    .max(20, "Le mot de passe doit contenir au maximum 20 caractères"),
-  confirm_password: z
-    .string()
-    .nonempty("La confirmation du mot de passe est requise"),
   city: z.string().nonempty("La ville est requise"),
   type: z.string().nonempty("Le type est requis"),
-}).refine((data) => data.password === data.confirm_password, {
-  message: "Les mots de passe ne correspondent pas",
-  path: ["confirm_password"],
 });
 
-export function UserForm() {
-  // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
+interface UserModificationProps {
+  userId: string;
+}
+
+export function UserModification({ userId }: UserModificationProps) {
+  const [userData, setUserData] = useState(null);
+  const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      last_name: "",
-      first_name: "",
-      birth_date: new Date(),
-      sexe: "",
-      phone: "",
-      email: "",
-      password: "",
-      confirm_password: "",
-      city: "",
-      type: "",
-    },
+    defaultValues: {},
   });
 
-  // State to manage password visibility
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  useEffect(() => {
+    // Fetch user data based on userId
+    async function fetchUserData() {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`);
+      const data = await response.json();
+      setUserData(data);
+      form.reset({
+        last_name: data.family_name || "",
+        first_name: data.first_name || "",
+        //birth_date: data.birth_date || "",
+        sexe: data.sexe || "",
+        phone: data.phone_number || "",
+        email: data.email || "",
+        city: data.city || "",
+        type: data.type || "",
+      });
+    }
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+    if (userId) {
+      fetchUserData();
+    }
+  }, [userId, form]);
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    // Handle form submission
     console.log(values);
+  };
+
+  if (!userData) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -100,7 +88,6 @@ export function UserForm() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-            {/* First column */}
             <div className="space-y-4">
               <FormField
                 control={form.control}
@@ -120,7 +107,7 @@ export function UserForm() {
                 )}
               />
 
-              <FormField
+<FormField
                 control={form.control}
                 name="birth_date"
                 render={({ field }) => (
@@ -189,28 +176,20 @@ export function UserForm() {
                 )}
               />
 
-
               <FormField
                 control={form.control}
-                name="password"
+                name="sexe"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium">Mot de passe</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium">Sexe</FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Mot de passe"
-                          className="bg-gray-50 rounded-md border-gray-200 p-2 h-12"
-                          {...field}
-                        />
-                        <button
-                          type="button"
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
-                          onClick={() => setShowPassword(!showPassword)}>
-                          {showPassword ? <FaEye /> : <FaEyeSlash />}
-                        </button>
-                      </div>
+                      <select
+                        className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
+                        {...field}>
+                        <option value="">Sélectionner le sexe</option>
+                        <option value="man">Homme</option>
+                        <option value="woman">Femme</option>
+                      </select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -236,7 +215,6 @@ export function UserForm() {
               />
             </div>
 
-            {/* Second column */}
             <div className="space-y-4">
               <FormField
                 control={form.control}
@@ -276,53 +254,6 @@ export function UserForm() {
 
               <FormField
                 control={form.control}
-                name="sexe"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium">Sexe</FormLabel>
-                    <FormControl>
-                      <select
-                        className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
-                        {...field}>
-                        <option value="">sexe</option>
-                        <option value="man">Homme</option>
-                        <option value="woman">Femme</option>
-                      </select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="confirm_password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium">Confirmer le mot de passe</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showConfirmPassword ? "text" : "password"}
-                          placeholder="Confirmer le mot de passe"
-                          className="bg-gray-50 rounded-md border-gray-200 p-2 h-12"
-                          {...field}
-                        />
-                        <button
-                          type="button"
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                          {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name="type"
                 render={({ field }) => (
                   <FormItem>
@@ -347,7 +278,7 @@ export function UserForm() {
           <div className="mt-8">
             <Button
               type="submit"
-              className="bg-black hover:bg-gray-700 text-white px-8 py-2 rounded-md">
+              className="bg-black hover:bg-gray-700 text-white px-8 py-2 rounded-md mb-6 mt-0">
               Enregistrer
             </Button>
           </div>

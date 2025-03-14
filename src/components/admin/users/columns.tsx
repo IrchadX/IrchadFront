@@ -1,20 +1,22 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
+import { ActionMenu } from "@/components/shared/action-menu"
 
-export type Client = {
+export type User = {
   id: string
   firstname: string
   lastname: string
   city: string
   phone: string
   email: string
-  helper: string
-  phone_helper: string
+  sexe: string
+  age: string
+  type: string
   registrationDate: string 
 }
 
-export const columns: ColumnDef<Client>[] = [
+export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "id",
     header: "ID",

@@ -1,46 +1,138 @@
+// Page.tsx with enhanced debugging
 "use client";
-import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Client, columns } from "@/components/admin/users/columns";
+import Link from "next/link";
+import { User, columns } from "@/components/admin/users/columns";
 import { DataTable } from "@/components/shared/data-table";
 import SearchInput from "@/components/shared/search-input";
-import FilterButton from "@/components/shared/filter-button";
-import { ButtonSecondary } from "@/components/shared/secondary-button";
+import FilterButton, { Filters } from "@/components/shared/filter-button";
 import { fetchUsers } from "@/data/users";
+import { ButtonSecondary } from "@/components/shared/secondary-button";
+
+// Define filter sections with property names exactly matching backend expectations
+const filterSections = [
+  { label: "Sex", key: "sex", options: ["homme", "femme"] },
+  { label: "User Type", key: "userType", options: ["admin", "super_admin", "commercial", "decideur"] },
+  { label: "City", key: "city", options: ["Alger", "Oran", "Constantine"] },
+  { label: "Age Group", key: "ageGroup", options: ["under18", "18-30", "31-50", "over50"] },
+];
 
 export default function Page() {
-  const [data, setData] = useState<Client[]>([]);
-  const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [data, setData] = useState<User[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<any>(null);
+  
+  // Initialize filters with empty arrays for each category
+  const [filters, setFilters] = useState<Filters>({
+    sex: [],
+    userType: [],
+    city: [],
+    ageGroup: []
+  });
 
-  useEffect(() => {
-    async function fetchData() {
-      const result = await fetchUsers();
+  // Direct 1:1 mapping to match exactly what backend expects
+  const convertFiltersForApi = () => {
+    const apiFilters: Record<string, string> = {};
+    
+    // Map each filter key directly as expected by your backend
+    if (filters.sex.length > 0) apiFilters.sex = filters.sex[0];
+    if (filters.city.length > 0) apiFilters.city = filters.city[0];
+    if (filters.ageGroup.length > 0) apiFilters.ageGroup = filters.ageGroup[0];
+    if (filters.userType.length > 0) apiFilters.userType = filters.userType[0];
+    
+    return apiFilters;
+  };
+
+  const fetchData = async () => {
+    setLoading(true);
+    setDebugInfo(null);
+    
+    try {
+      const apiFilters = convertFiltersForApi();
+      
+      // Store debug info
+      const debugObj = {
+        requestTime: new Date().toISOString(),
+        searchTerm,
+        requestFilters: apiFilters,
+        selectedFilters: { ...filters }
+      };
+      
+      console.log("API Request Debug:", debugObj);
+      
+      const result = await fetchUsers(searchTerm, apiFilters);
+      
+      // Update debug info with response
+      debugObj.responseReceived = true;
+      debugObj.resultCount = result.length;
+      setDebugInfo(debugObj);
+      
       setData(result);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      
+      setDebugInfo({
+        error: true,
+        errorMessage: error instanceof Error ? error.message : "Unknown error",
+        requestFilters: convertFiltersForApi(),
+        selectedFilters: { ...filters }
+      });
+    } finally {
+      setLoading(false);
     }
+  };
+
+  // Apply filters when user clicks Apply
+  const handleApplyFilters = () => {
     fetchData();
-  }, []);
+  };
+
+  // Fetch initial data on load or when search term changes
+  useEffect(() => {
+    fetchData();
+  }, [searchTerm]);
 
   return (
     <div>
       <div className="flex flex-row justify-between items-center container mx-auto">
         <div className="flex gap-2">
-          <SearchInput />
-          <FilterButton
-            options={options}
-            selectedOptions={selectedOptions}
-            onSelect={setSelectedOptions}
-            placeholder="Filter"
+          <SearchInput
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <FilterButton 
+            filters={filters} 
+            setFilters={setFilters} 
+            onApply={handleApplyFilters} 
+            filterSections={filterSections}
           />
         </div>
         <div className="flex justify-between items-start">
           <Link href={`/admin/users/add_user`}>
-            <ButtonSecondary title="Ajouter" />
+            <ButtonSecondary title="Ajouter" onClick={() => {}} />
           </Link>
         </div>
       </div>
+      
+      {/* Debug panel - only visible during development */}
+      {process.env.NODE_ENV !== "production" && debugInfo && (
+        <div className="container mx-auto mt-4 mb-0 p-4 bg-gray-100 rounded">
+          <h3 className="text-sm font-bold mb-2">Debug Info</h3>
+          <pre className="text-xs overflow-auto max-h-40 bg-gray-200 p-2 rounded">
+            {JSON.stringify(debugInfo, null, 2)}
+          </pre>
+        </div>
+      )}
+      
       <div className="container mx-auto py-10">
-        <DataTable columns={columns} data={data} />
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-main-10"></div>
+          </div>
+        ) : (
+          <DataTable columns={columns} data={data} />
+        )}
       </div>
     </div>
   );
