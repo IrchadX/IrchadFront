@@ -55,4 +55,9 @@ export const columns: ColumnDef<Client>[] = [
     accessorKey: "registrationDate",
     header: "Date d'inscription",
   },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => <ActionMenu userId={row.original.id} />, 
+  },
 ];
