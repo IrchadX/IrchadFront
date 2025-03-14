@@ -190,7 +190,27 @@ export function UserForm() {
               />
 
 
+             
+
               <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium">Ville</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Ville"
+                        className="bg-gray-50 rounded-md border-gray-200 p-2 h-12"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+<FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
@@ -211,24 +231,6 @@ export function UserForm() {
                           {showPassword ? <FaEye /> : <FaEyeSlash />}
                         </button>
                       </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="city"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium">Ville</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Ville"
-                        className="bg-gray-50 rounded-md border-gray-200 p-2 h-12"
-                        {...field}
-                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -294,7 +296,30 @@ export function UserForm() {
                 )}
               />
 
+             
+
               <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium">Type</FormLabel>
+                    <FormControl>
+                      <select
+                        className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
+                        {...field}>
+                        <option value="">Sélectionner un type</option>
+                        <option value="admin">Admin</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="decidor">Décideur</option>
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+<FormField
                 control={form.control}
                 name="confirm_password"
                 render={({ field }) => (
@@ -315,27 +340,6 @@ export function UserForm() {
                           {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
                         </button>
                       </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium">Type</FormLabel>
-                    <FormControl>
-                      <select
-                        className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
-                        {...field}>
-                        <option value="">Sélectionner un type</option>
-                        <option value="admin">Admin</option>
-                        <option value="commercial">Commercial</option>
-                        <option value="decidor">Décideur</option>
-                      </select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
