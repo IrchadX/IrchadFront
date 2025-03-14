@@ -62,10 +62,7 @@ export default function Page() {
       console.log("API Request Debug:", debugObj);
       
       const result = await fetchUsers(searchTerm, apiFilters);
-      
-      // Update debug info with response
-      debugObj.responseReceived = true;
-      debugObj.resultCount = result.length;
+     
       setDebugInfo(debugObj);
       
       setData(result);
@@ -114,16 +111,6 @@ export default function Page() {
           </Link>
         </div>
       </div>
-      
-      {/* Debug panel - only visible during development */}
-      {process.env.NODE_ENV !== "production" && debugInfo && (
-        <div className="container mx-auto mt-4 mb-0 p-4 bg-gray-100 rounded">
-          <h3 className="text-sm font-bold mb-2">Debug Info</h3>
-          <pre className="text-xs overflow-auto max-h-40 bg-gray-200 p-2 rounded">
-            {JSON.stringify(debugInfo, null, 2)}
-          </pre>
-        </div>
-      )}
       
       <div className="container mx-auto py-10">
         {loading ? (

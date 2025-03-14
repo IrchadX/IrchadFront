@@ -59,27 +59,30 @@ export function ActionMenu({ userId }: ActionMenuProps) {
           </button>
         </div>
       )}
-      {showConfirmDialog && (
-        <div className="fixed inset-0 flex items-center justify-center z-20 bg-black bg-opacity-10">
-          <div className="bg-white p-6 rounded-md shadow-lg">
-            <p className="text-gray-800">Êtes-vous sûr de vouloir supprimer cet utilisateur ?</p>
-            <div className="mt-4 flex justify-end space-x-2">
-              <button
-                onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-              >
-                Confirmer
-              </button>
-              <button
-                onClick={cancelDelete}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-              >
-                Annuler
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+     {showConfirmDialog && (
+  <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+    <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm">
+      <p className="text-gray-900 text-lg font-medium text-center">
+        Êtes-vous sûr de vouloir supprimer cet utilisateur ?
+      </p>
+      <div className="mt-6 flex justify-center space-x-4">
+        <button
+          onClick={confirmDelete}
+          className="px-5 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition"
+        >
+          Confirmer
+        </button>
+        <button
+          onClick={cancelDelete}
+          className="px-5 py-2 bg-gray-300 text-gray-800 font-semibold rounded-md hover:bg-gray-400 transition"
+        >
+          Annuler
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
