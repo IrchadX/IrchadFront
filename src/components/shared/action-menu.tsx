@@ -11,18 +11,26 @@ export function ActionMenu({ userId }: ActionMenuProps) {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const handleDelete = () => {
-    // Handle delete action
     setShowConfirmDialog(true);
   };
 
-  const confirmDelete = () => {
-    // Confirm delete action
-    console.log(`Delete user with ID: ${userId}`);
-    setShowConfirmDialog(false);
+  const confirmDelete = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`, {
+        method: "DELETE",
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to delete user");
+      }
+      setShowConfirmDialog(false);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
   };
+  
 
   const cancelDelete = () => {
-    // Cancel delete action
     setShowConfirmDialog(false);
   };
 

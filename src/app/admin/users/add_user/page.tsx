@@ -4,8 +4,8 @@ import Title from "@/components/shared/title";
 
 const AddUserPage: React.FC = () => {
   return (
-    <div className="container mx-auto py-10">
-      <Title text="Profil" lineLength="55px" />
+    <div className="container mx-auto py-5">
+      <Title text="Ajouter un utilsateur" lineLength="55px" />
       <UserForm />
     </div>
   );
