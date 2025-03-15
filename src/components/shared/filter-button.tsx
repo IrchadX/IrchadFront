@@ -64,8 +64,8 @@ const FilterButton = ({ filters, setFilters, onApply, filterSections }: FilterBu
       >
         <IoFilter />
         {activeFilterCount > 0
-          ? `Filters (${activeFilterCount})`
-          : "Filter"}
+          ? `Filtres (${activeFilterCount})`
+          : "Filtrer"}
       </button>
       
       {/* Dropdown */}

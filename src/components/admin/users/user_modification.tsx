@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from "@/components/shared/form";
 
-const DEFAULT_COUNTRY = "DZ"; //for phone number validation
+const DEFAULT_COUNTRY = "DZ";
 const wilayas = [
   "Adrar", "Chlef", "Laghouat", "Oum El Bouaghi", "Batna", "Béjaïa", "Biskra", "Béchar", "Blida", "Bouira",
   "Tamanrasset", "Tébessa", "Tlemcen", "Tiaret", "Tizi Ouzou", "Alger", "Djelfa", "Jijel", "Sétif", "Saïda",
@@ -99,7 +99,6 @@ export function UserModification({ userId }: UserModificationProps) {
   });
 
   useEffect(() => {
-    // Fetch user data based on userId
     async function fetchUserData() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`);
       const data = await response.json();
@@ -123,12 +122,10 @@ export function UserModification({ userId }: UserModificationProps) {
   }, [userId, form]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // Handle form submission for user details
     console.log("User Details:", values);
   };
 
   const onPasswordSubmit = (values: z.infer<typeof passwordSchema>) => {
-    // Handle form submission for password update
     console.log("Password Update:", values);
   };
 

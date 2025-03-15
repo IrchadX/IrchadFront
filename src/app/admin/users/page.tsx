@@ -16,12 +16,12 @@ const filterSections: {
 }[] = [
   { label: "Sex", key: "sex", options: ["homme", "femme"] },
   {
-    label: "User Type",
+    label: "Type",
     key: "userType",
     options: ["admin", "super_admin", "commercial", "decideur"],
   },
   {
-    label: "City",
+    label: "Ville",
     key: "city",
     options: [
       "Adrar",
@@ -85,7 +85,7 @@ const filterSections: {
     ],
   },
   {
-    label: "Age Group",
+    label: "Age",
     key: "ageGroup",
     options: ["under18", "18-30", "31-50", "over50"],
   },
