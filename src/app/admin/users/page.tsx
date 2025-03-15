@@ -9,7 +9,6 @@ import FilterButton, { Filters } from "@/components/shared/filter-button";
 import { fetchUsers } from "@/data/users";
 import { ButtonSecondary } from "@/components/shared/secondary-button";
 
-// Define filter sections with property names exactly matching backend expectations
 const filterSections: {
   label: string;
   key: keyof Filters;
@@ -190,15 +189,7 @@ export default function Page() {
         </div>
       </div>
 
-      {/* Debug panel - only visible during development */}
-      {process.env.NODE_ENV !== "production" && debugInfo && (
-        <div className="container mx-auto mt-4 mb-0 p-4 bg-gray-100 rounded">
-          <h3 className="text-sm font-bold mb-2">Debug Info</h3>
-          <pre className="text-xs overflow-auto max-h-40 bg-gray-200 p-2 rounded">
-            {JSON.stringify(debugInfo, null, 2)}
-          </pre>
-        </div>
-      )}
+    
 
       <div className="container mx-auto py-10">
         {loading ? (

@@ -26,8 +26,7 @@ import {
   PopoverTrigger,
 } from "@/components/shared/popover";
 
-const DEFAULT_COUNTRY = "DZ"; //for phone number validation
-
+const DEFAULT_COUNTRY = "DZ"; 
 const wilayas = [
   "Adrar", "Chlef", "Laghouat", "Oum El Bouaghi", "Batna", "Béjaïa", "Biskra", "Béchar", "Blida", "Bouira",
   "Tamanrasset", "Tébessa", "Tlemcen", "Tiaret", "Tizi Ouzou", "Alger", "Djelfa", "Jijel", "Sétif", "Saïda",
@@ -37,7 +36,7 @@ const wilayas = [
   "Relizane"
 ]; //For wilaya selection
 
-// Updated to match backend field names
+
 const formSchema = z.object({
   family_name: z
     .string()
