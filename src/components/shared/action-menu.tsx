@@ -23,9 +23,10 @@ export function ActionMenu({ userId }: ActionMenuProps) {
       if (!response.ok) {
         throw new Error("Failed to delete user");
       }
-      setShowConfirmDialog(false);
+      alert("User deleted successfully!");
     } catch (error) {
       console.error("Error deleting user:", error);
+      alert("Error deleting user.");
     }
   };
   
