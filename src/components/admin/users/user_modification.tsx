@@ -344,7 +344,7 @@ export function UserModification({ userId }: UserModificationProps) {
                         <option value="">Sélectionner un type</option>
                         <option value="admin">Admin</option>
                         <option value="commercial">Commercial</option>
-                        <option value="decidor">Décideur</option>
+                        <option value="décideur">Décideur</option>
                       </select>
                     </FormControl>
                     <FormMessage />
