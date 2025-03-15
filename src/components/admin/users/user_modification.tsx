@@ -232,7 +232,7 @@ export function UserModification({ userId }: UserModificationProps) {
         email: values.email,
         phoneNumber: values.phone_number, // Changed from phone
         birthDate: values.birth_date.toISOString(),
-        sex: values.sex, // Changed from sexe
+        sex: values.sex, 
         city: values.city,
         street: values.street, // Changed from address
         userType: values.userType, // Changed from type

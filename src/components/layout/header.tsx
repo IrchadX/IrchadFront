@@ -19,7 +19,7 @@ const Header = () => {
     } else if (pathname.startsWith("/admin/settings")) {
       return "Paramètres";
     }
-    return "Title goes in here";
+    return "Tableau de bord";
   };
 
   return (

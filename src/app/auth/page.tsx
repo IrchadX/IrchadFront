@@ -69,7 +69,7 @@ export default function Login() {
       // }
 
       console.log("Login successful, redirecting...");
-      router.push("/");
+      router.push("/admin/users");
     } catch (err) {
       console.error("Login error:", err);
       setError(err.message || "Something went wrong. Please try again.");

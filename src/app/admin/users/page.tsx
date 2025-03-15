@@ -87,7 +87,7 @@ const filterSections: {
   {
     label: "Age",
     key: "ageGroup",
-    options: ["under18", "18-30", "31-50", "over50"],
+    options: ["moins18", "18-30", "31-50", "plus50"],
   },
 ];
 

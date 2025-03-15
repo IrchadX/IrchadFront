@@ -92,7 +92,7 @@ const FilterButton = ({ filters, setFilters, onApply, filterSections }: FilterBu
                     >
                       <div className="flex items-center">
                         <div className={`w-4 h-4 border border-gray-400 rounded-sm mr-2 flex items-center justify-center ${
-                          filters[key].includes(option) ? "bg-blue-500 border-blue-500" : ""
+                          filters[key].includes(option) ? "bg-main border-blue-500" : ""
                         }`}>
                           {filters[key].includes(option) && (
                             <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -110,13 +110,13 @@ const FilterButton = ({ filters, setFilters, onApply, filterSections }: FilterBu
             
             <div className="p-2 flex gap-2">
               <button
-                className="flex-1 bg-gray-200 text-gray-800 rounded px-3 py-1 text-sm hover:bg-gray-300"
+                className="flex-1 bg-main/10 text-gray-800 rounded px-3 py-1 text-sm hover:bg-gray-300"
                 onClick={clearFilters}
               >
                 Clear
               </button>
               <button
-                className="flex-1 bg-blue-500 text-white rounded px-3 py-1 text-sm hover:bg-blue-600"
+                className="flex-1 bg-main text-white rounded px-3 py-1 text-sm hover:bg-blue-600"
                 onClick={() => {
                   setIsOpen(false);
                   onApply();
