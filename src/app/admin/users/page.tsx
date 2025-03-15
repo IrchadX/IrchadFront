@@ -9,7 +9,12 @@ import FilterButton, { Filters } from "@/components/shared/filter-button";
 import { fetchUsers } from "@/data/users";
 import { ButtonSecondary } from "@/components/shared/secondary-button";
 
-const filterSections = [
+// Define filter sections with property names exactly matching backend expectations
+const filterSections: {
+  label: string;
+  key: keyof Filters;
+  options: string[];
+}[] = [
   { label: "Sex", key: "sex", options: ["homme", "femme"] },
   {
     label: "User Type",
