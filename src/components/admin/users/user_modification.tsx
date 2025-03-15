@@ -8,7 +8,7 @@ import { Input } from "@/components/shared/input";
 import { Button } from "@/components/shared/button";
 import { Calendar } from "@/components/shared/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/shared/popover";
-
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import {
   Form,
@@ -20,6 +20,14 @@ import {
 } from "@/components/shared/form";
 
 const DEFAULT_COUNTRY = "DZ"; //for phone number validation
+const wilayas = [
+  "Adrar", "Chlef", "Laghouat", "Oum El Bouaghi", "Batna", "Béjaïa", "Biskra", "Béchar", "Blida", "Bouira",
+  "Tamanrasset", "Tébessa", "Tlemcen", "Tiaret", "Tizi Ouzou", "Alger", "Djelfa", "Jijel", "Sétif", "Saïda",
+  "Skikda", "Sidi Bel Abbès", "Annaba", "Guelma", "Constantine", "Médéa", "Mostaganem", "M'Sila", "Mascara",
+  "Ouargla", "Oran", "El Bayadh", "Illizi", "Bordj Bou Arreridj", "Boumerdès", "El Tarf", "Tindouf", "Tissemsilt",
+  "El Oued", "Khenchela", "Souk Ahras", "Tipaza", "Mila", "Aïn Defla", "Naâma", "Aïn Témouchent", "Ghardaïa",
+  "Relizane"
+]; //For wilaya selection
 
 const formSchema = z.object({
   last_name: z.string().nonempty("Le nom est requis"),
@@ -37,7 +45,23 @@ const formSchema = z.object({
     .nonempty("L'adresse email est requise")
     .email("L'adresse email doit être valide"),
   city: z.string().nonempty("La ville est requise"),
+  address: z.string().nonempty("L'adresse est requise"),
   type: z.string().nonempty("Le type est requis"),
+});
+
+const passwordSchema = z.object({
+  current_password: z.string().optional(),
+  new_password: z
+    .string()
+    .nonempty("Le mot de passe est requis")
+    .min(8, "Le mot de passe doit contenir au moins 8 caractères")
+    .max(20, "Le mot de passe doit contenir au maximum 20 caractères"),
+  confirm_new_password: z
+    .string()
+    .nonempty("La confirmation du mot de passe est requise"),
+}).refine((data) => data.new_password === data.confirm_new_password, {
+  message: "Les nouveaux mots de passe ne correspondent pas",
+  path: ["confirm_new_password"],
 });
 
 interface UserModificationProps {
@@ -46,9 +70,32 @@ interface UserModificationProps {
 
 export function UserModification({ userId }: UserModificationProps) {
   const [userData, setUserData] = useState(null);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
+    defaultValues: {
+      last_name: "",
+      first_name: "",
+      birth_date: undefined,
+      sexe: "",
+      phone: "",
+      email: "",
+      city: "",
+      address: "",
+      type: "",
+    },
+  });
+
+  const passwordForm = useForm({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: {
+      current_password: "",
+      new_password: "",
+      confirm_new_password: "",
+    },
   });
 
   useEffect(() => {
@@ -60,12 +107,13 @@ export function UserModification({ userId }: UserModificationProps) {
       form.reset({
         last_name: data.family_name || "",
         first_name: data.first_name || "",
-        //birth_date: data.birth_date || "",
-        sexe: data.sexe || "",
+        birth_date: data.birthDate ? new Date(data.birthDate) : undefined,
+        sexe: data.sex || "",
         phone: data.phone_number || "",
         email: data.email || "",
         city: data.city || "",
-        type: data.type || "",
+        address: data.street || "",
+        type: data.userType || "",
       });
     }
 
@@ -75,8 +123,13 @@ export function UserModification({ userId }: UserModificationProps) {
   }, [userId, form]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // Handle form submission
-    console.log(values);
+    // Handle form submission for user details
+    console.log("User Details:", values);
+  };
+
+  const onPasswordSubmit = (values: z.infer<typeof passwordSchema>) => {
+    // Handle form submission for password update
+    console.log("Password Update:", values);
   };
 
   if (!userData) {
@@ -88,6 +141,7 @@ export function UserModification({ userId }: UserModificationProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+            {/* First column */}
             <div className="space-y-4">
               <FormField
                 control={form.control}
@@ -107,7 +161,7 @@ export function UserModification({ userId }: UserModificationProps) {
                 )}
               />
 
-<FormField
+              <FormField
                 control={form.control}
                 name="birth_date"
                 render={({ field }) => (
@@ -138,7 +192,7 @@ export function UserModification({ userId }: UserModificationProps) {
                             <Input
                               placeholder="Choisir une date"
                               value={field.value ? field.value.toLocaleDateString() : ""}
-                              className="border-0 bg-transparent"
+                              className="bg-transparent w-full h-full pl-2 border-none focus:outline-none"
                               readOnly
                             />
                           </div>
@@ -178,17 +232,21 @@ export function UserModification({ userId }: UserModificationProps) {
 
               <FormField
                 control={form.control}
-                name="sexe"
+                name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium">Sexe</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium">Wilaya</FormLabel>
                     <FormControl>
                       <select
                         className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
-                        {...field}>
-                        <option value="">Sélectionner le sexe</option>
-                        <option value="man">Homme</option>
-                        <option value="woman">Femme</option>
+                        {...field}
+                      >
+                        <option value="">Sélectionner une wilaya</option>
+                        {wilayas.map((wilaya, index) => (
+                          <option key={index} value={wilaya}>
+                            {wilaya}
+                          </option>
+                        ))}
                       </select>
                     </FormControl>
                     <FormMessage />
@@ -198,13 +256,13 @@ export function UserModification({ userId }: UserModificationProps) {
 
               <FormField
                 control={form.control}
-                name="city"
+                name="address"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-medium">Ville</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium">Adresse</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Ville"
+                        placeholder="Adresse"
                         className="bg-gray-50 rounded-md border-gray-200 p-2 h-12"
                         {...field}
                       />
@@ -215,6 +273,7 @@ export function UserModification({ userId }: UserModificationProps) {
               />
             </div>
 
+            {/* Second column */}
             <div className="space-y-4">
               <FormField
                 control={form.control}
@@ -254,6 +313,26 @@ export function UserModification({ userId }: UserModificationProps) {
 
               <FormField
                 control={form.control}
+                name="sexe"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium">Sexe</FormLabel>
+                    <FormControl>
+                      <select
+                        className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
+                        {...field}>
+                        <option value="">Sélectionner le sexe</option>
+                        <option value="homme">Homme</option>
+                        <option value="femme">Femme</option>
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="type"
                 render={({ field }) => (
                   <FormItem>
@@ -265,7 +344,7 @@ export function UserModification({ userId }: UserModificationProps) {
                         <option value="">Sélectionner un type</option>
                         <option value="admin">Admin</option>
                         <option value="commercial">Commercial</option>
-                        <option value="decidor">Décideur</option>
+                        <option value="décideur">Décideur</option>
                       </select>
                     </FormControl>
                     <FormMessage />
@@ -278,9 +357,105 @@ export function UserModification({ userId }: UserModificationProps) {
           <div className="mt-8">
             <Button
               type="submit"
-              className="bg-black hover:bg-gray-700 text-white px-8 py-2 rounded-md mb-6 mt-0">
+              className="bg-black hover:bg-gray-700 text-white px-8 py-2 rounded-md">
               Enregistrer
             </Button>
+          </div>
+        </form>
+      </Form>
+
+      {/* Password Update Section */}
+      <Form {...passwordForm}>
+        <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}>
+          <div className="mt-8 space-y-4 bg-white rounded-md border border-gray-200 shadow-md p-4">
+            <h2 className="text-lg font-medium text-gray-700">Mettre à jour le mot de passe</h2>
+            <div>
+              <FormField
+                control={passwordForm.control}
+                name="current_password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium">Mot de passe actuel</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type={showCurrentPassword ? "text" : "password"}
+                          placeholder="Mot de passe actuel"
+                          className="bg-gray-50 rounded-md border-gray-200 p-2 h-12"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}>
+                          {showCurrentPassword ? <FaEye /> : <FaEyeSlash />}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={passwordForm.control}
+                name="new_password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium">Nouveau mot de passe</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type={showNewPassword ? "text" : "password"}
+                          placeholder="Nouveau mot de passe"
+                          className="bg-gray-50 rounded-md border-gray-200 p-2 h-12"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+                          onClick={() => setShowNewPassword(!showNewPassword)}>
+                          {showNewPassword ? <FaEye /> : <FaEyeSlash />}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={passwordForm.control}
+                name="confirm_new_password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700 font-medium">Confirmer le nouveau mot de passe</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type={showConfirmNewPassword ? "text" : "password"}
+                          placeholder="Confirmer le nouveau mot de passe"
+                          className="bg-gray-50 rounded-md border-gray-200 p-2 h-12"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+                          onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)}>
+                          {showConfirmNewPassword ? <FaEye /> : <FaEyeSlash />}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="submit"
+                className="bg-black hover:bg-gray-700 text-white px-8 py-2 rounded-md mt-4">
+                Confirmer la mise à jour du mot de passe
+              </Button>
+            </div>
           </div>
         </form>
       </Form>
