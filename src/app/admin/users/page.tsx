@@ -9,12 +9,82 @@ import FilterButton, { Filters } from "@/components/shared/filter-button";
 import { fetchUsers } from "@/data/users";
 import { ButtonSecondary } from "@/components/shared/secondary-button";
 
-// Define filter sections with property names exactly matching backend expectations
 const filterSections = [
   { label: "Sex", key: "sex", options: ["homme", "femme"] },
-  { label: "User Type", key: "userType", options: ["admin", "super_admin", "commercial", "decideur"] },
-  { label: "City", key: "city", options: ["Alger", "Oran", "Constantine"] },
-  { label: "Age Group", key: "ageGroup", options: ["under18", "18-30", "31-50", "over50"] },
+  {
+    label: "User Type",
+    key: "userType",
+    options: ["admin", "super_admin", "commercial", "decideur"],
+  },
+  {
+    label: "City",
+    key: "city",
+    options: [
+      "Adrar",
+      "Chlef",
+      "Laghouat",
+      "Oum El Bouaghi",
+      "Batna",
+      "Béjaïa",
+      "Biskra",
+      "Béchar",
+      "Blida",
+      "Bouira",
+      "Tamanrasset",
+      "Tébessa",
+      "Tlemcen",
+      "Tiaret",
+      "Tizi Ouzou",
+      "Algiers",
+      "Djelfa",
+      "Jijel",
+      "Sétif",
+      "Saïda",
+      "Skikda",
+      "Sidi Bel Abbès",
+      "Annaba",
+      "Guelma",
+      "Constantine",
+      "Médéa",
+      "Mostaganem",
+      "M'Sila",
+      "Mascara",
+      "Ouargla",
+      "Oran",
+      "El Bayadh",
+      "Illizi",
+      "Bordj Bou Arréridj",
+      "Boumerdès",
+      "El Tarf",
+      "Tindouf",
+      "Tissemsilt",
+      "El Oued",
+      "Khenchela",
+      "Souk Ahras",
+      "Tipaza",
+      "Mila",
+      "Aïn Defla",
+      "Naâma",
+      "Aïn Témouchent",
+      "Ghardaïa",
+      "Relizane",
+      "Timimoun",
+      "Bordj Badji Mokhtar",
+      "Ouled Djellal",
+      "Béni Abbès",
+      "In Salah",
+      "In Guezzam",
+      "Touggourt",
+      "Djanet",
+      "El M'Ghair",
+      "El Menia",
+    ],
+  },
+  {
+    label: "Age Group",
+    key: "ageGroup",
+    options: ["under18", "18-30", "31-50", "over50"],
+  },
 ];
 
 export default function Page() {
@@ -22,58 +92,61 @@ export default function Page() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [debugInfo, setDebugInfo] = useState<any>(null);
-  
+
   // Initialize filters with empty arrays for each category
   const [filters, setFilters] = useState<Filters>({
     sex: [],
     userType: [],
     city: [],
-    ageGroup: []
+    ageGroup: [],
   });
 
   // Direct 1:1 mapping to match exactly what backend expects
   const convertFiltersForApi = () => {
     const apiFilters: Record<string, string> = {};
-    
+
     // Map each filter key directly as expected by your backend
     if (filters.sex.length > 0) apiFilters.sex = filters.sex[0];
     if (filters.city.length > 0) apiFilters.city = filters.city[0];
     if (filters.ageGroup.length > 0) apiFilters.ageGroup = filters.ageGroup[0];
     if (filters.userType.length > 0) apiFilters.userType = filters.userType[0];
-    
+
     return apiFilters;
   };
 
   const fetchData = async () => {
     setLoading(true);
     setDebugInfo(null);
-    
+
     try {
       const apiFilters = convertFiltersForApi();
-      
+
       // Store debug info
       const debugObj = {
         requestTime: new Date().toISOString(),
         searchTerm,
         requestFilters: apiFilters,
-        selectedFilters: { ...filters }
+        selectedFilters: { ...filters },
       };
-      
+
       console.log("API Request Debug:", debugObj);
-      
+
       const result = await fetchUsers(searchTerm, apiFilters);
-     
+
+      // Update debug info with response
+      debugObj.responseReceived = true;
+      debugObj.resultCount = result.length;
       setDebugInfo(debugObj);
-      
+
       setData(result);
     } catch (error) {
       console.error("Error fetching data:", error);
-      
+
       setDebugInfo({
         error: true,
         errorMessage: error instanceof Error ? error.message : "Unknown error",
         requestFilters: convertFiltersForApi(),
-        selectedFilters: { ...filters }
+        selectedFilters: { ...filters },
       });
     } finally {
       setLoading(false);
@@ -98,10 +171,10 @@ export default function Page() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <FilterButton 
-            filters={filters} 
-            setFilters={setFilters} 
-            onApply={handleApplyFilters} 
+          <FilterButton
+            filters={filters}
+            setFilters={setFilters}
+            onApply={handleApplyFilters}
             filterSections={filterSections}
           />
         </div>
@@ -111,7 +184,17 @@ export default function Page() {
           </Link>
         </div>
       </div>
-      
+
+      {/* Debug panel - only visible during development */}
+      {process.env.NODE_ENV !== "production" && debugInfo && (
+        <div className="container mx-auto mt-4 mb-0 p-4 bg-gray-100 rounded">
+          <h3 className="text-sm font-bold mb-2">Debug Info</h3>
+          <pre className="text-xs overflow-auto max-h-40 bg-gray-200 p-2 rounded">
+            {JSON.stringify(debugInfo, null, 2)}
+          </pre>
+        </div>
+      )}
+
       <div className="container mx-auto py-10">
         {loading ? (
           <div className="flex justify-center items-center h-64">
