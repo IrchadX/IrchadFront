@@ -190,7 +190,7 @@ export default function Page() {
           />
         </div>
         <div className="flex justify-between items-start">
-          <Link href={`/admin/users/add_user`}>
+          <Link href={`/commercial/clients/add_client`}>
             <ButtonSecondary title="Ajouter" onClick={() => {}} />
           </Link>
         </div>
