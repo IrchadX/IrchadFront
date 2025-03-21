@@ -4,9 +4,10 @@ import Link from "next/link";
 
 interface ActionMenuProps {
   userId: string;
+  basePath: string;
 }
 
-export function ActionMenu({ userId }: ActionMenuProps) {
+export function ActionMenu({ userId, basePath }: ActionMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
@@ -49,7 +50,7 @@ export function ActionMenu({ userId }: ActionMenuProps) {
       </button>
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-          <Link href={`/admin/users/${userId}`} legacyBehavior>
+          <Link href={`${basePath}/${userId}`} legacyBehavior>
             <a className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
               <FaEdit className="mr-2" />
               Modifier

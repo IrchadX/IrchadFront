@@ -8,11 +8,8 @@ export default function UserModificationPage() {
   const { id: userId } = useParams();
 
   const userTypes = [
-    { id: "2", label: "Admin" },
-    { id: "3", label: "Commercial" },
-    { id: "4", label: "Décideur" },
-    { id: "5", label: "Client" },
-    { id: "6", label: "Aidant" },
+    { id: "5", label: "Aidant" },
+    { id: "6", label: "Client" },
   ];
 
   if (!userId) {
@@ -20,7 +17,7 @@ export default function UserModificationPage() {
   }
   return(
     <div className="container mx-auto py-5">
-      <Title text="Modifier un utilisateur" lineLength="100px" />
+      <Title text="Modifier un client" lineLength="100px" />
       <UserModification userId={Array.isArray(userId) ? userId[0] : userId} userTypes={userTypes} />
     </div>)
    ;

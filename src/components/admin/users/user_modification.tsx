@@ -23,6 +23,15 @@ import {
   FormMessage,
 } from "@/components/shared/form";
 
+// Map your form types to user types
+const userTypeMap = {
+  "admin": 2,
+  "commercial": 3,
+  "decidor": 4,
+  "aidant": 5,
+  "client": 6,
+};
+
 const DEFAULT_COUNTRY = "DZ";
 const wilayas = [
   "Adrar",
@@ -78,7 +87,7 @@ const wilayas = [
 const formSchema = z.object({
   family_name: z.string().nonempty("Le nom est requis"), // Changed from last_name
   first_name: z.string().nonempty("Le prénom est requis"),
-  birth_date: z.date().refine((date) => date <= new Date(), {
+  birthDate: z.date().refine((date) => date <= new Date(), {
     message: "Date de naissance invalide",
   }),
   sex: z.string().nonempty("Le sexe est requis"), // Changed from sexe
@@ -92,7 +101,7 @@ const formSchema = z.object({
     .email("L'adresse email doit être valide"),
   city: z.string().nonempty("La ville est requise"),
   street: z.string().nonempty("L'adresse est requise"), // Changed from address
-  userType: z.string().nonempty("Le type est requis"), // Changed from type
+  userTypeId: z.string().nonempty("Le type est requis"), // Changed from type
 });
 const passwordSchema = z
   .object({
@@ -113,21 +122,18 @@ const passwordSchema = z
 
 interface UserModificationProps {
   userId: string;
+  userTypes: { id: string; label: string }[];
 }
 
-export function UserModification({ userId }: UserModificationProps) {
+export function UserModification({ userId, userTypes }: UserModificationProps) {
   const [userData, setUserData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
-  const [showCurrentPassword, setShowCurrentPassword] = useState<string | null>(
-    null
-  );
-  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState<
-    string | null
-  >(null);
-  const [showNewPassword, setShowNewPassword] = useState<string | null>(null);
+  const [showCurrentPassword, setShowCurrentPassword] = useState<boolean>(false);
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState<boolean>(false);
+  const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
   const passwordForm = useForm<z.infer<typeof passwordSchema>>({
     resolver: zodResolver(passwordSchema),
     defaultValues: {
@@ -183,13 +189,13 @@ export function UserModification({ userId }: UserModificationProps) {
     defaultValues: {
       family_name: "",
       first_name: "",
-      birth_date: new Date(),
+      birthDate: new Date(),
       sex: "",
       phone_number: "",
       email: "",
       city: "",
       street: "",
-      userType: "",
+      userTypeId: "",
     },
   });
 
@@ -204,13 +210,13 @@ export function UserModification({ userId }: UserModificationProps) {
       form.reset({
         family_name: data.family_name || "",
         first_name: data.first_name || "",
-        birth_date: data.birth_date ? new Date(data.birth_date) : null,
+        birthDate: data.birthDate ? new Date(data.birthDate) : undefined,
         sex: data.sex || "",
         phone_number: data.phone_number || "",
         email: data.email || "",
         city: data.city || "",
         street: data.street || "",
-        userType: data.userType?.type || "", // Map userType to type
+        userTypeId: data.userTypeId ? String(data.userTypeId) : "",
       });
     }
 
@@ -231,11 +237,11 @@ export function UserModification({ userId }: UserModificationProps) {
         familyName: values.family_name, // Changed from last_name
         email: values.email,
         phoneNumber: values.phone_number, // Changed from phone
-        birthDate: values.birth_date.toISOString(),
+        birthDate: values.birthDate.toISOString(),
         sex: values.sex, 
         city: values.city,
         street: values.street, // Changed from address
-        userType: values.userType, // Changed from type
+        userTypeId: parseInt(values.userTypeId, 10), 
       };
 
       // Call the update API endpoint
@@ -269,6 +275,7 @@ export function UserModification({ userId }: UserModificationProps) {
   if (!userData) {
     return <div>Loading...</div>;
   }
+
 
   return (
     <div className="max-w-full">
@@ -311,7 +318,7 @@ export function UserModification({ userId }: UserModificationProps) {
 
               <FormField
                 control={form.control}
-                name="birth_date"
+                name="birthDate"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-700 font-medium">
@@ -478,28 +485,29 @@ export function UserModification({ userId }: UserModificationProps) {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="userType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium">
-                      Type
-                    </FormLabel>
-                    <FormControl>
-                      <select
-                        className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
-                        {...field}>
-                        <option value="">Sélectionner un type</option>
-                        <option value="admin">Admin</option>
-                        <option value="commercial">Commercial</option>
-                        <option value="decidor">Décideur</option>
-                      </select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="userTypeId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700 font-medium">Type</FormLabel>
+                  <FormControl>
+                    <select
+                      className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
+                      {...field}
+                    >
+                      <option value="">Sélectionner un type</option>
+                      {userTypes.map((type) => (
+                        <option key={type.id} value={type.id}>
+                          {type.label}
+                        </option>
+                      ))}
+                    </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             </div>
           </div>
 
