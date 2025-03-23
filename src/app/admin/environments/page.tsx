@@ -12,15 +12,52 @@ const Page = () => {
   const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
+  // Define filters state
+  const [filters, setFilters] = useState({
+    sex: [],
+    userType: [],
+    city: [],
+    ageGroup: [],
+  });
+
+  // Define filter sections
+  const filterSections = [
+    {
+      label: "Sex",
+      key: "sex",
+      options: ["Male", "Female"],
+    },
+    {
+      label: "User Type",
+      key: "userType",
+      options: ["Admin", "User"],
+    },
+    {
+      label: "City",
+      key: "city",
+      options: ["New York", "Los Angeles"],
+    },
+    {
+      label: "Age Group",
+      key: "ageGroup",
+      options: ["18-25", "26-35"],
+    },
+  ];
+
+  // Handle apply
+  const handleApply = () => {
+    console.log("Filters applied:", filters);
+  };
+
   return (
     <div className="">
       <div className="flex gap-2">
         <SearchInput />
         <FilterButton
-          options={options}
-          selectedOptions={selectedOptions}
-          onSelect={setSelectedOptions}
-          placeholder="Filter"
+          filters={filters}
+          setFilters={setFilters}
+          onApply={handleApply}
+          filterSections={filterSections}
         />
       </div>
       <div className="flex justify-between items-start mt-4">

@@ -7,8 +7,8 @@ import AddZoneCard from "@/components/admin/environment/add-zone-card";
 import AddPoiCard from "@/components/admin/environment/add-poi-card";
 import AddEnvCard from "@/components/admin/environment/add-env-card";
 import Image from "next/image";
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Link from "next/link";
 
 const DynamicMap = dynamic(
   () => import("@/components/admin/environment/editable-map"),
@@ -171,7 +171,12 @@ const Page = () => {
               </label>
             </>
           ) : (
-            <ButtonSecondary title="Save" onClick={saveGeoJSONToFile} />
+            <Link href="/admin/environments">
+              <ButtonSecondary
+                title="Sauvegarder"
+                onClick={saveGeoJSONToFile}
+              />
+            </Link>
           )}
         </div>
 

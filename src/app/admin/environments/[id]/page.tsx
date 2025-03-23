@@ -192,7 +192,7 @@ const Page = () => {
               </label>
             </>
           ) : (
-            <ButtonSecondary title="Save" onClick={saveGeoJSONToFile} />
+            <ButtonSecondary title="Sauvegarder" onClick={saveGeoJSONToFile} />
           )}
         </div>
 

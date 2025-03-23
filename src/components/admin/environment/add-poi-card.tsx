@@ -131,7 +131,7 @@ const AddPoiCard = ({
       <div className="items-end flex justify-end">
         {!showValues && (
           <Button variant="secondary" onClick={handleSave}>
-            Enregistrer
+            Ajouter le PoI
           </Button>
         )}
       </div>

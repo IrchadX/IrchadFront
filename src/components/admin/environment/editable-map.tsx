@@ -261,7 +261,10 @@ export default function EditableMap({
                   </Popup>
                 </Polyline>
               );
-            } else if (layer.properties.type.startsWith("Zone ")) {
+            } else if (
+              layer.properties.type.startsWith("Zone") ||
+              layer.properties.type.startsWith("zone")
+            ) {
               return (
                 <Polygon
                   key={index}
@@ -291,6 +294,7 @@ export default function EditableMap({
                       <Popup>
                         <strong>POI</strong>
                         <br />
+                        <p>{layer.properties.nom}</p>
                         <p>{layer.properties.description}</p>
                         {layer.properties.image && (
                           <img

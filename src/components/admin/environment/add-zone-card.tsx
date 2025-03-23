@@ -129,7 +129,7 @@ const AddZoneCard = ({
       <div className="items-end flex justify-end">
         {!showValues && (
           <Button variant="secondary" onClick={handleSave}>
-            Enregistrer
+            Ajouter la zone
           </Button>
         )}
       </div>

@@ -88,9 +88,7 @@ const AddEnvCard = ({
         />
         <div className="flex flex-col items-start justify-start">
           <Label>Visibilité</Label>
-          <p className="mt-1 text-gray-700">
-            {environmentInfo.isPublic ? "Public" : "Privé"}
-          </p>
+          <p className="mt-1 text-gray-700">Public</p>
         </div>
         <div className="flex items-center gap-2 mt-1">
           <Switch
