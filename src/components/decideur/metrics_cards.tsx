@@ -1,11 +1,30 @@
-import React from "react";
+"use client";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 const Metrics = () => {
+  const [inactiveDevicesCount, setInactiveDevicesCount] = useState(0);
+  const [avgMaintenanceTime, setAvgMaintenanceTime] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("http://localhost:3001/statistics/inactive-device-count")
+      .then((res) => res.json())
+      .then((data) => setInactiveDevicesCount(data.totalInactiveDevices))
+      .catch((err) => console.error("Erreur :", err));
+
+      fetch("http://localhost:3001/statistics/average-intervention-duration")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Réponse API avg maintenance:", data);
+        setAvgMaintenanceTime(data.avgDuration);
+      })
+      .catch((err) => console.error("Erreur avg maintenance:", err));
+  }, []);
+
   const metrics = [
     {
-      title: "Utilisateurs actifs",
-      value: "45",
+      title: "Utilisateurs inactifs",
+      value: inactiveDevicesCount,
       textColor: "text-blue-500",
       icon: "/assets/UserIIcon.png",
     },
@@ -22,8 +41,8 @@ const Metrics = () => {
       icon: "/assets/AffaireIcon.png",
     },
     {
-      title: "Temps moyen",
-      value: "5 minutes",
+      title: "Temps moyen de maintenance",
+      value: avgMaintenanceTime !== null ? `${avgMaintenanceTime} Heures` : "Chargement...",
       textColor: "text-cyan-500",
       icon: "/assets/MaintenanceIcon.png",
     },
