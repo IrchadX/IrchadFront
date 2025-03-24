@@ -229,6 +229,24 @@ export default function EditableMap({
                   </Popup>
                 </Polygon>
               );
+            } else if (layer.properties.type === "environment") {
+              return (
+                <Polygon
+                  key={index}
+                  positions={layer.geometry.coordinates[0].map(([lng, lat]) => [
+                    lat,
+                    lng,
+                  ])}
+                  color="gray"
+                  fillOpacity={0.2} // Faint color
+                  weight={2}>
+                  <Popup>
+                    <strong>Environment Boundary</strong>
+                    <br />
+                    <p>{layer.properties.description}</p>
+                  </Popup>
+                </Polygon>
+              );
             } else if (layer.properties.type === "door") {
               return (
                 <Polyline
@@ -294,7 +312,7 @@ export default function EditableMap({
                       <Popup>
                         <strong>POI</strong>
                         <br />
-                        <p>{layer.properties.nom}</p>
+
                         <p>{layer.properties.description}</p>
                         {layer.properties.image && (
                           <img
