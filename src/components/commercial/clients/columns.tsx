@@ -60,6 +60,6 @@ export const columns: ColumnDef<User>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => <ActionMenu userId={row.original.id} basePath="/commercial/clients"/>, 
+    cell: ({ row }) => <ActionMenu entityId={row.original.id} basePath="/commercial/clients" apiEndpoint="/commercial/clients"/>, 
   },
 ];
