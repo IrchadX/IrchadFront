@@ -6,7 +6,7 @@ import { Sale, columns } from "@/components/commercial/sales/columns";
 import { DataTable } from "@/components/shared/data-table";
 import SearchInput from "@/components/shared/search-input";
 import FilterButton, { Filters } from "@/components/shared/filter-button";
-import { fetchAidantAndClientUsers } from "@/data/users";
+import { fetchSalesData } from "@/data/sales";
 import { ButtonSecondary } from "@/components/shared/secondary-button";
 
 const filterSections: {
@@ -14,11 +14,10 @@ const filterSections: {
   key: keyof Filters;
   options: string[];
 }[] = [
-  { label: "Sex", key: "sex", options: ["homme", "femme"] },
   {
     label: "Type",
     key: "userType",
-    options: ["utilisateur", "aidant"],
+    options: ["option1", "option2"],
   },
   {
     label: "Ville",
@@ -84,11 +83,6 @@ const filterSections: {
       "El Menia",
     ],
   },
-  {
-    label: "Age",
-    key: "ageGroup",
-    options: ["moins18", "18-30", "31-50", "plus50"],
-  },
 ];
 
 export default function Page() {
@@ -142,7 +136,7 @@ export default function Page() {
 
       console.log("API Request Debug:", debugObj);
 
-      const result = await fetchAidantAndClientUsers(searchTerm, apiFilters);
+      const result = await fetchSalesData(searchTerm, apiFilters);
 
       // Update debug info with response
       debugObj.responseReceived = true;
