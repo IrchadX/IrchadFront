@@ -4,7 +4,7 @@ export interface SidebarLink {
   href: string;
   iconLink: string;
 }
-
+/*
 export const adminSidebarLinks: SidebarLink[] = [
   {
     name: "Tableau de Bord",
@@ -31,7 +31,7 @@ export const adminSidebarLinks: SidebarLink[] = [
     href: "/admin/settings",
     iconLink: "/assets/layout/settings.png",
   },
-];
+];*/
 export const decideurSidebarLinks: SidebarLink[] = [
   {
     name: "Tableau de Bord",
@@ -45,12 +45,12 @@ export const decideurSidebarLinks: SidebarLink[] = [
   },
   {
     name: "Fréquentation des zones",
-    href: "/decideur/environments",
+    href: "/decideur/zones",
     iconLink: "/assets/layout/envs.png",
   },
   {
     name: "Rapports",
-    href: "/decideur/devices",
+    href: "/decideur/rapports",
     iconLink: "/assets/layout/document.png",
   },
   {

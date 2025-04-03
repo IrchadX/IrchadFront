@@ -51,7 +51,7 @@ const Metrics = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 p-3">
       {metrics.map((metric, index) => (
-        <div key={index} className="bg-white shadow-md rounded-lg p-5 flex items-center hover:scale-95 transition-transform">
+        <div key={index} className="bg-white shadow-md rounded-lg p-5 flex items-center hover:scale-95 transition-transform hover:shadow-lg">
           <div className="flex-shrink-0 mr-3">
             <Image src={metric.icon} alt={metric.title} width={40} height={40} />
           </div>

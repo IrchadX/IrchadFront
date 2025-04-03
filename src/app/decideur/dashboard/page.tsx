@@ -1,11 +1,12 @@
 import KpiCards from "@/components/decideur/kpi_cards";
+import StatsCharts from "@/components/decideur/graphes";
 
 export default function DashboardPage() {
   return (
-    <div className="container mx-auto">
-      <h1 className="text-2xl font-bold my-4">Tableau de bord</h1>
-      
+    <div className="container mx-auto">      
       <KpiCards />
+      <StatsCharts  />
+
       
     </div>
   );

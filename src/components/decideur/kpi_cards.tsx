@@ -35,7 +35,7 @@ const KpiCards = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
       {kpis.map(({ title, value, trend, icon, trendColor }, index) => (
-        <div key={index} className="bg-white shadow-lg rounded-xl p-4 flex items-center justify-between hover:scale-95 hover:shadow-xl">
+        <div key={index} className="bg-white shadow-md rounded-xl p-4 flex items-center justify-between hover:scale-95 hover:shadow-lg">
           <div className="flex flex-col text-left space-y-1">
             <h3 className="text-gray-500">{title}</h3>
             <p className="text-xl font-bold">{value}</p>
