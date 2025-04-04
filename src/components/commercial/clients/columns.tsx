@@ -1,20 +1,22 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
+import { ActionMenu } from "@/components/shared/action-menu"
 
-export type Client = {
+export type User = {
   id: string
   firstname: string
   lastname: string
   city: string
   phone: string
   email: string
-  helper: string
-  phone_helper: string
+  sexe: string
+  age: string
+  type: string
   registrationDate: string 
 }
 
-export const columns: ColumnDef<Client>[] = [
+export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "id",
     header: "ID",
@@ -26,6 +28,14 @@ export const columns: ColumnDef<Client>[] = [
   {
     accessorKey: "firstname",
     header: "Prénom",
+  },
+  {
+    accessorKey: "age",
+    header: "Âge",
+  },
+  {
+    accessorKey: "sex",
+    header: "Sexe",
   },
   {
     accessorKey: "city",
@@ -40,15 +50,16 @@ export const columns: ColumnDef<Client>[] = [
     header: "Email",
   },
   {
-    accessorKey: "helper",
-    header: "Aidant",
-  },
-  {
-    accessorKey: "phone_helper",
-    header: "Téléphone Aidant",
+    accessorKey: "userType",
+    header: "Type d'utilisateur",
   },
   {
     accessorKey: "registrationDate",
     header: "Date d'inscription",
   },
-]
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => <ActionMenu userId={row.original.id} basePath="/commercial/clients"/>, 
+  },
+];

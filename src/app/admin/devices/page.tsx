@@ -8,13 +8,15 @@ import SearchInput from "@/components/shared/search-input";
 import FilterButton from "@/components/shared/filter-button";
 import { useState } from "react";
 import { Button } from "@/components/shared/button";
-
+import { DataTable } from "@/components/shared/data-table";
+import { columns } from "@/components/admin/devices/columns";
+import {devices} from "@/data/dispositifs";
 const Page = () => {
   const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
  const handleNewDevice = ()=> {
  };
- 
+
   return (
     <div>
       <div className="flex justify-between">
@@ -36,6 +38,9 @@ const Page = () => {
       </Button>
       </div>
         </div>
+          <div className="container mx-auto py-10">
+                <DataTable columns={columns} data={devices} />
+              </div>
     </div>
   );
 };

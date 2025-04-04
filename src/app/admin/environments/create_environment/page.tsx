@@ -9,8 +9,6 @@ import AddEnvCard from "@/components/admin/environment/add-env-card";
 import Image from "next/image";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useParams } from "next/navigation"; // Import useParams
-import environments from "@/data/environments"; // Import environments data
 
 const DynamicMap = dynamic(
   () => import("@/components/admin/environment/editable-map"),
@@ -18,16 +16,13 @@ const DynamicMap = dynamic(
 );
 
 const Page = () => {
-  const params = useParams(); // Get the dynamic route parameters
-  const id = params.id as string; // Extract the `id` parameter
-
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isFileUploaded, setIsFileUploaded] = useState(false);
   const [geojsonData, setGeoJsonData] = useState(null);
   const [environmentInfo, setEnvironmentInfo] = useState({
     name: "",
-    isPublic: true,
-    userId: null,
-    address: "",
+    description: "",
+    isPublic: true, // Default to public
+    userId: null, // Will store the user ID if the environment is not public
   });
   const [lat, setLat] = useState(36.704661);
   const [long, setLong] = useState(3.174653);
@@ -35,38 +30,22 @@ const Page = () => {
   const [isZoneFormOpen, setIsZoneFormOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  // Fetch environment data based on ID
-  useEffect(() => {
-    if (id) {
-      const environment = environments.find((env) => env.id === id);
-      if (environment) {
-        setGeoJsonData(environment.geoData); // Set GeoJSON data
-        setEnvironmentInfo({
-          name: environment.properties.name,
-          isPublic: environment.properties.isPublic,
-          userId: environment.properties.userId,
-          address: environment.properties.address,
-        });
-        setIsEditMode(true); // Enable edit mode
-      }
-    }
-  }, [id]); // Re-run when `id` changes
-
   const saveGeoJSONToFile = () => {
     if (!geojsonData) {
       alert("No data to save.");
       return;
     }
 
+    // Merge environmentInfo into the GeoJSON data
     const dataToExport = {
       ...geojsonData,
       properties: {
-        ...geojsonData.properties,
+        ...geojsonData.properties, // Preserve existing properties (if any)
         environment: {
           name: environmentInfo.name,
+          description: environmentInfo.description,
           isPublic: environmentInfo.isPublic,
-          userId: environmentInfo.isPublic ? null : environmentInfo.userId,
-          address: environmentInfo.address,
+          userId: environmentInfo.isPublic ? null : environmentInfo.userId, // Only include userId if not public
         },
       },
     };
@@ -129,21 +108,21 @@ const Page = () => {
         const geoJSON = JSON.parse(e.target.result);
 
         setGeoJsonData(geoJSON);
-        setIsEditMode(true);
+        setIsFileUploaded(true);
 
         // Extract environment info from the GeoJSON properties
         const environment = geoJSON.properties?.environment || {
           name: "Environment Name",
+          description: "Environment Description",
           isPublic: true,
           userId: null,
-          address: "Environment Address",
         };
 
         setEnvironmentInfo({
           name: environment.name,
+          description: environment.description,
           isPublic: environment.isPublic,
           userId: environment.userId,
-          address: environment.address,
         });
 
         const firstFeature = geoJSON.features[0];
@@ -173,7 +152,7 @@ const Page = () => {
         {/* Title and Upload/Save Button Row */}
         <div className="flex justify-between items-start mb-4">
           <Title text="Creation d'un environnement" lineLength="100px" />
-          {!isEditMode ? (
+          {!isFileUploaded ? (
             <>
               <input
                 type="file"
@@ -184,7 +163,7 @@ const Page = () => {
               />
               <label htmlFor="file-upload">
                 <ButtonSecondary
-                  title="Modifier"
+                  title="Upload"
                   onClick={() =>
                     document && document.getElementById("file-upload").click()
                   }
@@ -196,28 +175,43 @@ const Page = () => {
           )}
         </div>
 
-        <DynamicMap
-          geoData={{ lat: 36.704661, lng: 3.174653 }}
-          setIsPoiFormOpen={setIsPoiFormOpen}
-          setIsZoneFormOpen={setIsZoneFormOpen}
-          file={geojsonData}
-          setSelectedItem={setSelectedItem}
-        />
+        {/* Editable Map or Gray Div */}
+        {!isFileUploaded ? (
+          <div className="bg-[#DEDEDE] flex flex-col items-center justify-center h-[75vh] gap-4">
+            <Image
+              src="/assets/admin/environments/no-env.svg"
+              width={200}
+              height={40}
+              alt="No environment"
+            />
+            <p className="text-sm">
+              Importer un fichier .geojson pour commencer...
+            </p>
+          </div>
+        ) : (
+          <DynamicMap
+            geoData={{ lat: 36.704661, lng: 3.174653 }}
+            setIsPoiFormOpen={setIsPoiFormOpen}
+            setIsZoneFormOpen={setIsZoneFormOpen}
+            file={geojsonData}
+            setSelectedItem={setSelectedItem}
+          />
+        )}
       </div>
 
       {/* Right Column */}
       <div
         className={`col-span-1 ${
-          !isEditMode ? "disabled opacity-40 pointer-events-none" : ""
+          !isFileUploaded ? "disabled opacity-40 pointer-events-none" : ""
         }`}
         style={{
-          backgroundColor: !isEditMode ? "#f0f0f0" : "transparent", // Light gray background when disabled
-          cursor: !isEditMode ? "not-allowed" : "auto", // Change cursor to not-allowed when disabled
+          backgroundColor: !isFileUploaded ? "#f0f0f0" : "transparent", // Light gray background when disabled
+          cursor: !isFileUploaded ? "not-allowed" : "auto", // Change cursor to not-allowed when disabled
         }}>
         {/* Content for the right column */}
         {!isPoiFormOpen && !isZoneFormOpen && (
           <AddEnvCard
-            showValues={!isEditMode}
+            showValues={!isFileUploaded}
             environmentInfo={environmentInfo}
             setEnvironmentInfo={setEnvironmentInfo}
           />
@@ -227,7 +221,7 @@ const Page = () => {
             setSelectedItem={setSelectedItem}
             handleSaveItem={handleSaveItem}
             selectedItem={selectedItem}
-            showValues={!isEditMode}
+            showValues={!isFileUploaded}
           />
         )}
         {isZoneFormOpen && (
@@ -235,7 +229,7 @@ const Page = () => {
             setSelectedItem={setSelectedItem}
             handleSaveItem={handleSaveItem}
             selectedItem={selectedItem}
-            showValues={!isEditMode}
+            showValues={!isFileUploaded}
           />
         )}
       </div>

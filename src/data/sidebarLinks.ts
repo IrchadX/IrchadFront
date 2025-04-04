@@ -1,35 +1,40 @@
-// sidebarLinks.ts
+import { IconType } from "react-icons";
+import { FiUsers, FiSettings } from "react-icons/fi";
+import { MdDevices, MdOutlineDashboard, MdLocalOffer  } from "react-icons/md";
+import { FaMoneyBillTrendUp } from "react-icons/fa6";
+import { TbWorld } from "react-icons/tb";
+
 export interface SidebarLink {
   name: string;
   href: string;
-  iconLink: string;
+  Icon: IconType;
 }
 
 export const adminSidebarLinks: SidebarLink[] = [
   {
     name: "Tableau de Bord",
     href: "/admin/dashboard",
-    iconLink: "/assets/layout/dashboard.png",
+    Icon: MdOutlineDashboard,
   },
   {
     name: "Utilisateurs",
     href: "/admin/users",
-    iconLink: "/assets/layout/users.png",
+    Icon: FiUsers,
   },
   {
     name: "Environnements",
     href: "/admin/environments",
-    iconLink: "/assets/layout/envs.png",
+    Icon: TbWorld,
   },
   {
     name: "Dispositifs",
     href: "/admin/devices",
-    iconLink: "/assets/layout/devices.png",
+    Icon: MdDevices,
   },
   {
     name: "Paramètres",
     href: "/admin/settings",
-    iconLink: "/assets/layout/settings.png",
+    Icon: FiSettings,
   },
 ];
 
@@ -37,26 +42,27 @@ export const commercialSidebarLinks: SidebarLink[] = [
   {
     name: "Tableau de Bord",
     href: "/commercial/dashboard",
-    iconLink: "/assets/layout/dashboard.png",
+    Icon: MdOutlineDashboard,
   },
   {
     name: "Clients",
     href: "/commercial/clients",
-    iconLink: "/assets/layout/users.png",
+    Icon: FiUsers,
   },
   {
     name: "Ventes",
     href: "/commercial/sales",
-    iconLink: "/assets/layout/sales.png",
+    Icon: FaMoneyBillTrendUp,
   },
   {
     name: "Offres",
     href: "/commercial/offers",
-    iconLink: "/assets/layout/offers.png",
+    Icon: MdLocalOffer,
   },
   {
     name: "Paramètres",
     href: "/commercial/settings",
-    iconLink: "/assets/layout/settings.png",
+    Icon: FiSettings,
   },
 ];
+

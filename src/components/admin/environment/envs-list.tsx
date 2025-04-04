@@ -1,4 +1,4 @@
-import { environments } from "@/data/environments";
+import environments from "@/data/environments";
 import EnvironmentCard from "./env-card";
 
 const EnvsList = () => {

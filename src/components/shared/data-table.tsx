@@ -52,8 +52,7 @@ export function DataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="py-3 text-white font-medium border-r border-teal-600 last:border-r-0"
-                  >
+                    className="py-3 text-white font-medium border-r border-teal-600 last:border-r-0">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -71,21 +70,24 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="border-b border-gray-200 bg-gray-50 hover:bg-gray-100"
-                >
+                  className="border-b border-gray-200 bg-gray-50 hover:bg-gray-100">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="py-4 border-r border-gray-200 last:border-r-0"
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      className="py-4 border-r border-gray-200 last:border-r-0">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -118,8 +120,7 @@ export function DataTable<TData, TValue>({
                   table.getState().pagination.pageIndex === index
                     ? "bg-[#2B7A78] text-white border-[#2B7A78]"
                     : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
-                }`}
-              >
+                }`}>
                 {index + 1}
               </PaginationLink>
             </PaginationItem>
