@@ -7,6 +7,7 @@ const KpiCards = () => {
     users: 0,
     devices: 0,
     alerts: 0,
+  technicalPercentage: 0,
   });
 
   useEffect(() => {
@@ -14,22 +15,24 @@ const KpiCards = () => {
       fetch("http://localhost:3001/statistics/users-count").then((res) => res.json()),
       fetch("http://localhost:3001/statistics/device-count").then((res) => res.json()),
       fetch("http://localhost:3001/statistics/alerts-count").then((res) => res.json()),
+      fetch("http://localhost:3001/statistics/interventions").then((res) => res.json()),
     ])
-      .then(([usersData, devicesData, alertsData]) => {
+      .then(([usersData, devicesData, alertsData, techInterventionData]) => {
         setStats({
           users: usersData.totalUsers || 0,
           devices: devicesData.totalDevice || 0,
           alerts: alertsData.totalAlerts || 0,
+          technicalPercentage: techInterventionData.percentage || 0,
         });
       })
       .catch((err) => console.error("Erreur de chargement des statistiques :", err));
   }, []);
-
+  
   const kpis = [
     { title: "Utilisateurs actifs", value: stats.users, trend: "8.5% Up", icon: "/assets/UserIcon.png", trendColor: "text-green-500" },
     { title: "Dispositifs vendus ce mois", value: stats.devices, trend: "1.3% Up", icon: "/assets/DeviceIcon.png", trendColor: "text-green-500" },
     { title: "Alertes signalées ce mois", value: stats.alerts, trend: "4.3% Down", icon: "/assets/CourbeIcon.png", trendColor: "text-red-500" },
-    { title: "Taux de détection", value: "0.8", trend: "2% Up", icon: "/assets/TimeIcon.png", trendColor: "text-green-500" },
+    { title: "% Interventions techniques", value: `${stats.technicalPercentage}%`, trend: "2% Up", icon: "/assets/TimeIcon.png", trendColor: "text-green-500" },
   ];
 
   return (
@@ -39,7 +42,6 @@ const KpiCards = () => {
           <div className="flex flex-col text-left space-y-1">
             <h3 className="text-gray-500">{title}</h3>
             <p className="text-xl font-bold">{value}</p>
-            <p className={`text-sm ${trendColor}`}>{trend}</p>
           </div>
           <Image src={icon} alt={title} width={50} height={50} className="self-start mt-2" />
         </div>
