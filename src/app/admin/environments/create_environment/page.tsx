@@ -1,14 +1,53 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Dispatch, SetStateAction } from "react";
 import { ButtonSecondary } from "@/components/shared/secondary-button";
 import Title from "@/components/shared/title";
 import dynamic from "next/dynamic";
-import AddZoneCard from "@/components/admin/environment/add-zone-card";
-import AddPoiCard from "@/components/admin/environment/add-poi-card";
-import AddEnvCard from "@/components/admin/environment/add-env-card";
+import AddZoneCard, {
+  AddZoneCardProps,
+} from "@/components/admin/environment/add-zone-card";
+import AddPoiCard, {
+  AddPoiCardProps,
+} from "@/components/admin/environment/add-poi-card";
+import AddEnvCard, {
+  AddEnvCardProps,
+} from "@/components/admin/environment/add-env-card";
 import Image from "next/image";
 import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
+import { toast } from "react-toastify";
+
+interface GeoJSONFeature {
+  id?: string;
+  type: string;
+  properties: Record<string, any>;
+  geometry: {
+    type: string;
+    coordinates: any[];
+  };
+}
+
+interface GeoJSONData {
+  type: string;
+  features: GeoJSONFeature[];
+  properties?: {
+    environment?: {
+      name: string;
+      description: string;
+      address: string;
+      isPublic: boolean;
+      userId: number | null;
+    };
+  };
+}
+
+interface EnvironmentInfo {
+  name: string;
+  description: string;
+  address: string;
+  isPublic: boolean;
+  userId: number | null;
+}
 
 const DynamicMap = dynamic(
   () => import("@/components/admin/environment/editable-map"),
@@ -17,58 +56,73 @@ const DynamicMap = dynamic(
 
 const Page = () => {
   const [isFileUploaded, setIsFileUploaded] = useState(false);
-  const [geojsonData, setGeoJsonData] = useState(null);
-  const [environmentInfo, setEnvironmentInfo] = useState({
+  const [geojsonData, setGeoJsonData] = useState<GeoJSONData | null>(null);
+  const [environmentInfo, setEnvironmentInfo] = useState<EnvironmentInfo>({
     name: "",
     description: "",
-    isPublic: true, // Default to public
-    userId: null, // Will store the user ID if the environment is not public
+    address: "",
+    isPublic: true,
+    userId: null,
   });
   const [lat, setLat] = useState(36.704661);
   const [long, setLong] = useState(3.174653);
   const [isPoiFormOpen, setIsPoiFormOpen] = useState(false);
   const [isZoneFormOpen, setIsZoneFormOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState<GeoJSONFeature | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const saveGeoJSONToFile = () => {
+  const saveGeoJSONToFile = async () => {
     if (!geojsonData) {
       alert("No data to save.");
       return;
     }
 
-    // Merge environmentInfo into the GeoJSON data
-    const dataToExport = {
-      ...geojsonData,
-      properties: {
-        ...geojsonData.properties, // Preserve existing properties (if any)
-        environment: {
-          name: environmentInfo.name,
-          description: environmentInfo.description,
-          isPublic: environmentInfo.isPublic,
-          userId: environmentInfo.isPublic ? null : environmentInfo.userId, // Only include userId if not public
+    setIsSaving(true);
+
+    try {
+      const dataToExport = {
+        ...geojsonData,
+        properties: {
+          ...geojsonData.properties,
+          environment: {
+            name: environmentInfo.name,
+            description: environmentInfo.description,
+            address: environmentInfo.address,
+            isPublic: environmentInfo.isPublic,
+            userId: environmentInfo.isPublic ? null : environmentInfo.userId,
+          },
         },
-      },
-    };
+      };
 
-    const jsonString = JSON.stringify(dataToExport, null, 2);
+      const response = await fetch("http://localhost:3000/environments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToExport),
+      });
 
-    const blob = new Blob([jsonString], { type: "application/json" });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to save environment");
+      }
 
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "updated-environment.geojson";
-    document.body.appendChild(link);
-
-    link.click();
-
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-
-    console.log("GeoJSON file saved with environment info:", dataToExport);
+      const result = await response.json();
+      toast.success("Environnement enregistré avec succès");
+      console.log("Environnement enregistré :", result);
+    } catch (error: unknown) {
+      console.error("Erreur d'enregistrement :", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Une erreur inconnue est survenue";
+      toast.error(`Erreur : ${errorMessage}`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleSaveItem = (item) => {
+  const handleSaveItem = (item: GeoJSONFeature) => {
     if (!geojsonData) return;
 
     if (!item.id) {
@@ -98,22 +152,22 @@ const Page = () => {
     console.log("Updated GeoJSON:", updatedGeoJSON);
   };
 
-  const handleFileImport = (event) => {
-    const file = event.target.files[0];
+  const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const geoJSON = JSON.parse(e.target.result);
+        const geoJSON = JSON.parse(e.target?.result as string) as GeoJSONData;
 
         setGeoJsonData(geoJSON);
         setIsFileUploaded(true);
 
-        // Extract environment info from the GeoJSON properties
         const environment = geoJSON.properties?.environment || {
           name: "Environment Name",
           description: "Environment Description",
+          address: "Environment Address",
           isPublic: true,
           userId: null,
         };
@@ -121,6 +175,7 @@ const Page = () => {
         setEnvironmentInfo({
           name: environment.name,
           description: environment.description,
+          address: environment.address,
           isPublic: environment.isPublic,
           userId: environment.userId,
         });
@@ -163,9 +218,10 @@ const Page = () => {
               />
               <label htmlFor="file-upload">
                 <ButtonSecondary
+                  disabled={false}
                   title="Upload"
                   onClick={() =>
-                    document && document.getElementById("file-upload").click()
+                    document.getElementById("file-upload")?.click()
                   }
                 />
               </label>
@@ -173,8 +229,9 @@ const Page = () => {
           ) : (
             <Link href="/admin/environments">
               <ButtonSecondary
-                title="Sauvegarder"
+                title={isSaving ? "Saving..." : "Sauvegarder"}
                 onClick={saveGeoJSONToFile}
+                disabled={isSaving || !isFileUploaded}
               />
             </Link>
           )}
@@ -210,8 +267,8 @@ const Page = () => {
           !isFileUploaded ? "disabled opacity-40 pointer-events-none" : ""
         }`}
         style={{
-          backgroundColor: !isFileUploaded ? "#f0f0f0" : "transparent", // Light gray background when disabled
-          cursor: !isFileUploaded ? "not-allowed" : "auto", // Change cursor to not-allowed when disabled
+          backgroundColor: !isFileUploaded ? "#f0f0f0" : "transparent",
+          cursor: !isFileUploaded ? "not-allowed" : "auto",
         }}>
         {/* Content for the right column */}
         {!isPoiFormOpen && !isZoneFormOpen && (
@@ -223,7 +280,9 @@ const Page = () => {
         )}
         {isPoiFormOpen && (
           <AddPoiCard
-            setSelectedItem={setSelectedItem}
+            setSelectedItem={
+              setSelectedItem as Dispatch<SetStateAction<GeoJSONFeature | null>>
+            }
             handleSaveItem={handleSaveItem}
             selectedItem={selectedItem}
             showValues={!isFileUploaded}
@@ -231,7 +290,9 @@ const Page = () => {
         )}
         {isZoneFormOpen && (
           <AddZoneCard
-            setSelectedItem={setSelectedItem}
+            setSelectedItem={
+              setSelectedItem as Dispatch<SetStateAction<GeoJSONFeature | null>>
+            }
             handleSaveItem={handleSaveItem}
             selectedItem={selectedItem}
             showValues={!isFileUploaded}

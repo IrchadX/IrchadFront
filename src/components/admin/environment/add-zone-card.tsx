@@ -17,8 +17,9 @@ import { Button } from "@/components/shared/button";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-interface AddZoneCardProps {
+export interface AddZoneCardProps {
   handleSaveItem: (item: any) => void;
+  setSelectedItem: (item: any) => void;
   showValues: boolean;
   selectedItem: any;
 }
@@ -28,8 +29,8 @@ const AddZoneCard = ({
   selectedItem,
   handleSaveItem,
 }: AddZoneCardProps) => {
-  const [nom, setNom] = useState(
-    selectedItem?.properties?.nom || "Nom de la zone"
+  const [name, setname] = useState(
+    selectedItem?.properties?.name || "name de la zone"
   );
   const [type, setType] = useState(selectedItem?.properties?.type || "");
   const [description, setDescription] = useState(
@@ -38,7 +39,7 @@ const AddZoneCard = ({
 
   useEffect(() => {
     if (selectedItem) {
-      setNom(selectedItem.properties?.nom || "Nom de la zone");
+      setname(selectedItem.properties?.name || "Nom de la zone");
       setType(selectedItem.properties?.type || "");
       setDescription(
         selectedItem.properties?.description || "Description de la zone"
@@ -51,15 +52,15 @@ const AddZoneCard = ({
       ...selectedItem,
       properties: {
         ...selectedItem.properties,
-        nom,
+        name,
         type,
         description,
       },
     };
 
     handleSaveItem(updatedItem);
-    toast.success("Zone ajoutee");
-    setNom("");
+    toast.success("Zone Enregistrée");
+    setname("");
     setDescription("");
     setType("");
     console.log("Updated item:", updatedItem);
@@ -70,17 +71,17 @@ const AddZoneCard = ({
       <ToastContainer />
       <Title text="Créer une zone" lineLength="0" />
 
-      {/* Nom */}
+      {/* name */}
       <div className="mb-4 gap-2">
-        <Label htmlFor="nom">Nom</Label>
+        <Label htmlFor="name">name</Label>
         {showValues ? (
-          <p className="mt-1 text-gray-700">{nom}</p>
+          <p className="mt-1 text-gray-700">{name}</p>
         ) : (
           <Input
-            id="nom"
-            placeholder="Nom de la zone..."
-            value={nom}
-            onChange={(e) => setNom(e.target.value)}
+            id="name"
+            placeholder="name de la zone..."
+            value={name}
+            onChange={(e) => setname(e.target.value)}
             className="bg-white"
           />
         )}
