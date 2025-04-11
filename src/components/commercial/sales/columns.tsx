@@ -29,7 +29,7 @@ export const columns: ColumnDef<Sale>[] = [
   },
   {
     accessorKey: "price",
-    header: "Montant",
+    header: "Montant total",
   },
   {
     accessorKey: "offer",

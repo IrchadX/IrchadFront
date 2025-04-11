@@ -18,6 +18,10 @@ const Header = () => {
       return "Gestion des dispositifs";
     } else if (pathname.startsWith("/admin/settings")) {
       return "Paramètres";
+    } else if (pathname.startsWith("/commercial/clients")) {
+      return "Gestion des clients";
+    } else if (pathname.startsWith("/commercial/offers")) {
+      return "Offres";
     }
     return "Tableau de bord";
   };
