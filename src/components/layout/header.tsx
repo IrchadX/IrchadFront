@@ -27,21 +27,13 @@ const Header = () => {
       {!isAuthRoute && (
         <div className="z-50 bg-white py-6 xl:py-8 mb-4 border-b-[#E6EFF5] border-b-[1px] lg:text-2xl xl:text-3xl sticky font-montserrat top-0 w-full items-center text-main font-semibold  grid grid-cols-[90%,5%,5%]">
           <div>{getTitle()}</div>
-<<<<<<< HEAD
-          <Image
-            src="/assets/layout/notif.svg"
-            width={50}
-            height={50}
-            alt=""
-            className="xl:scale-100 scale-75 mx-auto"
-          />{" "}
-=======
+
+
           <div className="w-14 h-14 flex items-center justify-center rounded-full bg-main/5 shadow-sm">
   <BiBell className="w-6 h-6 text-gray-500" />
 </div>
 
 
->>>>>>> f3fd6646588a2fb73514801572a38f91fcad3f82
           <Image
             src="/assets/layout/avatar.svg"
             width={50}

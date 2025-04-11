@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import EnvsList from "@/components/admin/environment/envs-list";
-import ZonesSwiper from "@/components/admin/environment/zone-types-swiper";
-import { ButtonSecondary } from "@/components/shared/secondary-button";
+import Link from "next/link";
 import Title from "@/components/shared/title";
 import SearchInput from "@/components/shared/search-input";
-import FilterButton from "@/components/shared/filter-button";
 import { useState } from "react";
 import { Button } from "@/components/shared/button";
 import { DataTable } from "@/components/shared/data-table";
@@ -21,20 +18,23 @@ const Page = () => {
     <div>
       <div className="flex justify-between">
         <div className="flex gap-2">
-           <SearchInput />
-        <FilterButton
+           <SearchInput value={""} onChange={function (event: React.ChangeEvent<HTMLInputElement>): void {
+            throw new Error("Function not implemented.");
+          } } />
+        {/* <FilterButton
           options={options}
           selectedOptions={selectedOptions}
           onSelect={setSelectedOptions}
           placeholder="Filter"
-        />
+        /> */}
       </div>
       <div className="flex gap-2">
       <Button className="px-8 font-montserrat ">
         Dispositifs
       </Button>
       <Button className="px-8 font-montserrat" >
-        Nouveau
+        <Link href="/admin/devices/add-device">Nouveau</Link>
+      
       </Button>
       </div>
         </div>

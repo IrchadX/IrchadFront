@@ -45,25 +45,7 @@ const Sidebar =  ({ userRole }: { userRole: string }) => {
                         width={260}
                         height={50}
                       />
-<<<<<<< HEAD
-                    </div>
-                  )}
 
-                  {/* Link Icon and Name */}
-                  <Image
-                    src={link.iconLink}
-                    width={30}
-                    height={40}
-                    alt=""
-                    className="lg:scale-50 xl:scale-75"
-                  />
-                  <Link  href={link.href} className="hover:text-black">
-                    {link.name}
-                  </Link >
-                </motion.div>
-              ))}
-=======
->>>>>>> f3fd6646588a2fb73514801572a38f91fcad3f82
             </div>
           )}
 
@@ -71,9 +53,9 @@ const Sidebar =  ({ userRole }: { userRole: string }) => {
           <link.Icon className="text-white w-8 h-8 lg:scale-50 xl:scale-75" />
 
           {/* Link */}
-          <a href={link.href} className="hover:text-black">
-            {link.name}
-          </a>
+          <Link href={link.href} className="hover:text-black">
+          {link.name}
+          </Link>
         </motion.div>
       ))}
     </div>
