@@ -88,12 +88,12 @@ export function OfferCard() {
                       />
                     </div>
                     <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor={`env-type-${env.id}`}>Type</Label>
+                      <Label htmlFor={`env-type-${env.id}`}>Description</Label>
                       <Input
                         id={`env-type-${env.id}`}
                         value={env.type}
                         onChange={(e) => updateEnvironment(env.id, "type", e.target.value)}
-                        placeholder="Type d'environnement"
+                        placeholder="Description de l'environnement"
                       />
                     </div>
                     <div className="flex flex-col space-y-1.5">

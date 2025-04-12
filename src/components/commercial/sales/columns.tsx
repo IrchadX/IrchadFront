@@ -1,18 +1,20 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { ActionMenu } from "@/components/shared/action-menu"
+import { ColumnDef } from "@tanstack/react-table";
+import { ActionMenu } from "@/components/shared/action-menu";
+import Link from "next/link";
 
 export type Sale = {
-  id: string
-  type: string
-  saleDate: string 
-  price: string
-  offer: string
-  firstname: string
-  lastname: string
-  city: string
-}
+  id: string;
+  user_id : string;
+  type: string;
+  saleDate: string;
+  price: string;
+  offer: string;
+  firstname: string;
+  lastname: string;
+  city: string;
+};
 
 export const columns: ColumnDef<Sale>[] = [
   {
@@ -32,8 +34,8 @@ export const columns: ColumnDef<Sale>[] = [
     header: "Montant total",
   },
   {
-    accessorKey: "offer",
-    header: "Offre",
+    accessorKey: "user_id",
+    header: "ID utilisateur",
   },
   {
     accessorKey: "lastname",
@@ -47,9 +49,27 @@ export const columns: ColumnDef<Sale>[] = [
     accessorKey: "city",
     header: "Ville",
   },
-  {
+  /*{
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => <ActionMenu entityId={row.original.id} basePath="/commercial/sales" apiEndpoint="/sales"/>, 
+    cell: ({ row }) => (
+      <ActionMenu
+        entityId={row.original.id}
+        basePath="/commercial/sales"
+        apiEndpoint="/sales"
+      />
+    ),
+  },*/
+  {
+    id: "details",
+    header: "Détails",
+    cell: ({ row }) => (
+      <Link
+      href={`/commercial/sales/details?user_id=${row.original.user_id}&first_name=${row.original.firstname}&last_name=${row.original.lastname}&sale_date=${row.original.saleDate}`}
+      className="text-main hover:underline"
+    >
+      Détails de l'offre
+    </Link>
+    ),
   },
 ];
