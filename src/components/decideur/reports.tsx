@@ -5,6 +5,30 @@ import Image from "next/image";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { DownloadIcon, ChevronLeftIcon, ChevronRightIcon, CalendarIcon, ChevronDownIcon } from "lucide-react";
+const handleDownload = async (reportId) => {
+  try {
+    const response = await fetch(`http://localhost:3001/reports/pdf`, {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      throw new Error("Erreur lors du téléchargement");
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "rapport_dispositifs.pdf"; // Tu peux le rendre dynamique selon `report.title`
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Erreur téléchargement:", error);
+  }
+};
 
 const Reports = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,9 +38,9 @@ const Reports = () => {
 
   // Données des rapports
   const reports = [
-    { id: 1, title: "Identification des risques futurs", category: "Sécurité", objective: "Amélioration", icon: "/assets/securite.png", iconBgColor: "bg-cyan-100" },
-    { id: 2, title: "Dimension stratégique ", category: "Performance", objective: "Suivi", icon: "/assets/moneyy.png", iconBgColor: "bg-pink-100" },
-    { id: 3, title: "Modélisation prédictive de l'adoption", category: "Business", objective: "Stratégie", icon: "/assets/strategey.png", iconBgColor: "bg-yellow-100" }
+    { id: 1, title: "Analyse sur les dispositifs", category: "Sécurité", objective: "Amélioration", icon: "/assets/securite.png", iconBgColor: "bg-cyan-100" },
+    { id: 2, title: "Performance commerciale", category: "Performance", objective: "Suivi", icon: "/assets/moneyy.png", iconBgColor: "bg-pink-100" },
+    { id: 3, title: "Utilisation du système", category: "Business", objective: "Stratégie", icon: "/assets/strategey.png", iconBgColor: "bg-yellow-100" }
   ];
 
   const allReports = [...Array(10)].map((_, index) => (
@@ -158,9 +182,19 @@ const Reports = () => {
 
               {/* Bouton Télécharger */}
               <div className="text-center">
-                <button className="text-red-500 hover:text-red-600 transition-colors p-2 rounded-full hover:bg-red-50">
-                  <DownloadIcon size={20} />
-                </button>
+              <button 
+  onClick={() => {
+    if (report.id === 1) {
+      handleDownload(report.id);
+    } else {
+      alert("Téléchargement non disponible pour ce rapport.");
+    }
+  }}
+  className="text-red-500 hover:text-red-600 transition-colors p-2 rounded-full hover:bg-red-50"
+>
+  <DownloadIcon size={20} />
+</button>
+
               </div>
             </div>
           ))}
