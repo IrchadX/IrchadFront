@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 
 export function DevisCard() {
   // You can replace this with your actual total calculation
-  const totalPrice = "1,250.00 €"
+  const totalPrice = "00.00 DA"
 
   return (
     <Card className="w-[350px] h-full">

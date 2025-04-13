@@ -50,3 +50,22 @@ export async function fetchUserEnvironmentsWithPricing(userId: number) {
   
     return totalEnvironmentsPrice + devicePrice;
   }
+
+  export async function fetchTotalPrice(userId: number): Promise<number> {
+    try {
+      // Fetch environments with pricing
+      const environments = await fetchUserEnvironmentsWithPricing(userId);
+  
+      // Fetch the user's device
+      const device = await fetchUserDevice(userId);
+  
+      // Calculate the total price
+      const totalPrice = calculateTotalPrice(environments, device[0]); 
+  
+      console.log(`Total price for user ID ${userId}: ${totalPrice}`);
+      return totalPrice;
+    } catch (error) {
+      console.error(`Error fetching total price for user ID ${userId}:`, error);
+      throw error;
+    }
+  }

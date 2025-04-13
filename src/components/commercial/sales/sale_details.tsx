@@ -27,16 +27,17 @@ interface OffreDetails {
   accesEnvironnementsPublics: boolean;
 }
 
-export function OfferDetailsCard({ 
+export function OfferDetailsCard({
   userId,
   firstName,
   lastName,
   saleDate,
-  }: { 
+}: {
   userId: number;
   firstName: string;
-  lastName: string; 
-  saleDate: string;}) {
+  lastName: string;
+  saleDate: string;
+}) {
   const [offerDetails, setOfferDetails] = useState<OffreDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,8 +50,15 @@ export function OfferDetailsCard({
 
         // Fetch environments and device data in parallel
         const [environments, device] = await Promise.all([
-          fetchUserEnvironmentsWithPricing(userId),
-          fetchUserDevice(userId),
+          fetchUserEnvironmentsWithPricing(userId).catch((err) => {
+            if (err.message.includes("Aucun environnement trouvé")) {
+              throw new Error("Aucun environnement trouvé pour cet utilisateur.");
+            }
+            throw new Error("Erreur lors de la récupération des environnements.");
+          }),
+          fetchUserDevice(userId).catch((err) => {
+            throw new Error("Erreur lors de la récupération du dispositif de l'utilisateur.");
+          }),
         ]);
 
         // Calculate total price
@@ -68,13 +76,13 @@ export function OfferDetailsCard({
             surface: `${env.surface} m²`,
             prix: parseFloat(env.price),
           })),
-          accesEnvironnementsPublics: true, // to be replaced with actual data
+          accesEnvironnementsPublics: true, // Replace with actual data if available
         };
 
         setOfferDetails(mappedDetails);
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error loading offer details:", err);
-        setError("Failed to load offer details.");
+        setError(err.message || "Une erreur inattendue s'est produite.");
       } finally {
         setLoading(false);
       }
@@ -85,10 +93,10 @@ export function OfferDetailsCard({
     }
   }, [userId]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Chargement des détails de l'offre...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
 
-  if (!offerDetails) return <div>No offer details available.</div>;
+  if (!offerDetails) return <div>Aucun détail d'offre disponible.</div>;
 
   // Calculate total price of environments
   const totalEnvironnements = offerDetails.environnements.reduce(
@@ -99,7 +107,7 @@ export function OfferDetailsCard({
   // Calculate total amount
   const montantTotal = offerDetails.prixDispositif + totalEnvironnements;
 
-  // Format price with Euro symbol
+  // Format price with currency symbol
   const formatPrice = (price: number) => `${price.toFixed(2)} DA`;
 
   return (
