@@ -18,7 +18,7 @@ const filterSections: {
   {
     label: "Type",
     key: "userType",
-    options: ["utilisateur", "aidant"],
+    options: ["malvoyant", "aidant"],
   },
   {
     label: "Ville",

@@ -47,7 +47,7 @@ export async function fetchUsers(searchTerm = "", filters = {}) {
 export async function fetchAidantAndClientUsers(searchTerm = "", filters = {}) {
   try {
     const queryParams = new URLSearchParams();
-    queryParams.append("type", "aidant,client"); // Pass multiple types
+    queryParams.append("type", "aidant,malvoyant"); // Pass multiple types
 
     if (searchTerm) queryParams.append("search", searchTerm);
 
@@ -58,19 +58,19 @@ export async function fetchAidantAndClientUsers(searchTerm = "", filters = {}) {
     });
 
     const requestUrl = `${process.env.NEXT_PUBLIC_API_URL}/users/by-type?${queryParams.toString()}`;
-    console.log(`Fetching aidant and client users from: ${requestUrl}`);
+    console.log(`Fetching aidant and malvoyant users from: ${requestUrl}`);
 
     const response = await fetch(requestUrl);
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`API Error: ${errorText}`);
-      throw new Error("Failed to fetch aidant and client users.");
+      throw new Error("Failed to fetch aidant and malvoyant users.");
     }
 
     const users = await response.json();
 
-    console.log(`Received ${users.length} users (aidant + client)`);
+    console.log(`Received ${users.length} users (aidant + malvoyant)`);
 
     return users.map((user: any) => ({
       id: user.id,
@@ -86,7 +86,7 @@ export async function fetchAidantAndClientUsers(searchTerm = "", filters = {}) {
       registrationDate: new Date(user.created_at).toLocaleDateString(),
     }));
   } catch (error) {
-    console.error("Error fetching aidant and client users:", error);
+    console.error("Error fetching aidant and malvoyant users:", error);
     throw error;
   }
 }
