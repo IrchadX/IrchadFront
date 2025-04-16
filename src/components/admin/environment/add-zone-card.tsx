@@ -55,11 +55,12 @@ const AddZoneCard = ({
         name,
         type,
         description,
+        id: 0,
       },
     };
 
     handleSaveItem(updatedItem);
-    toast.success("Zone Enregistrée");
+    toast.success("Zone ajoutee");
     setname("");
     setDescription("");
     setType("");

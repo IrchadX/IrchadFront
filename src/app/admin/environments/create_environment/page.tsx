@@ -94,22 +94,36 @@ const Page = () => {
         },
       };
 
-      const response = await fetch("http://localhost:3000/environments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToExport),
-      });
+      // Convert the data to a JSON string with pretty formatting
+      const jsonString = JSON.stringify(dataToExport, null, 2);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to save environment");
-      }
+      // Create a blob with the JSON data
+      const blob = new Blob([jsonString], { type: "application/json" });
 
-      const result = await response.json();
+      // Create a URL for the blob
+      const url = URL.createObjectURL(blob);
+
+      // Create a temporary anchor element to trigger the download
+      const link = document.createElement("a");
+      link.href = url;
+
+      // Set the filename - using the environment name if available, or a default name
+      const fileName = environmentInfo.name
+        ? `${environmentInfo.name.replace(/\s+/g, "_")}.geojson`
+        : `environment_${new Date().toISOString().slice(0, 10)}.geojson`;
+
+      link.download = fileName;
+
+      // Append the link to the body, click it, and then remove it
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Release the URL object
+      URL.revokeObjectURL(url);
+
       toast.success("Environnement enregistré avec succès");
-      console.log("Environnement enregistré :", result);
+      console.log("Environnement enregistré dans un fichier");
     } catch (error: unknown) {
       console.error("Erreur d'enregistrement :", error);
       const errorMessage =

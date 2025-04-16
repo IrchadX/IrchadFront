@@ -125,7 +125,7 @@ const Page = () => {
           setEnvironmentInfo({
             name: data.environment.name,
             description: data.environment.description || "",
-            isPublic: data.environment.user_id === null,
+            isPublic: data.environment.is_public,
             userId: data.environment.user_id,
             address: data.environment.address || "",
           });

@@ -324,9 +324,8 @@ export default function EditableMap({
                   )}
                   pathOptions={{ color: "purple" }}>
                   <Popup>
-                    <strong>Zone</strong>
+                    <strong>Zone : {layer.properties.name}</strong>
                     <br />
-                    <p>{layer.properties.nom}</p>
                     <p>{layer.properties.description}</p>
                   </Popup>
                 </Polygon>
@@ -342,7 +341,7 @@ export default function EditableMap({
                         layer.geometry.coordinates[0],
                       ]}>
                       <Popup>
-                        <strong>POI</strong>
+                        <strong>PoI : {layer.properties.name}</strong>
                         <br />
                         <p>{layer.properties.description}</p>
                         {layer.properties.image && (

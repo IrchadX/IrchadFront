@@ -43,7 +43,7 @@ const AddPoiCard = ({
 
   useEffect(() => {
     if (selectedItem) {
-      setName(selectedItem.properties?.Name || "Nom du POI");
+      setName(selectedItem.properties?.name || "Nom du POI");
       setCategorie(selectedItem.properties?.categorie || "");
       setDescription(
         selectedItem.properties?.description || "Description du POI"
@@ -51,52 +51,25 @@ const AddPoiCard = ({
     }
   }, [selectedItem]);
 
-  const handleSave = async () => {
-    const poiToInsert = {
-      name: Name,
-      description,
-      env_id: envId,
-      coordinates: [],
+  const handleSave = () => {
+    const updatedItem = {
+      ...selectedItem,
+      properties: {
+        ...selectedItem.properties,
+        name,
+        categorie,
+        description,
+        id: 0,
+      },
     };
 
-    console.log(poiToInsert);
-    try {
-      const response = await fetch("http://localhost:3000/pois", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(poiToInsert),
-      });
+    handleSaveItem(updatedItem);
+    setName("");
+    setCategorie("");
+    setDescription("");
+    toast.success("PoI ajoute");
 
-      if (!response.ok) {
-        throw new Error("Failed to insert PoI");
-      }
-
-      const insertedPoi = await response.json();
-
-      const updatedItem = {
-        ...selectedItem,
-        properties: {
-          ...selectedItem.properties,
-          Name,
-          categorie,
-          description,
-          id: insertedPoi.id,
-        },
-      };
-
-      handleSaveItem(updatedItem);
-      toast.success("PoI enregistré !");
-      setName("");
-      setCategorie("");
-      setDescription("");
-
-      console.log("Inserted PoI and updated GeoJSON item:", updatedItem);
-    } catch (error) {
-      console.error("PoI insert error:", error);
-      toast.error("Erreur lors de l'insertion du PoI");
-    }
+    console.log("Updated item:", updatedItem);
   };
 
   return (
