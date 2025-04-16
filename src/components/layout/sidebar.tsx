@@ -3,6 +3,8 @@ import { adminSidebarLinks, commercialSidebarLinks, SidebarLink } from "@/data/s
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import Link from "next/link";
+
 
 const Sidebar =  ({ userRole }: { userRole: string }) => {
   const pathname = usePathname();
@@ -43,6 +45,7 @@ const Sidebar =  ({ userRole }: { userRole: string }) => {
                         width={260}
                         height={50}
                       />
+
             </div>
           )}
 
@@ -50,9 +53,9 @@ const Sidebar =  ({ userRole }: { userRole: string }) => {
           <link.Icon className="text-white w-8 h-8 lg:scale-50 xl:scale-75" />
 
           {/* Link */}
-          <a href={link.href} className="hover:text-black">
-            {link.name}
-          </a>
+          <Link href={link.href} className="hover:text-black">
+          {link.name}
+          </Link>
         </motion.div>
       ))}
     </div>

@@ -76,12 +76,18 @@ const formSchema = z.object({
 
 // Map your form types to user types
 const userTypeMap = {
-  "admin": 1,
-  "commercial": 2,
-  "decidor": 3
+  "admin": 2,
+  "commercial": 3,
+  "decidor": 4,
+  "aidant": 5,
+  "client": 6,
 };
 
-export function UserForm() {
+interface UserFormProps {
+  userTypes: { id: string; label: string }[]; // Define the structure of the user types
+}
+
+export function UserForm({ userTypes }: UserFormProps) {
   // Form state
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -112,11 +118,11 @@ export function UserForm() {
     setIsSubmitting(true);
     setSubmitError(null);
     setSubmitSuccess(false);
-    
+
     try {
       // Format the date as YYYY-MM-DD
-      const formattedDate = values.birth_date.toISOString().split('T')[0];
-      
+      const formattedDate = values.birth_date.toISOString().split("T")[0];
+
       // Prepare data according to your backend API structure
       const userData = {
         firstName: values.first_name,
@@ -128,33 +134,34 @@ export function UserForm() {
         birthDate: formattedDate,
         sex: values.sex,
         city: values.city,
-        street: values.street
+        street: values.street,
       };
 
       // Make the API call to create user
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, { 
-        method: 'POST',
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(userData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create user');
+        throw new Error(errorData.message || "Failed to create user");
       }
 
       const data = await response.json();
-      console.log('User created successfully:', data);
+      console.log("User created successfully:", data);
       setSubmitSuccess(true);
-      
+
       // Optional: Reset the form after successful submission
       form.reset();
-      
     } catch (error) {
-      console.error('Error creating user:', error);
-      setSubmitError(error instanceof Error ? error.message : 'Une erreur s\'est produite');
+      console.error("Error creating user:", error);
+      setSubmitError(
+        error instanceof Error ? error.message : "Une erreur s'est produite"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -368,26 +375,29 @@ export function UserForm() {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="userTypeId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-medium">Type</FormLabel>
-                    <FormControl>
-                      <select
-                        className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
-                        {...field}>
-                        <option value="">Sélectionner un type</option>
-                        <option value="admin">Admin</option>
-                        <option value="commercial">Commercial</option>
-                        <option value="decidor">Décideur</option>
-                      </select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="userTypeId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700 font-medium">Type</FormLabel>
+                  <FormControl>
+                    <select
+                      className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
+                      {...field}
+                    >
+                      <option value="">Sélectionner un type</option>
+                      {userTypes.map((type) => (
+                        <option key={type.id} value={type.id}>
+                          {type.label}
+                        </option>
+                      ))}
+                    </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
               {/* Empty div to align with "Adresse" in the first column */}
               <div></div>
