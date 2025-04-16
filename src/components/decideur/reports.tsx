@@ -38,12 +38,12 @@ const Reports = () => {
 
   // Données des rapports
   const reports = [
-    { id: 1, title: "Analyse sur les dispositifs", category: "Sécurité", objective: "Amélioration", icon: "/assets/securite.png", iconBgColor: "bg-cyan-100" },
-    { id: 2, title: "Performance commerciale", category: "Performance", objective: "Suivi", icon: "/assets/moneyy.png", iconBgColor: "bg-pink-100" },
-    { id: 3, title: "Utilisation du système", category: "Business", objective: "Stratégie", icon: "/assets/strategey.png", iconBgColor: "bg-yellow-100" }
+    { id: 1, title: "Analyse des dispositifs", category: "Sécurité", objective: "Amélioration", icon: "/assets/securite.png", iconBgColor: "bg-cyan-100" },
+    { id: 2, title: "Performance commerciale", category: "Business", objective: "Startégie", icon: "/assets/moneyy.png", iconBgColor: "bg-pink-100" },
+    { id: 3, title: "Utilisation du système", category: "Performance", objective: "Suivie", icon: "/assets/strategey.png", iconBgColor: "bg-yellow-100" }
   ];
 
-  const allReports = [...Array(10)].map((_, index) => (
+  const allReports = [...Array(3)].map((_, index) => (
     index < 3 ? reports[index] : {
       id: index + 1,
       title: `Rapport ${index + 1}`,
