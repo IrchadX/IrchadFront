@@ -12,7 +12,6 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -26,7 +25,7 @@ export default function Login() {
     console.log("Attempting login with:", { email });
 
     try {
-      const apiUrl = "http://localhost:3000/auth";
+      const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth`;
       console.log("Sending request to:", apiUrl);
 
       const response = await fetch(apiUrl, {
@@ -70,7 +69,7 @@ export default function Login() {
       // }
 
       console.log("Login successful, redirecting...");
-      router.push("/");
+      router.push("/admin/users");
     } catch (err) {
       console.error("Login error:", err);
       setError(err.message || "Something went wrong. Please try again.");
