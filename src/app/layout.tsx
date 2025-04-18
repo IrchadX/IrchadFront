@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
-import Sidebar from "@/components/layout/sidebar";
+import Sidebar from "@/components/layout/decideursidebar";
 import Header from "@/components/layout/header";
 
 const futura = localFont({
