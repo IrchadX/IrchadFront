@@ -18,6 +18,12 @@ const Header = () => {
       return "Dispositifs";
     } else if (pathname.startsWith("/admin/settings")) {
       return "Paramètres";
+    } else if (pathname.startsWith("/commercial/clients")) {
+      return "Gestion des clients";
+    } else if (pathname.startsWith("/commercial/sales")) {
+      return "Gestion des ventes";
+    } else if (pathname.startsWith("/commercial/offers")) {
+      return "Offres";
     }
     return "Décideur";
   };

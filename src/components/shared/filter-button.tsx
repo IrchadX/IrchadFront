@@ -48,7 +48,7 @@ const FilterButton = ({
   };
 
   // Count total active filters
-  const activeFilterCount = Object.values(filters).reduce(
+  const activeFilterCount = Object.values(filters || {}).reduce(
     (count, filterValues) => count + filterValues.length,
     0
   );
