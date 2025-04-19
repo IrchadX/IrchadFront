@@ -46,29 +46,60 @@ export default function Login() {
     hover: { scale: 1.05 },
   };
 
+  interface LoginResponse {
+    access_token: string;
+    user: {
+      id: string;
+      email: string;
+      role: string;
+    };
+    message?: string;
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        credentials: "include",
-        mode: "cors",
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+          credentials: "include", // This is crucial for cookies
+          mode: "cors",
+        }
+      );
 
-      const data = await response.json();
-      if (!response.ok)
+      const data: LoginResponse = await response.json();
+
+      if (!response.ok) {
         throw new Error(data.message || "Authentication failed");
+      }
 
-      localStorage.setItem("accessToken", data.access_token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      router.push("/admin/users");
+      const user = data.user;
+
+      const safeUserData = {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      };
+
+      sessionStorage.setItem("user", JSON.stringify(safeUserData));
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      console.log(user.role);
+      router.push(`/${user.role}`);
     } catch (err: any) {
-      setError(err.message || "Something went wrong. Please try again.");
+      if (err instanceof SyntaxError) {
+        setError("Invalid server response");
+      } else if (err.message.includes("Failed to fetch")) {
+        setError("Network error - please check your connection");
+      } else {
+        setError(err.message || "Something went wrong. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -174,7 +205,6 @@ export default function Login() {
             variants={itemVariants}
             whileHover="hover"
             whileTap="tap"
-            variants={buttonVariants}
             type="submit"
             className="w-full font-futura font-medium bg-main p-[12px] text-white rounded-[12px] text-[20px]"
             disabled={isLoading}>

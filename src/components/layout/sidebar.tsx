@@ -5,14 +5,48 @@ import {
   SidebarLink,
 } from "@/data/sidebarLinks";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { decideurSidebarLinks } from "@/data/sidebarLinks";
 
-const Sidebar = ({ userRole }: { userRole: string }) => {
+const Sidebar = () => {
+  const router = useRouter();
+  // Get user data from sessionStorage
+  const userData =
+    typeof window !== "undefined"
+      ? JSON.parse(sessionStorage.getItem("user") || "{}")
+      : null;
+
+  const userRole = userData?.role || "guest"; // Default to 'guest' if not logged in
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith("/auth");
+
+  const handleSignOut = async () => {
+    try {
+      // Call your logout API endpoint
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/logout`,
+        {
+          method: "POST",
+          credentials: "include", // Important for cookie-based auth
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Logout failed");
+      }
+
+      // Clear client-side storage
+      sessionStorage.removeItem("user");
+
+      // Redirect to login page
+      router.push("/auth/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Optionally show error to user
+    }
+  };
 
   const sidebarLinks: SidebarLink[] =
     userRole === "admin"
@@ -70,15 +104,17 @@ const Sidebar = ({ userRole }: { userRole: string }) => {
             {/* Logout Section */}
             <motion.div className="h-[40%] flex flex-col items-center justify-end w-full">
               <div className="flex flex-col border-t-border border-t-[1px] py-6 mx-auto w-full">
-                <div className="flex gap-2 mx-auto">
+                <button
+                  onClick={handleSignOut}
+                  className="flex gap-2 mx-auto hover:opacity-80 transition-opacity">
                   <Image
                     src="/assets/layout/logout.svg"
                     width={20}
                     height={20}
-                    alt=""
+                    alt="Logout"
                   />
                   <p>Se déconnecter</p>
-                </div>
+                </button>
               </div>
             </motion.div>
           </div>
