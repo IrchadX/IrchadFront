@@ -12,7 +12,7 @@ export default function AuthLayout({
 antialiased font-montserrat bg-white`}>
       <div className="flex min-h-screen">
         <div className=" h-screen overflow-hidden sticky top-0">
-          <Sidebar userRole="commercial" />
+          <Sidebar />
         </div>
 
         <div className="flex-1 flex flex-col px-8 xl:px-10">
