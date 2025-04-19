@@ -1,25 +1,12 @@
 "use client";
-import {
-  adminSidebarLinks,
-  commercialSidebarLinks,
-  SidebarLink,
-} from "@/data/sidebarLinks";
+import { decideurSidebarLinks } from "@/data/sidebarLinks";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { decideurSidebarLinks } from "@/data/sidebarLinks";
 
-const Sidebar = ({ userRole }: { userRole: string }) => {
+const Sidebar = () => {
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith("/auth");
-
-  const sidebarLinks: SidebarLink[] =
-    userRole === "admin"
-      ? adminSidebarLinks
-      : userRole === "commercial"
-      ? commercialSidebarLinks
-      : decideurSidebarLinks;
 
   return (
     <>
@@ -39,7 +26,7 @@ const Sidebar = ({ userRole }: { userRole: string }) => {
 
             {/* Sidebar Links */}
             <div className="w-full h-[45%] flex flex-col justify-between items-center">
-              {sidebarLinks.map((link, index) => (
+              {decideurSidebarLinks.map((link, index) => (
                 <motion.div
                   key={index}
                   whileHover={{ scale: 1.05 }}
@@ -56,19 +43,25 @@ const Sidebar = ({ userRole }: { userRole: string }) => {
                     </div>
                   )}
 
-                  {/* Render React Icon Instead of Image */}
-                  <link.Icon className="text-white w-8 h-8 lg:scale-50 xl:scale-75" />
-
-                  {/* Link */}
-                  <Link href={link.href} className="hover:text-black">
+                  {/* Link Icon and Name */}
+                  <Image
+                    src={link.iconLink}
+                    width={30}
+                    height={40}
+                    alt=""
+                    className="lg:scale-50 xl:scale-75"
+                  />
+                  <a href={link.href} className="hover:text-black">
                     {link.name}
-                  </Link>
+                  </a>
                 </motion.div>
               ))}
             </div>
 
             {/* Logout Section */}
-            <motion.div className="h-[40%] flex flex-col items-center justify-end w-full">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="h-[40%] flex flex-col items-center justify-end w-full">
               <div className="flex flex-col border-t-border border-t-[1px] py-6 mx-auto w-full">
                 <div className="flex gap-2 mx-auto">
                   <Image

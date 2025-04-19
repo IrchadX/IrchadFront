@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
-import Sidebar from "@/components/layout/sidebar";
+import Sidebar from "@/components/layout/decideursidebar";
 import Header from "@/components/layout/header";
 
 const futura = localFont({
@@ -16,7 +16,7 @@ const montserrat = Montserrat({
 });
 
 //user role is specified here for testing purposes
-const userRole = "commercial";
+const userRole = "admin";
 
 export const metadata: Metadata = {
   title: "Irchad",
@@ -32,16 +32,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${futura.variable} ${montserrat.variable} antialiased font-montserrat bg-white`}>
-        <div className="flex min-h-screen">
-          <div className=" h-screen overflow-hidden sticky top-0">
-            <Sidebar userRole={userRole} />
-          </div>
-
-          <div className="flex-1 flex flex-col px-8 xl:px-10">
-            <Header />
-            <main className="flex-1 overflow-y-auto ">{children}</main>
-          </div>
-        </div>
+        <div className="flex min-h-screen">{children}</div>
       </body>
     </html>
   );
