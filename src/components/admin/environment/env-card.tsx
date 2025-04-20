@@ -1,11 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface EnvironmentCardProps {
   title: string;
   address: string;
   id: string;
   imgSrc: string;
+  onDelete: (id: string) => Promise<void>; // Add onDelete callback prop
 }
 
 const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
@@ -13,16 +16,29 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
   address,
   id,
   imgSrc,
+  onDelete,
 }) => {
+  const handleDelete = async () => {
+    try {
+      if (confirm("Êtes-vous sûr de vouloir supprimer cet environnement ?")) {
+        await onDelete(id);
+        toast.success("Environnement supprimé avec succès !");
+      }
+    } catch (error) {
+      toast.error("Erreur lors de la suppression de l'environnement");
+      console.error("Delete error:", error);
+    }
+  };
+
   return (
     <div
       key={id}
       className="lg:w-[230px] xl:w-[300px] 2xl:w-[280px] p-3 border-[1px] border-black-10 bg-main-5 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center justify-center">
       <div className="flex w-full">
-        <h3 className="font-bold w-[80%] text-start text-md xl:text-lg  text-black">
+        <h3 className="font-bold w-[80%] text-start text-md xl:text-lg text-black">
           {title}
         </h3>
-        <div className="w-[10%]">
+        <div className="w-[10%] cursor-pointer" onClick={handleDelete}>
           <Image
             src="/assets/shared/delete.png"
             width={23}
@@ -44,7 +60,7 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
       </div>
       <p className="w-full text-start text-sm text-black-30">{address}</p>
       <Image
-        src={imgSrc}
+        src="/assets/admin/environments/env-map.png"
         width={320}
         height={100}
         alt="env image"

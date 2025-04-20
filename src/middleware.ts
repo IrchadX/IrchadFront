@@ -19,13 +19,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // If not logged in, redirect to login
-  if (!accessToken) {
-    const loginUrl = new URL("/auth/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
   // Role-based redirect logic
   if (pathname === "/admin") {
     return NextResponse.redirect(new URL("/admin/environments", request.url));

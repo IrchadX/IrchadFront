@@ -16,63 +16,39 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
-    // For debugging
-    console.log("Attempting login with:", { email });
-
     try {
-      const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth`;
-      console.log("Sending request to:", apiUrl);
-
-      const response = await fetch(apiUrl, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-
         credentials: "include",
-        mode: "cors",
       });
 
-      console.log("Response status:", response.status);
-
-      let data;
-      try {
-        data = await response.json();
-        console.log("Response data:", data);
-      } catch (jsonError) {
-        console.error("Failed to parse JSON response:", jsonError);
-        const textResponse = await response.text();
-        console.log("Raw response:", textResponse);
-        throw new Error("Invalid response format from server");
-      }
-
       if (!response.ok) {
-        throw new Error(
-          data.message || `Error ${response.status}: Authentication failed`
-        );
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Authentication failed");
       }
 
-      localStorage.setItem("accessToken", data.access_token);
-      console.log("Token stored successfully");
+      const data = await response.json();
 
-      localStorage.setItem("user", JSON.stringify(data.user));
-      console.log("User data stored successfully");
+      localStorage.setItem(
+        "uiPreferences",
+        JSON.stringify({
+          darkMode: false,
+        })
+      );
 
-      // if (rememberMe) {
-      //   localStorage.setItem("rememberUser", "true");
-      // }
-
-      console.log("Login successful, redirecting...");
-      router.push("/admin/users");
+      router.push("/admin/environments");
     } catch (err) {
+      setError(err.message || "Login failed. Please try again.");
       console.error("Login error:", err);
-      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }

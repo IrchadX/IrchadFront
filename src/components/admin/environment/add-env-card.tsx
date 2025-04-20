@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -15,19 +15,28 @@ import Title from "@/components/shared/title";
 import { TextArea } from "@/components/shared/text-area";
 import Image from "next/image";
 
-interface AddEnvCardProps {
+interface User {
+  id: number;
+  first_name: string;
+  family_name: string;
+  email: string;
+}
+
+export interface AddEnvCardProps {
   showValues: boolean;
   environmentInfo: {
     name: string;
+    description: string;
     address: string;
     isPublic: boolean;
-    userId: string | null;
+    userId: number | null;
   };
   setEnvironmentInfo: (info: {
     name: string;
+    description: string;
     address: string;
     isPublic: boolean;
-    userId: string | null;
+    userId: number | null;
   }) => void;
 }
 
@@ -36,6 +45,39 @@ const AddEnvCard = ({
   environmentInfo,
   setEnvironmentInfo,
 }: AddEnvCardProps) => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/users");
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        setUsers(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+        console.error("Error fetching users:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  // Function to get the full name of a user by ID
+  const getUserNameById = (userId: number | null) => {
+    if (!userId) return "Aucun utilisateur sélectionné";
+    const user = users.find((u) => u.id === userId);
+    return user
+      ? `${user.first_name} ${user.family_name}`
+      : "Utilisateur inconnu";
+  };
+
   return (
     <div className="p-6 bg-white rounded-lg shadow-md max-w-md mx-auto border-main-40 border">
       <Title text="Informations" lineLength="0" />
@@ -47,10 +89,28 @@ const AddEnvCard = ({
         ) : (
           <Input
             id="nom"
-            placeholder="Nom de l’envrionnement..."
+            placeholder="Nom de l'environnement..."
             value={environmentInfo.name}
             onChange={(e) =>
               setEnvironmentInfo({ ...environmentInfo, name: e.target.value })
+            }
+          />
+        )}
+      </div>
+      <div className="mb-4 gap-2">
+        <Label htmlFor="nom">Description</Label>
+        {showValues ? (
+          <p className="mt-1 text-gray-700">{environmentInfo.description}</p>
+        ) : (
+          <Input
+            id="description"
+            placeholder="Description de l'environnement..."
+            value={environmentInfo.description}
+            onChange={(e) =>
+              setEnvironmentInfo({
+                ...environmentInfo,
+                description: e.target.value,
+              })
             }
           />
         )}
@@ -64,7 +124,7 @@ const AddEnvCard = ({
         ) : (
           <TextArea
             id="adresse"
-            placeholder="Adresse de l’environnement"
+            placeholder="Adresse de l'environnement"
             className="mt-1"
             value={environmentInfo.address}
             onChange={(e) =>
@@ -88,19 +148,17 @@ const AddEnvCard = ({
         />
         <div className="flex flex-col items-start justify-start">
           <Label>Visibilité</Label>
-          <p className="mt-1 text-gray-700">
-            {environmentInfo.isPublic ? "Public" : "Privé"}
-          </p>
+          <p className="mt-1 text-gray-700">Public</p>
         </div>
         <div className="flex items-center gap-2 mt-1">
           <Switch
             id="visibility"
-            checked={!environmentInfo.isPublic} // Switch is "on" when private
+            checked={environmentInfo.isPublic}
             onCheckedChange={(checked) =>
               setEnvironmentInfo({
                 ...environmentInfo,
-                isPublic: !checked, // Invert the checked value for isPublic
-                userId: checked ? null : environmentInfo.userId, // Reset userId if public
+                isPublic: checked,
+                userId: checked ? null : environmentInfo.userId,
               })
             }
           />
@@ -113,23 +171,38 @@ const AddEnvCard = ({
           <Label htmlFor="utilisateur">Utilisateur</Label>
           {showValues ? (
             <p className="mt-1 text-gray-700">
-              {environmentInfo.userId || "Aucun utilisateur sélectionné"}
+              {getUserNameById(environmentInfo.userId)}
             </p>
           ) : (
-            <Select
-              onValueChange={(value) =>
-                setEnvironmentInfo({ ...environmentInfo, userId: value })
-              }
-              value={environmentInfo.userId || ""}>
-              <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Sélectionnez un utilisateur" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="user1">Utilisateur 1</SelectItem>
-                <SelectItem value="user2">Utilisateur 2</SelectItem>
-                <SelectItem value="user3">Utilisateur 3</SelectItem>
-              </SelectContent>
-            </Select>
+            <>
+              {loading ? (
+                <p className="mt-1 text-gray-700">
+                  Chargement des utilisateurs...
+                </p>
+              ) : error ? (
+                <p className="mt-1 text-red-500">Erreur: {error}</p>
+              ) : (
+                <Select
+                  onValueChange={(value) =>
+                    setEnvironmentInfo({
+                      ...environmentInfo,
+                      userId: value ? parseInt(value) : null,
+                    })
+                  }
+                  value={environmentInfo.userId?.toString() || ""}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Sélectionnez un utilisateur" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {users.map((user) => (
+                      <SelectItem key={user.id} value={user.id.toString()}>
+                        {`${user.first_name} ${user.family_name}`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </>
           )}
         </div>
       )}
