@@ -183,11 +183,6 @@ export default function Page() {
             filterSections={filterSections}
           />
         </div>
-        <div className="flex justify-between items-start">
-          <Link href={`/commercial/clients/add_client`}>
-            <ButtonSecondary title="Ajouter" onClick={() => {}} />
-          </Link>
-        </div>
       </div>
 
     
