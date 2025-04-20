@@ -1,59 +1,12 @@
 "use client";
-import {
-  adminSidebarLinks,
-  commercialSidebarLinks,
-  SidebarLink,
-} from "@/data/sidebarLinks";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import Link from "next/link";
 import { decideurSidebarLinks } from "@/data/sidebarLinks";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 
 const Sidebar = () => {
-  const router = useRouter();
-  // Get user data from sessionStorage
-  const userData =
-    typeof window !== "undefined"
-      ? JSON.parse(sessionStorage.getItem("user") || "{}")
-      : null;
-
-  const userRole = userData?.role || "guest"; // Default to 'guest' if not logged in
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith("/auth");
-
-  const handleSignOut = async () => {
-    try {
-      // Call your logout API endpoint
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/logout`,
-        {
-          method: "POST",
-          credentials: "include", // Important for cookie-based auth
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Logout failed");
-      }
-
-      // Clear client-side storage
-      sessionStorage.removeItem("user");
-
-      // Redirect to login page
-      router.push("/auth/login");
-    } catch (error) {
-      console.error("Logout error:", error);
-      // Optionally show error to user
-    }
-  };
-
-  const sidebarLinks: SidebarLink[] =
-    userRole === "admin"
-      ? adminSidebarLinks
-      : userRole === "commercial"
-      ? commercialSidebarLinks
-      : decideurSidebarLinks;
 
   return (
     <>
@@ -73,7 +26,7 @@ const Sidebar = () => {
 
             {/* Sidebar Links */}
             <div className="w-full h-[45%] flex flex-col justify-between items-center">
-              {sidebarLinks.map((link, index) => (
+              {decideurSidebarLinks.map((link, index) => (
                 <motion.div
                   key={index}
                   whileHover={{ scale: 1.05 }}
@@ -90,31 +43,35 @@ const Sidebar = () => {
                     </div>
                   )}
 
-                  {/* Render React Icon Instead of Image */}
-                  <link.Icon className="text-white w-8 h-8 lg:scale-50 xl:scale-75" />
-
-                  {/* Link */}
-                  <Link href={link.href} className="hover:text-black">
+                  {/* Link Icon and Name */}
+                  <Image
+                    src={link.iconLink}
+                    width={30}
+                    height={40}
+                    alt=""
+                    className="lg:scale-50 xl:scale-75"
+                  />
+                  <a href={link.href} className="hover:text-black">
                     {link.name}
-                  </Link>
+                  </a>
                 </motion.div>
               ))}
             </div>
 
             {/* Logout Section */}
-            <motion.div className="h-[40%] flex flex-col items-center justify-end w-full">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="h-[40%] flex flex-col items-center justify-end w-full">
               <div className="flex flex-col border-t-border border-t-[1px] py-6 mx-auto w-full">
-                <button
-                  onClick={handleSignOut}
-                  className="flex gap-2 mx-auto hover:opacity-80 transition-opacity">
+                <div className="flex gap-2 mx-auto">
                   <Image
                     src="/assets/layout/logout.svg"
                     width={20}
                     height={20}
-                    alt="Logout"
+                    alt=""
                   />
                   <p>Se déconnecter</p>
-                </button>
+                </div>
               </div>
             </motion.div>
           </div>

@@ -11,6 +11,10 @@ interface FilterSection {
 
 export interface Filters {
   visibility: string[];
+  sex: string[];
+  userType: string[];
+  city: string[];
+  ageGroup: string[];
 }
 
 interface FilterButtonProps {
@@ -21,7 +25,13 @@ interface FilterButtonProps {
 }
 
 const FilterButton = ({
-  filters,
+  filters = {
+    visibility: [],
+    sex: [],
+    userType: [],
+    city: [],
+    ageGroup: [],
+  },
   setFilters,
   onApply,
   filterSections,
@@ -46,9 +56,11 @@ const FilterButton = ({
 
   const clearFilters = () => {
     setFilters({
-      city: [],
-      userType: [],
       visibility: [],
+      sex: [],
+      userType: [],
+      city: [],
+      ageGroup: [],
     });
   };
 
@@ -123,7 +135,7 @@ const FilterButton = ({
               <button
                 className="flex-1 bg-main/10 text-gray-800 rounded px-3 py-1 text-sm hover:bg-gray-300"
                 onClick={clearFilters}>
-                Effacer
+                Clear
               </button>
               <button
                 className="flex-1 bg-main text-white rounded px-3 py-1 text-sm hover:bg-blue-600"
@@ -131,7 +143,7 @@ const FilterButton = ({
                   setIsOpen(false);
                   onApply(filters);
                 }}>
-                Appliquer
+                Apply
               </button>
             </div>
           </motion.div>

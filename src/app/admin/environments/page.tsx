@@ -7,6 +7,7 @@ import SearchInput from "@/components/shared/search-input";
 import FilterButton from "@/components/shared/filter-button";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Environment {
   id: string;
@@ -24,6 +25,7 @@ interface Filters {
 }
 
 const Page = () => {
+  const router = useRouter();
   const [searchValue, setSearchValue] = useState("");
   const [allEnvironments, setAllEnvironments] = useState<Environment[]>([]);
   const [filteredEnvironments, setFilteredEnvironments] = useState<
@@ -49,18 +51,38 @@ const Page = () => {
       setIsLoading(true);
       try {
         const params = new URLSearchParams();
-
         filters.visibility.forEach((v) => params.append("visibility", v));
         if (searchValue) params.set("search", searchValue);
 
         const response = await fetch(
-          `http://localhost:3000/environments?${params.toString()}`
+          `${
+            process.env.NEXT_PUBLIC_API_URL
+          }/environments?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
         );
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            router.push("/auth/login");
+            return;
+          }
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data: Environment[] = await response.json();
         setAllEnvironments(data);
         setFilteredEnvironments(data);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error fetching environments:", error);
+        if (error.message.includes("401")) {
+          router.push("/auth/login");
+        }
       } finally {
         setIsLoading(false);
       }
