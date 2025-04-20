@@ -31,8 +31,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${futura.variable} ${montserrat.variable} antialiased font-montserrat bg-white`}>
-        <div className="flex min-h-screen">{children}</div>
+        className={`${futura.variable} ${montserrat.variable} antialiased font-montserrat bg-white w-screen`}>
+        <div className="flex min-h-screen w-full">{children}</div>
       </body>
     </html>
   );

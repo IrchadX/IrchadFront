@@ -111,7 +111,14 @@ const Page = () => {
       const fetchEnvironmentData = async () => {
         try {
           const response = await fetch(
-            `http://localhost:3000/environments/${id}`
+            `${process.env.NEXT_PUBLIC_API_URL}/environments/${id}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            }
           );
           if (!response.ok) {
             throw new Error("Failed to fetch environment");
@@ -246,13 +253,17 @@ const Page = () => {
         },
       };
 
-      const response = await fetch(`http://localhost:3000/environments/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToExport),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/environments/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(dataToExport),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -361,7 +372,7 @@ const Page = () => {
   }, [isPoiFormOpen, isZoneFormOpen]);
 
   return (
-    <div className="grid grid-cols-[2fr,1fr] gap-4">
+    <div className="grid grid-cols-[2fr,1fr] gap-4 w-full">
       {/* Left Column */}
       <div className="col-span-1">
         {/* Title and Upload/Save Button Row */}
