@@ -17,18 +17,23 @@ import { poiCategories } from "@/data/poiCategories";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-interface AddPoiCardProps {
+export interface AddPoiCardProps {
   handleSaveItem: (item: any) => void;
+  setSelectedItem: (item: any) => void;
   showValues: boolean;
   selectedItem: any;
+  envId: number;
 }
 
 const AddPoiCard = ({
   showValues,
   selectedItem,
   handleSaveItem,
+  envId,
 }: AddPoiCardProps) => {
-  const [nom, setNom] = useState(selectedItem?.properties?.nom || "Nom du POI");
+  const [Name, setName] = useState(
+    selectedItem?.properties?.Name || "Name du POI"
+  );
   const [categorie, setCategorie] = useState(
     selectedItem?.properties?.categorie || ""
   );
@@ -38,7 +43,7 @@ const AddPoiCard = ({
 
   useEffect(() => {
     if (selectedItem) {
-      setNom(selectedItem.properties?.nom || "Nom du POI");
+      setName(selectedItem.properties?.name || "Nom du POI");
       setCategorie(selectedItem.properties?.categorie || "");
       setDescription(
         selectedItem.properties?.description || "Description du POI"
@@ -51,14 +56,15 @@ const AddPoiCard = ({
       ...selectedItem,
       properties: {
         ...selectedItem.properties,
-        nom,
+        name,
         categorie,
         description,
+        id: 0,
       },
     };
 
     handleSaveItem(updatedItem);
-    setNom("");
+    setName("");
     setCategorie("");
     setDescription("");
     toast.success("PoI ajoute");
@@ -72,17 +78,17 @@ const AddPoiCard = ({
 
       <Title text="Créer un Point d'Intérêt" lineLength="0" />
 
-      {/* Nom */}
+      {/* Name */}
       <div className="mb-4 gap-2">
-        <Label htmlFor="nom">Nom</Label>
+        <Label htmlFor="Name">Name</Label>
         {showValues ? (
-          <p className="mt-1 text-gray-700">{nom}</p>
+          <p className="mt-1 text-gray-700">{Name}</p>
         ) : (
           <Input
-            id="nom"
-            placeholder="Nom du POI..."
-            value={nom}
-            onChange={(e) => setNom(e.target.value)}
+            id="Name"
+            placeholder="Name du POI..."
+            value={Name}
+            onChange={(e) => setName(e.target.value)}
             className="bg-white"
           />
         )}
@@ -131,7 +137,7 @@ const AddPoiCard = ({
       <div className="items-end flex justify-end">
         {!showValues && (
           <Button variant="secondary" onClick={handleSave}>
-            Enregistrer
+            Ajouter le PoI
           </Button>
         )}
       </div>

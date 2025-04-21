@@ -1,4 +1,3 @@
-// FilterButton.tsx
 "use client";
 import * as React from "react";
 import { IoFilter } from "react-icons/io5";
@@ -11,6 +10,7 @@ interface FilterSection {
 }
 
 export interface Filters {
+  visibility: string[];
   sex: string[];
   userType: string[];
   city: string[];
@@ -19,13 +19,14 @@ export interface Filters {
 
 interface FilterButtonProps {
   filters: Filters;
-  setFilters: (filters: Filters) => void;
-  onApply: () => void;
+  setFilters: React.Dispatch<React.SetStateAction<Filters>>;
+  onApply: (newFilters: Filters) => void;
   filterSections: FilterSection[];
 }
 
 const FilterButton = ({
   filters = {
+    visibility: [],
     sex: [],
     userType: [],
     city: [],
@@ -39,22 +40,23 @@ const FilterButton = ({
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleOptionClick = (sectionKey: keyof Filters, option: string) => {
-    setFilters({
-      ...filters,
-      [sectionKey]: filters[sectionKey].includes(option)
-        ? filters[sectionKey].filter((item) => item !== option)
-        : [...filters[sectionKey], option],
-    });
+    setFilters((prev) => ({
+      ...prev,
+      [sectionKey]: prev[sectionKey].includes(option)
+        ? prev[sectionKey].filter((item) => item !== option)
+        : [...prev[sectionKey], option],
+    }));
   };
 
   // Count total active filters
-  const activeFilterCount = Object.values(filters || {}).reduce(
+  const activeFilterCount = Object.values(filters).reduce(
     (count, filterValues) => count + filterValues.length,
     0
   );
 
   const clearFilters = () => {
     setFilters({
+      visibility: [],
       sex: [],
       userType: [],
       city: [],
@@ -139,7 +141,7 @@ const FilterButton = ({
                 className="flex-1 bg-main text-white rounded px-3 py-1 text-sm hover:bg-blue-600"
                 onClick={() => {
                   setIsOpen(false);
-                  onApply();
+                  onApply(filters);
                 }}>
                 Apply
               </button>
