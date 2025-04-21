@@ -7,15 +7,15 @@ const Header = () => {
   const isAuthRoute = pathname.startsWith("/auth");
 
   const getTitle = () => {
-    if (pathname.startsWith("/dashboard")) {
+    if (pathname.startsWith("/decideur/dashboard")) {
       return "Tableau de bord";
-    } else if (pathname.startsWith("/admin/users")) {
+    } else if (pathname.startsWith("/decideur/users")) {
       return "Gestion des utilisateurs";
-    } else if (pathname.startsWith("/admin/environment")) {
-      return "Gestion des environnements";
-    } else if (pathname.startsWith("/admin/devices")) {
-      return "Gestion des dispositifs";
-    } else if (pathname.startsWith("/admin/settings")) {
+    } else if (pathname.startsWith("/decideur/zones")) {
+      return "Fréquentation des zones";
+    } else if (pathname.startsWith("/decideur/rapports")) {
+      return "Rapports";
+    } else if (pathname.startsWith("/decideur/settings")) {
       return "Paramètres";
     }
     return "Décideur";
@@ -24,24 +24,26 @@ const Header = () => {
   return (
     <>
       {!isAuthRoute && (
-        <div className="z-50 bg-white py-6 xl:py-8 mb-4 border-b-[#E6EFF5] border-b-[1px] font-futura lg:text-2xl xl:text-3xl sticky top-0 w-full text-black  grid grid-cols-[90%,5%,5%]">
-          <div>{getTitle()}</div>
-          <Image
-            src="/assets/layout/notif.png"
-            width={50}
-            height={50}
-            alt=""
-            className="xl:scale-100 scale-75 mx-auto"
-          />{" "}
-          <Image
-            src="/assets/layout/avatar.svg"
-            width={50}
-            height={50}
-            alt=""
-            className="xl:scale-100 scale-75 mx-auto"
-          />{" "}
+        <div className="z-50 bg-white py-2 xl:py-3 mb-4 border-b border-[#E6EFF5] text-black font-futura sticky top-0 w-full flex items-center justify-between px-4 xl:px-8">
+          <div className="text-xl xl:text-2xl">{getTitle()}</div>
+          <div className="flex items-center gap-4">
+            <Image
+              src="/assets/layout/notif.png"
+              width={50}
+              height={50}
+              alt="Notification"
+              className="xl:scale-100 scale-75"
+            />
+            <Image
+              src="/assets/layout/avatar.svg"
+              width={50}
+              height={50}
+              alt="Avatar"
+              className="xl:scale-100 scale-75"
+            />
+          </div>
         </div>
-      )}{" "}
+      )}
     </>
   );
 };
