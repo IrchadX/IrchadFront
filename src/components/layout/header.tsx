@@ -1,5 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
+import { BiBell } from "react-icons/bi"; // BoxIcons (Outline)
 import Image from "next/image";
 
 const Header = () => {

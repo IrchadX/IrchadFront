@@ -6,13 +6,14 @@ import Title from "@/components/shared/title";
 import SearchInput from "@/components/shared/search-input";
 import FilterButton from "@/components/shared/filter-button";
 import { useState } from "react";
+import Link from "next/link";
 
 const Page = () => {
   const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   return (
-    <div>
+    <div className="">
       <div className="flex gap-2">
         <SearchInput />
         <FilterButton
@@ -22,24 +23,28 @@ const Page = () => {
           placeholder="Filter"
         />
       </div>
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-start mt-4">
         <Title text="Environnements" lineLength="100px" />
-        <ButtonSecondary
-          title="Ajouter"
-          onClick={() => {
-            console.log("adding env");
-          }}
-        />
+        <Link href="/admin/environments/create_environment" passHref>
+          <ButtonSecondary
+            title="Ajouter"
+            onClick={() => {
+              console.log("Navigating to add environment page");
+            }}
+          />
+        </Link>
       </div>
       <EnvsList />
       <div className="flex justify-between items-center">
         <Title text="Types de Zones" lineLength="60px" />
-        <ButtonSecondary
-          title="Ajouter"
-          onClick={() => {
-            console.log("adding zone");
-          }}
-        />
+        <Link href="/admin/environments/create_environment" passHref>
+          <ButtonSecondary
+            title="Ajouter"
+            onClick={() => {
+              console.log("Navigating to add environment page");
+            }}
+          />
+        </Link>
       </div>{" "}
       <ZonesSwiper />
     </div>

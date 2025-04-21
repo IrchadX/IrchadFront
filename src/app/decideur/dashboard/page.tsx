@@ -3,11 +3,9 @@ import StatsCharts from "@/components/decideur/graphes";
 
 export default function DashboardPage() {
   return (
-    <div className="container mx-auto">      
+    <div className="container mx-auto">
       <KpiCards />
-      <StatsCharts  />
-
-      
+      <StatsCharts />
     </div>
   );
 }
