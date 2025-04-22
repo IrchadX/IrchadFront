@@ -90,7 +90,7 @@ export async function fetchAidantAndClientUsers(searchTerm = "", filters = {}) {
       street: user.street ?? "N/A",
       phone: user.phone_number,
       email: user.email,
-      userType: user.userType ?? "N/A",
+      userType: user.user_type.type ?? "N/A",
       registrationDate: new Date(user.created_at).toLocaleDateString(),
     }));
   } catch (error) {
