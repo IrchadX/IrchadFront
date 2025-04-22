@@ -1,3 +1,5 @@
+import {API_URL} from "@/config/api";
+
 export async function fetchSalesData(searchTerm = "", filters = {}) {
     try {
       const queryParams = new URLSearchParams();
@@ -10,10 +12,17 @@ export async function fetchSalesData(searchTerm = "", filters = {}) {
         }
       });
   
-      const requestUrl = `${process.env.NEXT_PUBLIC_API_URL}/sales/purchase-history?${queryParams.toString()}`;
+      const requestUrl = `${API_URL}/sales/purchase-history?${queryParams.toString()}`;
       console.log(`Fetching sales data from: ${requestUrl}`);
   
-      const response = await fetch(requestUrl);
+      // Fetch data from the API
+      const response = await fetch(requestUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // this is needed for the cookie to be sent
+      });
   
       if (!response.ok) {
         const errorText = await response.text();

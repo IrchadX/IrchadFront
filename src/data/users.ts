@@ -1,3 +1,5 @@
+import {API_URL} from "@/config/api";
+
 export async function fetchUsers(searchTerm = "", filters = {}) {
   try {
     const queryParams = new URLSearchParams();
@@ -11,7 +13,7 @@ export async function fetchUsers(searchTerm = "", filters = {}) {
     });
     
 
-    const requestUrl = `${process.env.NEXT_PUBLIC_API_URL}/users?${queryParams.toString()}`;
+    const requestUrl = `${API_URL}/users?${queryParams.toString()}`;
     console.log(`Making request to: ${requestUrl}`);
     
     const response = await fetch(requestUrl);
@@ -57,10 +59,16 @@ export async function fetchAidantAndClientUsers(searchTerm = "", filters = {}) {
       }
     });
 
-    const requestUrl = `${process.env.NEXT_PUBLIC_API_URL}/users/by-type?${queryParams.toString()}`;
+    const requestUrl = `${API_URL}/users/by-type?${queryParams.toString()}`;
     console.log(`Fetching aidant and malvoyant users from: ${requestUrl}`);
 
-    const response = await fetch(requestUrl);
+    const response = await fetch(requestUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // this is needed for the cookie to be sent
+    });
 
     if (!response.ok) {
       const errorText = await response.text();

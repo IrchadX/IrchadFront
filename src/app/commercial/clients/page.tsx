@@ -103,6 +103,7 @@ export default function Page() {
     userType: [],
     city: [],
     ageGroup: [],
+    visibility: [],
   });
 
   // Direct 1:1 mapping to match exactly what backend expects
@@ -191,7 +192,7 @@ export default function Page() {
         </div>
         <div className="flex justify-between items-start">
           <Link href={`/commercial/clients/add_client`}>
-            <ButtonSecondary title="Ajouter" onClick={() => {}} />
+            <ButtonSecondary title="Ajouter" onClick={() => {} } disabled={false}/>
           </Link>
         </div>
       </div>

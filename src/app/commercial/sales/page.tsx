@@ -7,7 +7,6 @@ import { DataTable } from "@/components/shared/data-table";
 import SearchInput from "@/components/shared/search-input";
 import FilterButton, { Filters } from "@/components/shared/filter-button";
 import { fetchSalesData } from "@/data/sales";
-import { ButtonSecondary } from "@/components/shared/secondary-button";
 
 const filterSections: {
   label: string;
@@ -97,6 +96,7 @@ export default function Page() {
     userType: [],
     city: [],
     ageGroup: [],
+    visibility: [],
   });
 
   // Direct 1:1 mapping to match exactly what backend expects

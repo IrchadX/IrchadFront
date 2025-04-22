@@ -1,9 +1,17 @@
+import {API_URL} from "../config/api";
+
 export async function fetchUserEnvironmentsWithPricing(userId: number) {
     try {
-      const requestUrl = `${process.env.NEXT_PUBLIC_API_URL}/offers/user-environments-pricing/${userId}`;
+      const requestUrl = `${API_URL}/offers/user-environments-pricing/${userId}`;
       console.log(`Fetching environments with pricing for user ID ${userId} from: ${requestUrl}`);
   
-      const response = await fetch(requestUrl);
+      const response = await fetch(requestUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // this is needed for the cookie to be sent
+      });
   
       if (!response.ok) {
         const errorText = await response.text();
@@ -23,10 +31,16 @@ export async function fetchUserEnvironmentsWithPricing(userId: number) {
 
   export async function fetchUserPublicEnvironmentsPricing(userId: number) {
     try { 
-      const requestUrl = `${process.env.NEXT_PUBLIC_API_URL}/offers/user-public-access/${userId}`;
+      const requestUrl = `${API_URL}/offers/user-public-access/${userId}`;
       console.log(`Fetching public environments pricing for user ID ${userId} from: ${requestUrl}`);
   
-      const response = await fetch(requestUrl);
+      const response = await fetch(requestUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // this is needed for the cookie to be sent
+      });
   
       if (!response.ok) {
         const errorText = await response.text();
@@ -47,10 +61,16 @@ export async function fetchUserEnvironmentsWithPricing(userId: number) {
   
   export async function fetchUserDevice(userId: number) {
     try {
-      const requestUrl = `${process.env.NEXT_PUBLIC_API_URL}/offers/user-device/${userId}`;
+      const requestUrl = `${API_URL}/offers/user-device/${userId}`;
       console.log(`Fetching device for user ID ${userId} from: ${requestUrl}`);
   
-      const response = await fetch(requestUrl);
+      const response = await fetch(requestUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // this is needed for the cookie to be sent
+      });
   
       if (!response.ok) {
         const errorText = await response.text();
