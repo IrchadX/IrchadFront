@@ -104,3 +104,32 @@ function calculateAge(birthDate: string): number {
   const today = new Date();
   return today.getFullYear() - birth.getFullYear();
 }
+
+export async function fetchUserByName(first_name: string, family_name : string) {
+  try {
+    const requestUrl = `${API_URL}/users/by-name/${first_name},${family_name}`;
+    console.log(`Fetching user by name from: ${requestUrl}`);
+
+    const response = await fetch(requestUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // this is needed for the cookie to be sent
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`API Error (${response.status}): ${errorText}`);
+      throw new Error(`API Error (${response.status}): ${errorText}`);
+    }
+
+    const user = await response.json();
+    console.log(`Received user by name:`, user);
+
+    return user;
+  } catch (error) {
+    console.error("Error fetching user by name:", error);
+    throw error;
+  }
+}

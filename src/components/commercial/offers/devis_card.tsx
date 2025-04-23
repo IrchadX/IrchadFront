@@ -1,10 +1,11 @@
-import { Button } from "@/components/shared/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/shared/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
-export function DevisCard() {
-  // You can replace this with your actual total calculation
-  const totalPrice = "00.00 DA"
+interface DevisCardProps {
+  totalPrice: string;
+}
 
+export function DevisCard({ totalPrice }: DevisCardProps) {
   return (
     <Card className="w-[350px] h-full">
       <CardHeader>
@@ -22,5 +23,5 @@ export function DevisCard() {
         <Button>Confirmer l'offre</Button>
       </CardFooter>
     </Card>
-  )
+  );
 }

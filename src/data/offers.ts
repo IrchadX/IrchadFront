@@ -96,28 +96,6 @@ export async function fetchUserEnvironmentsWithPricing(userId: number) {
     return totalEnvironmentsPrice + devicePrice + parseFloat(public_access);
   }
 
-  /*export async function fetchTotalPrice(userId: number): Promise<number> {
-    try {
-      // Fetch environments with pricing
-      const environments = await fetchUserEnvironmentsWithPricing(userId);
-  
-      // Fetch the user's device
-      const device = await fetchUserDevice(userId);
-
-      // Fetch public access pricing
-      const public_access = await fetchUserPublicEnvironmentsPricing(userId);
-  
-      // Calculate the total price
-      const totalPrice = await calculateTotalPrice(environments, device[0], public_access); 
-  
-      //console.log(`Total price for user ID ${userId}: ${totalPrice}`);
-      return public_access;
-    } catch (error) {
-      console.error(`Error fetching total price for user ID ${userId}:`, error);
-      throw error;
-    }
-  }*/
-
     export async function fetchTotalPrice(userId: number): Promise<number> {
       try {
         // Fetch environments with pricing
@@ -143,5 +121,39 @@ export async function fetchUserEnvironmentsWithPricing(userId: number) {
       } catch (error) {
         console.error(`Error fetching total price for user ID ${userId}:`, error);
         return 0; // Return 0 in case of an error
+      }
+    }
+
+    export async function estimateTotalPrice(
+      environments: { surface: number }[],
+      includePublicAccess: boolean,
+      device: { price?: number },
+    ): Promise<number> {
+      try {
+        const requestUrl = `${API_URL}/offers/estimate-total-price`;
+        console.log(`Estimating total price from: ${requestUrl}`);
+  
+        const response = await fetch(requestUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // this is needed for the cookie to be sent
+          body: JSON.stringify({ environments, includePublicAccess, device }),
+        });
+  
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`API Error (${response.status}): ${errorText}`);
+          throw new Error(`API Error (${response.status}): ${errorText}`);
+        }
+  
+        const totalPrice = await response.json();
+        console.log(`Estimated total price: ${totalPrice}`);
+  
+        return totalPrice;
+      } catch (error) {
+        console.error("Error estimating total price:", error);
+        throw error;
       }
     }
