@@ -6,7 +6,7 @@ import { User, columns } from "@/components/commercial/clients/columns";
 import { DataTable } from "@/components/shared/data-table";
 import SearchInput from "@/components/shared/search-input";
 import FilterButton, { Filters } from "@/components/shared/filter-button";
-import { fetchAidantAndClientUsers } from "@/data/users";
+import { fetchAidantAndClientUsers } from "@/app/api/users";
 import { ButtonSecondary } from "@/components/shared/secondary-button";
 
 const filterSections: {

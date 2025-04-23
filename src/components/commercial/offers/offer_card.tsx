@@ -10,9 +10,9 @@ import { Input } from "@/components/shared/input";
 import { Label } from "@/components/shared/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { fetchAvailableDevices } from "@/data/devices";
-import { fetchUserByName } from "@/data/users";
-import { estimateTotalPrice } from "@/data/offers";
+import { fetchAvailableDevices } from "@/app/api/devices";
+import { fetchUserByName } from "@/app/api/users";
+import { estimateTotalPrice } from "@/app/api/offers";
 
 export function OfferCard() {
   const [environments, setEnvironments] = useState([{ id: 1, nom: "", type: "", surface: "", adresse: "" }]);

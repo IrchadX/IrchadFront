@@ -10,7 +10,7 @@ import {
   fetchUserDevice,
   fetchUserPublicEnvironmentsPricing,
   calculateTotalPrice,
-} from "@/data/offers";
+} from "@/app/api/offers";
 
 interface Environnement {
   nom: string;

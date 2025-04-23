@@ -6,7 +6,7 @@ import { Sale, columns } from "@/components/commercial/sales/columns";
 import { DataTable } from "@/components/shared/data-table";
 import SearchInput from "@/components/shared/search-input";
 import FilterButton, { Filters } from "@/components/shared/filter-button";
-import { fetchSalesData } from "@/data/sales";
+import { fetchSalesData } from "@/app/api/sales";
 
 const filterSections: {
   label: string;

@@ -18,7 +18,7 @@ export function DevisCard({ totalPrice }: DevisCardProps) {
           <span className="text-xl font-bold">{totalPrice}</span>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex gap-5 justify-between">
         <Button variant="outline">Annuler</Button>
         <Button>Confirmer l'offre</Button>
       </CardFooter>
