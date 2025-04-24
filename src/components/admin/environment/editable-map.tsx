@@ -165,7 +165,7 @@ export default function EditableMap({
   };
 
   return (
-    <div className="font-montserrat">
+    <div className="font-montserrat z-0">
       <ToastContainer />
 
       <MapContainer

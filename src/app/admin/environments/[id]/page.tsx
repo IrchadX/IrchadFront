@@ -10,6 +10,8 @@ import Image from "next/image";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useParams } from "next/navigation";
+import ZonesSwiper from "@/components/admin/environment/zones-swiper";
+import POIsSwiper from "@/components/admin/environment/pois-swiper";
 
 const DynamicMap = dynamic(
   () => import("@/components/admin/environment/editable-map"),
@@ -88,7 +90,8 @@ interface FeatureItem extends MapLayer {
 const Page = () => {
   const params = useParams();
   const id = params.id as string;
-
+  const [pois, setPois] = useState([]);
+  const [zones, setZones] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [geoJSON, setGeoJSON] = useState<GeoJSONData | null>(null);
   const [environmentInfo, setEnvironmentInfo] = useState<EnvironmentInfo>({
@@ -143,7 +146,56 @@ const Page = () => {
         }
       };
 
+      const fetchZonesData = async () => {
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/zones/env/${id}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            }
+          );
+          if (!response.ok) {
+            throw new Error("Failed to fetch environment zones");
+          }
+          const data = await response.json();
+          setZones(data);
+          console.log(data);
+        } catch (error) {
+          console.error("Error fetching environment zones:", error);
+          toast.error("Failed to load environment zones data");
+        }
+      };
+
+      const fetchPoisData = async () => {
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/pois/env/${id}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            }
+          );
+          if (!response.ok) {
+            throw new Error("Failed to fetch environment pois");
+          }
+          const data = await response.json();
+          setPois(data);
+          console.log(data);
+        } catch (error) {
+          console.error("Error fetching environment pois:", error);
+          toast.error("Failed to load environment pois data");
+        }
+      };
       fetchEnvironmentData();
+      fetchZonesData();
+      fetchPoisData();
     }
   }, [id]);
 
@@ -372,106 +424,118 @@ const Page = () => {
   }, [isPoiFormOpen, isZoneFormOpen]);
 
   return (
-    <div className="grid grid-cols-[2fr,1fr] gap-4 w-full">
-      {/* Left Column */}
-      <div className="col-span-1">
-        {/* Title and Upload/Save Button Row */}
-        <div className="flex justify-between items-start mb-4">
-          <Title
-            text={
-              isEditMode
-                ? "Modification d'un environnement"
-                : "Création d'un environnement"
-            }
-            lineLength="100px"
-          />
-          {!isEditMode ? (
-            <>
-              <input
-                type="file"
-                accept=".json,.geojson"
-                onChange={handleFileImport}
-                style={{ display: "none" }}
-                id="file-upload"
-              />
-              <label htmlFor="file-upload">
-                <ButtonSecondary
-                  title="Modifier"
-                  onClick={() =>
-                    document.getElementById("file-upload")?.click()
-                  }
-                  disabled={false}
+    <div className="flex flex-col w-full">
+      {" "}
+      <div className="grid grid-cols-[2fr,1fr] gap-4 w-full">
+        {/* Left Column */}
+
+        <div className="col-span-1">
+          {/* Title and Upload/Save Button Row */}
+          <div className="flex justify-between items-start mb-4">
+            <Title
+              text={
+                isEditMode
+                  ? "Modification d'un environnement"
+                  : "Création d'un environnement"
+              }
+              lineLength="100px"
+            />
+            {!isEditMode ? (
+              <>
+                <input
+                  type="file"
+                  accept=".json,.geojson"
+                  onChange={handleFileImport}
+                  style={{ display: "none" }}
+                  id="file-upload"
                 />
-              </label>
-            </>
+                <label htmlFor="file-upload">
+                  <ButtonSecondary
+                    title="Modifier"
+                    onClick={() =>
+                      document.getElementById("file-upload")?.click()
+                    }
+                    disabled={false}
+                  />
+                </label>
+              </>
+            ) : (
+              <ButtonSecondary
+                title="Sauvegarder"
+                onClick={saveGeoJSONToFile}
+                disabled={false}
+              />
+            )}
+          </div>
+
+          {geoJSON ? (
+            <div className="flex flex-col">
+              {" "}
+              <DynamicMap
+                geoData={{ lat, lng: long }}
+                setIsPoiFormOpen={setIsPoiFormOpen}
+                setIsZoneFormOpen={setIsZoneFormOpen}
+                file={geoJSON}
+                setSelectedItem={setSelectedItem}
+              />
+            </div>
           ) : (
-            <ButtonSecondary
-              title="Sauvegarder"
-              onClick={saveGeoJSONToFile}
-              disabled={false}
+            <div className="bg-[#DEDEDE] flex flex-col items-center justify-center h-[75vh] gap-4">
+              <Image
+                src="/assets/admin/environments/no-env.svg"
+                width={200}
+                height={40}
+                alt="No environment"
+              />
+              <p className="text-sm">
+                Importer un fichier .geojson pour commencer...
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Right Column */}
+        <div
+          className={`col-span-1 ${
+            !isEditMode ? "disabled opacity-40 pointer-events-none" : ""
+          }`}
+          style={{
+            backgroundColor: !isEditMode ? "#f0f0f0" : "transparent",
+            cursor: !isEditMode ? "not-allowed" : "auto",
+          }}>
+          {/* Content for the right column */}
+          {!isPoiFormOpen && !isZoneFormOpen && (
+            <AddEnvCard
+              showValues={!isEditMode}
+              environmentInfo={environmentInfo}
+              setEnvironmentInfo={setEnvironmentInfo}
+            />
+          )}
+          {isPoiFormOpen && (
+            <AddPoiCard
+              setSelectedItem={setSelectedItem}
+              handleSaveItem={handleSaveItem}
+              selectedItem={selectedItem}
+              showValues={!isEditMode}
+              envId={parseInt(params.id)}
+            />
+          )}
+          {isZoneFormOpen && (
+            <AddZoneCard
+              setSelectedItem={setSelectedItem}
+              handleSaveItem={handleSaveItem}
+              selectedItem={selectedItem}
+              showValues={!isEditMode}
             />
           )}
         </div>
 
-        {geoJSON ? (
-          <DynamicMap
-            geoData={{ lat, lng: long }}
-            setIsPoiFormOpen={setIsPoiFormOpen}
-            setIsZoneFormOpen={setIsZoneFormOpen}
-            file={geoJSON}
-            setSelectedItem={setSelectedItem}
-          />
-        ) : (
-          <div className="bg-[#DEDEDE] flex flex-col items-center justify-center h-[75vh] gap-4">
-            <Image
-              src="/assets/admin/environments/no-env.svg"
-              width={200}
-              height={40}
-              alt="No environment"
-            />
-            <p className="text-sm">
-              Importer un fichier .geojson pour commencer...
-            </p>
-          </div>
-        )}
+        <ToastContainer />
       </div>
-
-      {/* Right Column */}
-      <div
-        className={`col-span-1 ${
-          !isEditMode ? "disabled opacity-40 pointer-events-none" : ""
-        }`}
-        style={{
-          backgroundColor: !isEditMode ? "#f0f0f0" : "transparent",
-          cursor: !isEditMode ? "not-allowed" : "auto",
-        }}>
-        {/* Content for the right column */}
-        {!isPoiFormOpen && !isZoneFormOpen && (
-          <AddEnvCard
-            showValues={!isEditMode}
-            environmentInfo={environmentInfo}
-            setEnvironmentInfo={setEnvironmentInfo}
-          />
-        )}
-        {isPoiFormOpen && (
-          <AddPoiCard
-            setSelectedItem={setSelectedItem}
-            handleSaveItem={handleSaveItem}
-            selectedItem={selectedItem}
-            showValues={!isEditMode}
-            envId={parseInt(params.id)}
-          />
-        )}
-        {isZoneFormOpen && (
-          <AddZoneCard
-            setSelectedItem={setSelectedItem}
-            handleSaveItem={handleSaveItem}
-            selectedItem={selectedItem}
-            showValues={!isEditMode}
-          />
-        )}
-      </div>
-      <ToastContainer />
+      <Title text="Zones" lineLength="40px" />
+      <ZonesSwiper zones={zones} />
+      <Title text="Points d'interet" lineLength="80px" />
+      <POIsSwiper pois={pois} />
     </div>
   );
 };

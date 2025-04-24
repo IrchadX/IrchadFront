@@ -8,6 +8,7 @@ import { MdOutlineMail } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import loginImg from "../../../../public/assets/loginimg.png";
+import Cookies from "js-cookie";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -81,13 +82,8 @@ export default function Login() {
 
       const user = data.user;
 
-      const safeUserData = {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      };
-
-      sessionStorage.setItem("user", JSON.stringify(safeUserData));
+      Cookies.set("user", JSON.stringify(user), { expires: 7, path: "/" });
+      // sessionStorage.setItem("user", JSON.stringify(safeUserData));
 
       await new Promise((resolve) => setTimeout(resolve, 500));
       console.log(user.role);
