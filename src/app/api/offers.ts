@@ -157,3 +157,115 @@ export async function fetchUserEnvironmentsWithPricing(userId: number) {
         throw error;
       }
     }
+
+    export async function createBasicEnvironment(
+      name: string,
+      description: string,
+      address: string,
+      userId: number,
+      isPublic: boolean,
+      surface: number
+    ): Promise<any> {
+      try {
+        const requestUrl = `${API_URL}/environments/create-basic-environment`;
+        console.log(`Creating basic environment from: ${requestUrl}`);
+  
+        const response = await fetch(requestUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // this is needed for the cookie to be sent
+          body: JSON.stringify({
+            name,
+            description,
+            address,
+            userId,
+            isPublic,
+            surface,
+          }),
+        });
+  
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`API Error (${response.status}): ${errorText}`);
+          throw new Error(`API Error (${response.status}): ${errorText}`);
+        }
+  
+        const newEnvironment = await response.json();
+        console.log(`Created new environment:`, newEnvironment);
+  
+        return newEnvironment;
+      } catch (error) {
+        console.error("Error creating basic environment:", error);
+        throw error;
+      }
+    }
+
+    export async function updateDeviceUser(deviceId: number, userId: number): Promise<any> {
+      try {
+        const requestUrl = `${API_URL}/devices/${deviceId}`;
+        console.log(`Updating device ID ${deviceId} with user ID ${userId} at: ${requestUrl}`);
+    
+        const response = await fetch(requestUrl, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Include cookies if needed
+          body: JSON.stringify({ user_id: userId }),
+        });
+    
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`API Error (${response.status}): ${errorText}`);
+          throw new Error(`API Error (${response.status}): ${errorText}`);
+        }
+    
+        const updatedDevice = await response.json();
+        console.log(`Device updated successfully:`, updatedDevice);
+    
+        return updatedDevice;
+      } catch (error) {
+        console.error("Error updating device user:", error);
+        throw error;
+      }
+    }
+
+    export async function createPurchaseHistory(
+      userId: number,
+      deviceId: number,
+      hasPublicAccess: boolean,
+    ): Promise<any> {
+      try {
+        const requestUrl = `${API_URL}/sales/add-purchase`;
+        console.log(`Creating purchase history for user ID ${userId}, device ID ${deviceId}, public access: ${hasPublicAccess}`);
+    
+        const response = await fetch(requestUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Include cookies if needed
+          body: JSON.stringify({
+            userId,
+            deviceId,
+            hasPublicAccess,
+          }),
+        });
+    
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`API Error (${response.status}): ${errorText}`);
+          throw new Error(`API Error (${response.status}): ${errorText}`);
+        }
+    
+        const purchaseHistory = await response.json();
+        console.log(`Purchase history created successfully:`, purchaseHistory);
+    
+        return purchaseHistory;
+      } catch (error) {
+        console.error("Error creating purchase history:", error);
+        throw error;
+      }
+    }

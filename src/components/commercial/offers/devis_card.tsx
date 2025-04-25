@@ -3,9 +3,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 
 interface DevisCardProps {
   totalPrice: string;
+  onConfirm: () => void;
 }
 
-export function DevisCard({ totalPrice }: DevisCardProps) {
+export function DevisCard({ totalPrice, onConfirm }: DevisCardProps) {
   return (
     <Card className="w-[350px] h-full">
       <CardHeader>
@@ -20,7 +21,7 @@ export function DevisCard({ totalPrice }: DevisCardProps) {
       </CardContent>
       <CardFooter className="flex gap-5 justify-between">
         <Button variant="outline">Annuler</Button>
-        <Button>Confirmer l'offre</Button>
+        <Button onClick={onConfirm}>Confirmer l'offre</Button>
       </CardFooter>
     </Card>
   );

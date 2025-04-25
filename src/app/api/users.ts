@@ -173,8 +173,11 @@ export async function fetchUserByName(first_name: string, family_name : string) 
     console.log(`Received user by name:`, user);
 
     return user;
-  } catch (error) {
+  } catch (error : any) {
     console.error("Error fetching user by name:", error);
+    if (error.message.includes("404")) {
+      return null; // Retourne null si l'utilisateur n'est pas trouvé
+    }
     throw error;
   }
 }
