@@ -23,9 +23,9 @@ export function ProductsTableComponent() {
   return (
     <Card className="bg-white shadow-sm rounded-lg overflow-hidden">
       <CardHeader className="pb-0 pt-6 px-6 border-b">
-        <CardTitle className="text-xl font-medium text-gray-800">Produits les plus vendus</CardTitle>
+        <CardTitle className="text-xl mb-6 font-medium text-gray-800">Produits les plus vendus</CardTitle>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="p-0 m-2">
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
