@@ -144,6 +144,39 @@ export async function fetchMalvoyantUsers() {
   }
 }
 
+
+export async function fetchUserById(userId: number) {
+  try { 
+    const requestUrl = `${API_URL}/users/${userId}`;
+    console.log(`Fetching user by ID from: ${requestUrl}`);
+
+    const response = await fetch(requestUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // this is needed for the cookie to be sent
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`API Error (${response.status}): ${errorText}`);
+      throw new Error(`API Error (${response.status}): ${errorText}`);
+    }
+
+    const user = await response.json();
+    console.log(`Received user by ID:`, user);
+
+    return user;
+  } catch (error : any) {
+    console.error("Error fetching user by ID:", error);
+    if (error.message.includes("404")) {
+      return null; 
+    }
+    throw error;
+  }
+}
+
 function calculateAge(birthDate: string): number {
   const birth = new Date(birthDate);
   const today = new Date();
@@ -184,7 +217,7 @@ export async function fetchUserByName(first_name: string, family_name : string) 
 
 export async function createUser(userData: any) {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+    const response = await fetch(`${API_URL}/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -211,6 +244,39 @@ export async function createUser(userData: any) {
     }
   } catch (error) {
     console.error("Error creating user:", error);
+    throw error;
+  }
+}
+
+export async function updateUser(userId: number, userData: any) {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`API Error (${response.status}): ${errorText}`);
+      throw new Error(`API Error (${response.status}): ${errorText}`);
+    }
+
+    // Vérifiez si la réponse contient un JSON valide
+    const contentType = response.headers.get("Content-Type");
+    if (contentType && contentType.includes("application/json")) {
+      const user = await response.json();
+      console.log(`User updated successfully:`, user);
+      return user;
+    } else {
+      console.error("Response does not contain JSON.");
+      throw new Error("Invalid response format from server.");
+    }
+  } catch (error) {
+    console.error("Error updating user:", error);
     throw error;
   }
 }
