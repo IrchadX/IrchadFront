@@ -10,6 +10,8 @@ import { Button } from "@/components/shared/button";
 import { Calendar } from "@/components/shared/calendar";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 
+import {createUser} from "@/app/api/users"; 
+
 import {
   Form,
   FormControl,
@@ -137,22 +139,8 @@ export function UserForm({ userTypes }: UserFormProps) {
         street: values.street,
       };
 
-      // Make the API call to create user
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to create user");
-      }
-
-      const data = await response.json();
-      console.log("User created successfully:", data);
+      const response = await createUser(userData);
+      console.log("User created successfully:", response);
       setSubmitSuccess(true);
 
       // Optional: Reset the form after successful submission

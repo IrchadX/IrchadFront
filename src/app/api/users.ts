@@ -181,3 +181,36 @@ export async function fetchUserByName(first_name: string, family_name : string) 
     throw error;
   }
 }
+
+export async function createUser(userData: any) {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`API Error (${response.status}): ${errorText}`);
+      throw new Error(`API Error (${response.status}): ${errorText}`);
+    }
+
+    // Vérifiez si la réponse contient un JSON valide
+    const contentType = response.headers.get("Content-Type");
+    if (contentType && contentType.includes("application/json")) {
+      const user = await response.json();
+      console.log(`User created successfully:`, user);
+      return user;
+    } else {
+      console.error("Response does not contain JSON.");
+      throw new Error("Invalid response format from server.");
+    }
+  } catch (error) {
+    console.error("Error creating user:", error);
+    throw error;
+  }
+}
