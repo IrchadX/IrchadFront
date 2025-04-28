@@ -19,7 +19,7 @@ import {
 
 interface DeviceActionModalProps {
   device: Device | null;
-  action: "edit" | "delete" | "block" | null;
+  action: "edit" | "delete" | "block" |"assign"|  null;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (updatedDevice?: Device) => void;
@@ -37,9 +37,10 @@ export function DeviceActionModal({
   const [deviceStates, setDeviceStates] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState("none"); // Valeur par défaut "none" au lieu de chaîne vide
 
   useEffect(() => {
-    if (isOpen && action === "edit") {
+    if (isOpen && (action === "edit" || action === "assign")) {
       const loadFormData = async () => {
         setLoading(true);
         try {
@@ -51,6 +52,10 @@ export function DeviceActionModal({
           setDeviceTypes(types);
           setDeviceStates(states);
           setUsers(usersList);
+          
+          if (action === "assign") {
+            setSelectedUserId("none"); // Utilisation de "none" au lieu de chaîne vide
+          }
         } catch (error) {
           console.error("Error loading form data:", error);
         } finally {
@@ -86,6 +91,23 @@ export function DeviceActionModal({
     }
   };
 
+  const handleUserSelect = (userId: string) => {
+    setSelectedUserId(userId);
+  };
+
+  const handleAssignSubmit = () => {
+    console.log("Device ID:", device?.id);
+    console.log("User ID:", selectedUserId === "none" ? null : selectedUserId);
+    
+    if (editableDevice) {
+      const processedDevice = {
+        ...editableDevice,
+        user_id: selectedUserId === "none" ? null : parseInt(selectedUserId)
+      };
+      onConfirm(processedDevice);
+    }
+  };
+
   const getActionDetails = () => {
     switch (action) {
       case "edit":
@@ -109,6 +131,13 @@ export function DeviceActionModal({
           confirmText: device?.comm_state ? "Bloquer" : "Débloquer",
           confirmColor: device?.comm_state ? "bg-red-500" : "bg-[#2B7A78]",
         };
+        case "assign":
+          return {
+            title: "Associer un utilisateur",
+            icon: <Edit className="h-5 w-5 mr-2 text-[#2B7A78]" />,
+            confirmText: "Associer",
+            confirmColor: "bg-[#2B7A78] hover:bg-blue-600",
+          };
       default:
         return {
           title: "",
@@ -120,6 +149,11 @@ export function DeviceActionModal({
   };
 
   const handleSubmit = () => {
+    if (action === "assign") {
+      handleAssignSubmit();
+      return;
+    }
+    
     if (action === "edit" && editableDevice) {
       const processedDevice = {
         ...editableDevice,
@@ -241,14 +275,41 @@ export function DeviceActionModal({
                   </div>
                 </div>
 
-                
-
                 <div className="flex items-center justify-between">
                   <Label htmlFor="comm_state">Communication activée</Label>
                   <Switch 
                     checked={editableDevice.comm_state}
                     onCheckedChange={(checked) => handleToggleChange("comm_state", checked)}
                   />
+                </div>
+              </div>
+            )
+          ) : action === "assign" ? (
+            loading ? (
+              <div className="text-center py-4">Chargement des utilisateurs...</div>
+            ) : (
+              <div className="space-y-4 py-2">
+                <div className="space-y-2">
+                  <Label htmlFor="user_id">Sélectionner un utilisateur</Label>
+                  <Select
+                    value={selectedUserId}
+                    onValueChange={handleUserSelect}
+                  >
+                    <SelectTrigger className="w-full bg-main/5 rounded-[8px] border border-black/30">
+                      <SelectValue placeholder="Sélectionner un utilisateur" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Aucun utilisateur</SelectItem>
+                      {users.map((user) => (
+                        <SelectItem key={user.id} value={user.id.toString()}>
+                          {user.family_name + " " + user.first_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="text-sm text-gray-500">
+                  Appareil: {editableDevice.mac_address || `ID: ${editableDevice.id}`}
                 </div>
               </div>
             )

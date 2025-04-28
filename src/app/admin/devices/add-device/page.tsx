@@ -23,7 +23,6 @@ import {
 } from "@/components/shared/form";
 import { Input } from "@/components/shared/input";
 import { Button } from "@/components/shared/button";
-import { DialogDemo } from "@/components/admin/devices/DialogDemo";
 
 const formSchema = deviceFormSchema ;
 export default function DeviceForm() {

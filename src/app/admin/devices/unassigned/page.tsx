@@ -4,11 +4,10 @@ import SearchInput from "@/components/shared/search-input";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/shared/button";
 import { DataTable } from "@/components/shared/data-table";
-import { createColumns } from "@/components/admin/devices/columns";
+import { createColumns2 } from "@/components/admin/devices/columns";
 import { Device } from "@/data/dispositifs";
-import { DeviceService } from "./_lib/services/deviceService";
 import { DeviceActionModal } from "@/components/admin/devices/DeviceActionModal";
-
+import { DeviceService } from "../_lib/services/deviceService";
 const Page = () => {
   const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
@@ -16,12 +15,12 @@ const Page = () => {
   const [searchTerm, setSearchTerm] = useState("");
   
   const [modalDevice, setModalDevice] = useState<Device | null>(null);
-  const [modalAction, setModalAction] = useState<"edit" | "delete" | "block" | null>(null);
+  const [modalAction, setModalAction] = useState<"edit" | "delete" | "block" |"assign"|  null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleEdit = (device: Device) => {
     setModalDevice(device);
-    setModalAction("edit");
+    setModalAction("assign");
     setIsModalOpen(true);
   };
 
@@ -52,7 +51,6 @@ const Page = () => {
       try {
         // Update the device in the backend
         await DeviceService.updateDevice(updatedDevice);
-        
         setDevices(prev => 
           prev.map(device => device.id === updatedDevice.id ? updatedDevice : device)
         );
@@ -66,8 +64,6 @@ const Page = () => {
       
       try {
         await DeviceService.deleteDevice(modalDevice.id);
-        
-        // Remove the device from the local state
         setDevices(prev => prev.filter(device => device.id !== modalDevice.id));
         
         console.log("Device deleted successfully");
@@ -102,18 +98,25 @@ const Page = () => {
   useEffect(() => {
     const fetchDevices = async () => {
       try {
-        const fetchedDevices = await DeviceService.fetchAssignedDevices();
-    
+        const fetchedDevices = await DeviceService.fetchUnassignedDevices();
+        console.log('fetched ************************************');
+        console.log('fetched ************************************');
+        console.log('fetched ************************************');
+        console.log('fetched ************************************');
+        console.log('fetched ************************************');
+        console.log('fetched ************************************');
+        console.log('fetched ************************************');
+        console.log('fetched ************************************');
+        console.log('fetched ************************************');
+        console.log('fetched ************************************');
+        console.log(fetchedDevices);
         const updatedDevices = await Promise.all(
           fetchedDevices.map(async (device) => {
-            const user = await DeviceService.getUserByDeviceId(device.user_id);
             const state = await DeviceService.getStateTypeById(device.state_type_id);
             const type = await DeviceService.getTypeByTypeId(device.type_id);
             
             return {
               ...device,
-              client_name: user.first_name,
-              client_family_name: user.family_name,
               actual_state: state.state,     
               type: type.type,
               comm_state: device.comm_state,
@@ -131,7 +134,7 @@ const Page = () => {
   }, []);
 
   // Create columns with action handlers
-  const columns = createColumns(handleEdit, handleDelete, handleBlock);
+  const columns = createColumns2(handleEdit, handleDelete, handleBlock);
 
   // Filter function for search
   const filteredDevices = devices.filter((device) => {
@@ -158,7 +161,7 @@ const Page = () => {
         </div>
         <div className="flex gap-2">
           <Button className="px-8 font-montserrat">
-          <Link href="/admin/devices/unassigned">  Dispositifs
+          <Link href="/admin/devices/add-device">  Dispositifs
           </Link>
 
           </Button>
