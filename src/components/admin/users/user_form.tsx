@@ -82,7 +82,7 @@ const userTypeMap = {
   "commercial": 3,
   "decidor": 4,
   "aidant": 5,
-  "client": 6,
+  "malvoyant": 7,
 };
 
 interface UserFormProps {
