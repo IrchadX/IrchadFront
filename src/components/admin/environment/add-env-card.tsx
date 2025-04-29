@@ -14,6 +14,7 @@ import { Label } from "@/components/shared/label";
 import Title from "@/components/shared/title";
 import { TextArea } from "@/components/shared/text-area";
 import Image from "next/image";
+import {fetchMalvoyantUsers} from "@/app/api/users";
 
 interface User {
   id: number;

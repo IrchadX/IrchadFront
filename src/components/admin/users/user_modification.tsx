@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {API_URL} from "@/config/api";
+import {fetchUserById, updateUser} from "@/app/api/users";
+
+import { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -150,7 +153,7 @@ export function UserModification({ userId, userTypes }: UserModificationProps) {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/update-password`,
+        `${API_URL}/users/${userId}/update-password`,
         {
           method: "PATCH",
           headers: {
@@ -202,10 +205,7 @@ export function UserModification({ userId, userTypes }: UserModificationProps) {
   useEffect(() => {
     // Fetch user data based on userId
     async function fetchUserData() {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`
-      );
-      const data = await response.json();
+      const data = await fetchUserById(Number(userId));
       setUserData(data);
       form.reset({
         family_name: data.family_name || "",
@@ -216,7 +216,7 @@ export function UserModification({ userId, userTypes }: UserModificationProps) {
         email: data.email || "",
         city: data.city || "",
         street: data.street || "",
-        userTypeId: data.userTypeId ? String(data.userTypeId) : "",
+        userTypeId: data.user_type.id ? String(data.user_type.id) : "",
       });
     }
 
@@ -245,18 +245,9 @@ export function UserModification({ userId, userTypes }: UserModificationProps) {
       };
 
       // Call the update API endpoint
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updateUserDto),
-        }
-      );
+      const response = await updateUser(Number(userId), updateUserDto);
 
-      if (!response.ok) {
+      if (!response) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to update user");
       }

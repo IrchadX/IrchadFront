@@ -8,8 +8,9 @@ import Title from "@/components/shared/title";
 import {
   fetchUserEnvironmentsWithPricing,
   fetchUserDevice,
+  fetchUserPublicEnvironmentsPricing,
   calculateTotalPrice,
-} from "@/data/offers";
+} from "@/app/api/offers";
 
 interface Environnement {
   nom: string;
@@ -24,7 +25,7 @@ interface OffreDetails {
   dispositif: string;
   prixDispositif: number;
   environnements: Environnement[];
-  accesEnvironnementsPublics: boolean;
+  accesEnvironnementsPublics: number;
 }
 
 export function OfferDetailsCard({
@@ -40,6 +41,7 @@ export function OfferDetailsCard({
 }) {
   const [offerDetails, setOfferDetails] = useState<OffreDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [montantTotal, setMontantTotal] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -48,8 +50,8 @@ export function OfferDetailsCard({
         setLoading(true);
         setError(null);
 
-        // Fetch environments and device data in parallel
-        const [environments, device] = await Promise.all([
+        // Fetch environments, device, and public pricing in parallel
+        const [environments, device, public_pricing] = await Promise.all([
           fetchUserEnvironmentsWithPricing(userId).catch((err) => {
             if (err.message.includes("Aucun environnement trouvé")) {
               throw new Error("Aucun environnement trouvé pour cet utilisateur.");
@@ -59,10 +61,13 @@ export function OfferDetailsCard({
           fetchUserDevice(userId).catch((err) => {
             throw new Error("Erreur lors de la récupération du dispositif de l'utilisateur.");
           }),
+          fetchUserPublicEnvironmentsPricing(userId).catch((err) => {
+            throw new Error("Erreur lors de la récupération des environnements publics.");
+          }),
         ]);
 
         // Calculate total price
-        const totalPrice = calculateTotalPrice(environments, device[0]);
+        const totalPrice = calculateTotalPrice(environments, device[0], public_pricing);
 
         // Map data to match the `OffreDetails` structure
         const mappedDetails: OffreDetails = {
@@ -76,10 +81,13 @@ export function OfferDetailsCard({
             surface: `${env.surface} m²`,
             prix: parseFloat(env.price),
           })),
-          accesEnvironnementsPublics: true, // Replace with actual data if available
+          accesEnvironnementsPublics: public_pricing,
         };
 
         setOfferDetails(mappedDetails);
+
+        // Set total price
+        setMontantTotal(totalPrice);
       } catch (err: any) {
         console.error("Error loading offer details:", err);
         setError(err.message || "Une erreur inattendue s'est produite.");
@@ -103,9 +111,6 @@ export function OfferDetailsCard({
     (sum, env) => sum + env.prix,
     0
   );
-
-  // Calculate total amount
-  const montantTotal = offerDetails.prixDispositif + totalEnvironnements;
 
   // Format price with currency symbol
   const formatPrice = (price: number) => `${price.toFixed(2)} DA`;
@@ -183,7 +188,7 @@ export function OfferDetailsCard({
         <div className="flex justify-between items-center">
           <p className="font-medium">Accès aux environnements publics</p>
           <div>
-            {offerDetails.accesEnvironnementsPublics ? (
+            {offerDetails.accesEnvironnementsPublics !== 0 ? (
               <div className="flex items-center text-green-600">
                 <Check className="h-5 w-5 mr-1" />
                 <span>Oui</span>
@@ -202,7 +207,9 @@ export function OfferDetailsCard({
         {/* Montant total */}
         <div className="flex justify-between items-center pt-2">
           <p className="font-semibold text-lg">Montant total</p>
-          <p className="font-bold text-xl">{formatPrice(montantTotal)}</p>
+          <p className="font-bold text-xl">
+            {montantTotal !== null ? formatPrice(montantTotal) : "Chargement..."}
+          </p>
         </div>
       </CardContent>
     </Card>
