@@ -8,6 +8,7 @@ import { createColumns2 } from "@/components/admin/devices/columns";
 import { Device } from "@/data/dispositifs";
 import { DeviceActionModal } from "@/components/admin/devices/DeviceActionModal";
 import { DeviceService } from "../_lib/services/deviceService";
+
 const Page = () => {
   const options = ["Option 1", "Option 2", "Option 3", "Option 4"];
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
@@ -15,10 +16,12 @@ const Page = () => {
   const [searchTerm, setSearchTerm] = useState("");
   
   const [modalDevice, setModalDevice] = useState<Device | null>(null);
-  const [modalAction, setModalAction] = useState<"edit" | "delete" | "block" |"assign"|  null>(null);
+  const [modalAction, setModalAction] = useState<"edit" | "delete" | "block" | "assign" | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleEdit = (device: Device) => {
+  // Changed function name from handleEdit to handleAssign for clarity
+  const handleAssign = (device: Device) => {
+    console.log("Assigning device:", device); // Debug log
     setModalDevice(device);
     setModalAction("assign");
     setIsModalOpen(true);
@@ -44,48 +47,45 @@ const Page = () => {
     if (!modalDevice) return;
     
     if (modalAction === "edit" && updatedDevice) {
-      console.log(`Edit device for user ${modalDevice.user_id}`);
-      console.log(updatedDevice);
-      console.log(`Edit device ${updatedDevice.id} for user ${updatedDevice.user_id}`);
-      
       try {
-        // Update the device in the backend
         await DeviceService.updateDevice(updatedDevice);
         setDevices(prev => 
           prev.map(device => device.id === updatedDevice.id ? updatedDevice : device)
         );
-        
         console.log("Device updated successfully", updatedDevice);
       } catch (error) {
         console.error("Error updating device:", error);
       }
+    } else if (modalAction === "assign" && updatedDevice) {  // Added handling for assign action
+      try {
+        console.log("Assigning device:", updatedDevice.id, "to user:", updatedDevice.user_id);
+        // You might need a specific API call for assignment
+        await DeviceService.updateDevice(updatedDevice);
+        setDevices(prev => 
+          prev.map(device => device.id === updatedDevice.id ? updatedDevice : device)
+        );
+        console.log("Device assigned successfully", updatedDevice);
+      } catch (error) {
+        console.error("Error assigning device:", error);
+      }
     } else if (modalAction === "delete") {
-      console.log(`Delete device ${modalDevice.id} for user ${modalDevice.user_id}`);
-      
       try {
         await DeviceService.deleteDevice(modalDevice.id);
         setDevices(prev => prev.filter(device => device.id !== modalDevice.id));
-        
         console.log("Device deleted successfully");
       } catch (error) {
         console.error("Error deleting device:", error);
       }
     } else if (modalAction === "block") {
-      console.log(`Block device ${modalDevice.id} for user ${modalDevice.user_id}`);
-      
       try {
         await DeviceService.blockCommunication(modalDevice.id);
-        
-        // Update the local state to reflect the change in comm_state
         const updatedDevices = devices.map(device => {
           if (device.id === modalDevice.id) {
             return { ...device, comm_state: !device.comm_state };
           }
           return device;
         });
-        
         setDevices(updatedDevices);
-        
         console.log("Device communication state updated successfully");
       } catch (error) {
         console.error("Error updating device communication state:", error);
@@ -99,17 +99,6 @@ const Page = () => {
     const fetchDevices = async () => {
       try {
         const fetchedDevices = await DeviceService.fetchUnassignedDevices();
-        console.log('fetched ************************************');
-        console.log('fetched ************************************');
-        console.log('fetched ************************************');
-        console.log('fetched ************************************');
-        console.log('fetched ************************************');
-        console.log('fetched ************************************');
-        console.log('fetched ************************************');
-        console.log('fetched ************************************');
-        console.log('fetched ************************************');
-        console.log('fetched ************************************');
-        console.log(fetchedDevices);
         const updatedDevices = await Promise.all(
           fetchedDevices.map(async (device) => {
             const state = await DeviceService.getStateTypeById(device.state_type_id);
@@ -134,7 +123,7 @@ const Page = () => {
   }, []);
 
   // Create columns with action handlers
-  const columns = createColumns2(handleEdit, handleDelete, handleBlock);
+  const columns = createColumns2(handleAssign, handleDelete, handleBlock);
 
   // Filter function for search
   const filteredDevices = devices.filter((device) => {
@@ -163,7 +152,6 @@ const Page = () => {
           <Button className="px-8 font-montserrat">
           <Link href="/admin/devices/add-device">  Dispositifs
           </Link>
-
           </Button>
           <Button className="px-8 font-montserrat">
             <Link href="/admin/devices/add-device">Nouveau</Link>

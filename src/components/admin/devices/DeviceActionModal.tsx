@@ -19,7 +19,7 @@ import {
 
 interface DeviceActionModalProps {
   device: Device | null;
-  action: "edit" | "delete" | "block" |"assign"|  null;
+  action: "edit" | "delete" | "block" | "assign" | null;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (updatedDevice?: Device) => void;
@@ -37,7 +37,7 @@ export function DeviceActionModal({
   const [deviceStates, setDeviceStates] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState("none"); // Valeur par défaut "none" au lieu de chaîne vide
+  const [selectedUserId, setSelectedUserId] = useState("none");
 
   useEffect(() => {
     if (isOpen && (action === "edit" || action === "assign")) {
@@ -54,7 +54,7 @@ export function DeviceActionModal({
           setUsers(usersList);
           
           if (action === "assign") {
-            setSelectedUserId("none"); // Utilisation de "none" au lieu de chaîne vide
+            setSelectedUserId(device?.user_id ? device.user_id.toString() : "none");
           }
         } catch (error) {
           console.error("Error loading form data:", error);
@@ -64,11 +64,12 @@ export function DeviceActionModal({
       };
       loadFormData();
     }
-  }, [isOpen, action]);
+  }, [isOpen, action, device]);
 
   useEffect(() => {
     if (device) {
       setEditableDevice({ ...device });
+      console.log("Modal device ID:", device.id); // Debug log
     }
   }, [device]);
 
@@ -93,19 +94,26 @@ export function DeviceActionModal({
 
   const handleUserSelect = (userId: string) => {
     setSelectedUserId(userId);
+    console.log("Selected User ID:", userId);  // Debug log
   };
 
   const handleAssignSubmit = () => {
-    console.log("Device ID:", device?.id);
-    console.log("User ID:", selectedUserId === "none" ? null : selectedUserId);
-    
-    if (editableDevice) {
-      const processedDevice = {
-        ...editableDevice,
-        user_id: selectedUserId === "none" ? null : parseInt(selectedUserId)
-      };
-      onConfirm(processedDevice);
+    if (!device || !editableDevice) {
+      console.error("Cannot assign user: device is null");
+      return;
     }
+    
+    console.log("Device ID for assignment:", device.id);
+    console.log("User ID for assignment:", selectedUserId === "none" ? null : selectedUserId);
+    
+    const processedDevice = {
+      ...editableDevice,
+      id: device.id, // Ensure the ID is included
+      user_id: selectedUserId === "none" ? null : parseInt(selectedUserId)
+    };
+    
+    console.log("Processed device for assignment:", processedDevice);
+    onConfirm(processedDevice);
   };
 
   const getActionDetails = () => {
@@ -131,13 +139,13 @@ export function DeviceActionModal({
           confirmText: device?.comm_state ? "Bloquer" : "Débloquer",
           confirmColor: device?.comm_state ? "bg-red-500" : "bg-[#2B7A78]",
         };
-        case "assign":
-          return {
-            title: "Associer un utilisateur",
-            icon: <Edit className="h-5 w-5 mr-2 text-[#2B7A78]" />,
-            confirmText: "Associer",
-            confirmColor: "bg-[#2B7A78] hover:bg-blue-600",
-          };
+      case "assign":
+        return {
+          title: "Associer un utilisateur",
+          icon: <Edit className="h-5 w-5 mr-2 text-[#2B7A78]" />,
+          confirmText: "Associer",
+          confirmColor: "bg-[#2B7A78] hover:bg-blue-600",
+        };
       default:
         return {
           title: "",
@@ -149,6 +157,11 @@ export function DeviceActionModal({
   };
 
   const handleSubmit = () => {
+    if (!device) {
+      console.error("Cannot process: device is null");
+      return;
+    }
+    
     if (action === "assign") {
       handleAssignSubmit();
       return;
@@ -157,13 +170,14 @@ export function DeviceActionModal({
     if (action === "edit" && editableDevice) {
       const processedDevice = {
         ...editableDevice,
+        id: device.id,
         type_id: typeof editableDevice.type_id === 'string' ? parseInt(editableDevice.type_id) : editableDevice.type_id,
         state_type_id: typeof editableDevice.state_type_id === 'string' ? parseInt(editableDevice.state_type_id) : editableDevice.state_type_id,
         user_id: editableDevice.user_id === "" ? null : (typeof editableDevice.user_id === 'string' ? parseInt(editableDevice.user_id) : editableDevice.user_id),
       };
       onConfirm(processedDevice);
     } else {
-      onConfirm();
+      onConfirm(device);
     }
   };
 
@@ -184,7 +198,7 @@ export function DeviceActionModal({
         </DialogHeader>
 
         <div className="py-4">
-          {action === "edit" ? (
+        {action === "edit" ? (
             loading ? (
               <div className="text-center py-4">Chargement des données...</div>
             ) : (
@@ -284,7 +298,7 @@ export function DeviceActionModal({
                 </div>
               </div>
             )
-          ) : action === "assign" ? (
+          ): action === "assign" ? (
             loading ? (
               <div className="text-center py-4">Chargement des utilisateurs...</div>
             ) : (
@@ -309,7 +323,7 @@ export function DeviceActionModal({
                   </Select>
                 </div>
                 <div className="text-sm text-gray-500">
-                  Appareil: {editableDevice.mac_address || `ID: ${editableDevice.id}`}
+                  Appareil: {editableDevice.mac_address || `ID: ${device.id}`}
                 </div>
               </div>
             )

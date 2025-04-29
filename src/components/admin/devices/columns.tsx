@@ -82,10 +82,9 @@ export const createColumns = (
 
 
 export const createColumns2 = (
-  onAssign: (user_id: string, device_id:string) => void,
+  onAssign: (device: Device) => void,  // Changed to accept a Device object
   onDelete: (device: Device) => void,
   onBlock: (device: Device) => void
-
 ): ColumnDef<Device>[] => [
   {
     accessorKey: "type",
@@ -125,7 +124,7 @@ export const createColumns2 = (
       
       return (
         <div className="flex items-center justify-center gap-2">
-          <p className="underline" onClick={() => onAssign(device.id ,device.user_id)}>
+          <p className="underline" onClick={() => onAssign(device)}>
           Associer à un utilisateur
           </p>
           <Button variant="ghost" size="icon" onClick={() => onDelete(device)}>
