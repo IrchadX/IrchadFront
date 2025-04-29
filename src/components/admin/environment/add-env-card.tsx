@@ -86,7 +86,6 @@ const AddEnvCard = ({
       ? `${user.first_name} ${user.family_name}`
       : "Utilisateur inconnu";
   };
-
   return (
     <div className="p-6 bg-white rounded-lg shadow-md max-w-md mx-auto border-main-40 border">
       <Title text="Informations" lineLength="0" />
@@ -218,5 +217,4 @@ const AddEnvCard = ({
     </div>
   );
 };
-
 export default AddEnvCard;

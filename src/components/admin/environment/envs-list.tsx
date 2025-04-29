@@ -19,7 +19,7 @@ const EnvsList = ({ environments: initialEnvs }: EnvsListProps) => {
 
   const handleDeleteEnvironment = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:3000/environments/${id}`, {
+      const response = await fetch(`http://localhost:5000/environments/${id}`, {
         method: "DELETE",
       });
 
