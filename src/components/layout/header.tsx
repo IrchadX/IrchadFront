@@ -1,12 +1,11 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { BiBell } from "react-icons/bi";  // BoxIcons (Outline)
+import { BiBell } from "react-icons/bi";  
 import Image from "next/image";
 
 const Header = () => {
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith("/auth");
-
   const getTitle = () => {
     if (pathname.startsWith("/dashboard")) {
       return "Tableau de bord";
