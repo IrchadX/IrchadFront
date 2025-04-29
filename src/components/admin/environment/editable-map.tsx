@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
+import type { Map as LeafletMap } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import { ToastContainer, toast } from "react-toastify";
@@ -39,16 +40,48 @@ const EditControl = dynamic(
   { ssr: false }
 );
 
+interface GeoData {
+  lat: number;
+  lng: number;
+}
+
+interface LayerProperties {
+  type: string;
+  name?: string;
+  description?: string;
+  image?: string;
+  nom?: string;
+}
+
+interface MapLayer {
+  type: string;
+  geometry: {
+    type: string;
+    coordinates: any;
+  };
+  properties: LayerProperties;
+  _leaflet_id?: number;
+}
+
+interface EditableMapProps {
+  geoData: GeoData;
+  file?: {
+    features: MapLayer[];
+  } | null;
+  setIsPoiFormOpen?: (isOpen: boolean) => void;
+  setIsZoneFormOpen?: (isOpen: boolean) => void;
+  setSelectedItem: (item: MapLayer | null) => void;
+}
 export default function EditableMap({
   geoData,
-  file,
+  file = null,
   setIsPoiFormOpen = () => {},
   setIsZoneFormOpen = () => {},
   setSelectedItem,
-}: any) {
-  const [drawingMode, setDrawingMode] = useState(null);
-  const [map, setMap] = useState(null);
-  const [mapLayer, setMapLayer] = useState([]);
+}: EditableMapProps) {
+  const [drawingMode, setDrawingMode] = useState<string | null>(null);
+  const [map, setMap] = useState<LeafletMap | null>(null);
+  const [mapLayer, setMapLayer] = useState<MapLayer[]>([]);
 
   // Effect to update map layers when file or geoData changes
   useEffect(() => {
@@ -66,7 +99,7 @@ export default function EditableMap({
   useEffect(() => {}, [drawingMode]);
 
   // Handle drawing mode selection
-  const handleDrawingMode = (mode) => {
+  const handleDrawingMode = (mode: string) => {
     if (drawingMode === mode) {
       setDrawingMode(null);
     } else {
@@ -82,7 +115,7 @@ export default function EditableMap({
     }
   };
 
-  const _onCreate = (e) => {
+  const _onCreate = (e: any) => {
     const { layerType, layer } = e;
 
     // Skip intermediate Polyline features when drawing a Polygon
@@ -91,13 +124,14 @@ export default function EditableMap({
     }
 
     const properties = {
-      type: drawingMode,
+      type: drawingMode || "",
     };
 
-    const newLayer = {
+    const newLayer: MapLayer = {
       type: layerType,
       geometry: layer.toGeoJSON().geometry,
       properties,
+      _leaflet_id: layer._leaflet_id,
     };
 
     setMapLayer((prevLayers) => [...prevLayers, newLayer]);
@@ -105,7 +139,7 @@ export default function EditableMap({
     console.log("New layer added:", newLayer);
   };
 
-  const _onEditPath = (e) => {
+  const _onEditPath = (e: any) => {
     const { layers } = e;
     const updatedLayers = mapLayer.map((layer) => {
       const editedLayer = layers.getLayer(layer._leaflet_id);
@@ -121,7 +155,7 @@ export default function EditableMap({
     console.log("Layers updated:", updatedLayers);
   };
 
-  const _onDeleted = (e) => {
+  const _onDeleted = (e: any) => {
     const { layers } = e;
     const remainingLayers = mapLayer.filter(
       (layer) => !layers.getLayer(layer._leaflet_id)
@@ -135,11 +169,12 @@ export default function EditableMap({
       <ToastContainer />
 
       <MapContainer
+        zoom={18}
+        maxZoom={22}
         center={[geoData.lat, geoData.lng]}
         zoom={18}
         maxZoom={22}
-        style={{ height: "70vh", width: "800px" }}
-        whenCreated={setMap}>
+        style={{ height: "70vh", width: "800px" }}>
         <div
           style={{
             position: "absolute",
@@ -217,13 +252,31 @@ export default function EditableMap({
               return (
                 <Polygon
                   key={index}
-                  positions={layer.geometry.coordinates[0].map(([lng, lat]) => [
-                    lat,
-                    lng,
-                  ])}
-                  color="black">
+                  positions={layer.geometry.coordinates[0].map(
+                    ([lng, lat]: [number, number]) => [lat, lng]
+                  )}
+                  pathOptions={{ color: "black" }}>
                   <Popup>
                     <strong>Wall</strong>
+                    <br />
+                    <p>{layer.properties.description}</p>
+                  </Popup>
+                </Polygon>
+              );
+            } else if (layer.properties.type === "environment") {
+              return (
+                <Polygon
+                  key={index}
+                  positions={layer.geometry.coordinates[0].map(
+                    ([lng, lat]: [number, number]) => [lat, lng]
+                  )}
+                  pathOptions={{
+                    color: "gray",
+                    fillOpacity: 0.2,
+                    weight: 2,
+                  }}>
+                  <Popup>
+                    <strong>Environment Boundary</strong>
                     <br />
                     <p>{layer.properties.description}</p>
                   </Popup>
@@ -233,11 +286,10 @@ export default function EditableMap({
               return (
                 <Polyline
                   key={index}
-                  positions={layer.geometry.coordinates.map(([lng, lat]) => [
-                    lat,
-                    lng,
-                  ])}
-                  color="green">
+                  positions={layer.geometry.coordinates.map(
+                    ([lng, lat]: [number, number]) => [lat, lng]
+                  )}
+                  pathOptions={{ color: "green" }}>
                   <Popup>
                     <strong>Door</strong>
                     <br />
@@ -249,11 +301,10 @@ export default function EditableMap({
               return (
                 <Polyline
                   key={index}
-                  positions={layer.geometry.coordinates.map(([lng, lat]) => [
-                    lat,
-                    lng,
-                  ])}
-                  color="blue">
+                  positions={layer.geometry.coordinates.map(
+                    ([lng, lat]: [number, number]) => [lat, lng]
+                  )}
+                  pathOptions={{ color: "blue" }}>
                   <Popup>
                     <strong>Window</strong>
                     <br />
@@ -261,19 +312,20 @@ export default function EditableMap({
                   </Popup>
                 </Polyline>
               );
-            } else if (layer.properties.type.startsWith("Zone ")) {
+            } else if (
+              layer.properties.type.startsWith("Zone") ||
+              layer.properties.type.startsWith("zone")
+            ) {
               return (
                 <Polygon
                   key={index}
-                  positions={layer.geometry.coordinates[0].map(([lng, lat]) => [
-                    lat,
-                    lng,
-                  ])}
-                  color="purple">
+                  positions={layer.geometry.coordinates[0].map(
+                    ([lng, lat]: [number, number]) => [lat, lng]
+                  )}
+                  pathOptions={{ color: "purple" }}>
                   <Popup>
-                    <strong>Zone</strong>
+                    <strong>Zone : {layer.properties.name}</strong>
                     <br />
-                    <p>{layer.properties.nom}</p>
                     <p>{layer.properties.description}</p>
                   </Popup>
                 </Polygon>
@@ -289,7 +341,7 @@ export default function EditableMap({
                         layer.geometry.coordinates[0],
                       ]}>
                       <Popup>
-                        <strong>POI</strong>
+                        <strong>PoI : {layer.properties.name}</strong>
                         <br />
                         <p>{layer.properties.description}</p>
                         {layer.properties.image && (
@@ -325,13 +377,16 @@ export default function EditableMap({
                     </Polyline>
                   );
                 case "polygon":
+                  {
+                    console.log(layer);
+                  }
                   return (
                     <Polygon
                       key={index}
                       positions={layer.geometry.coordinates[0].map(
-                        ([lng, lat]) => [lat, lng]
+                        ([lng, lat]: [number, number]) => [lat, lng]
                       )}
-                      color="yellow">
+                      pathOptions={{ color: "yellow" }}>
                       <Popup>
                         <strong>POI</strong>
                         <br />

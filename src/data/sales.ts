@@ -26,10 +26,10 @@ export async function fetchSalesData(searchTerm = "", filters = {}) {
   
       return sales.map((sale: any) => ({
         id: sale.id.toString(),
+        user_id : sale.user_id.toString(),
         type: sale.device?.device_type?.type ?? "N/A",
         saleDate: new Date(sale.date).toLocaleDateString(),
         //price: sale.price ? `${sale.price} €` : "N/A", 
-        //offer: sale.offer ?? "N/A", 
         firstname: sale.user?.first_name ?? "N/A",
         lastname: sale.user?.family_name ?? "N/A",
         city: sale.user?.city ?? "N/A",
