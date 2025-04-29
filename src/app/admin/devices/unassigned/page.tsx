@@ -150,7 +150,7 @@ const Page = () => {
         </div>
         <div className="flex gap-2">
           <Button className="px-8 font-montserrat">
-          <Link href="/admin/devices/add-device">  Dispositifs
+          <Link href="/admin/devices">  Retour
           </Link>
           </Button>
           <Button className="px-8 font-montserrat">

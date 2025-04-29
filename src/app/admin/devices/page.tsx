@@ -158,7 +158,7 @@ const Page = () => {
         </div>
         <div className="flex gap-2">
           <Button className="px-8 font-montserrat">
-          <Link href="/admin/devices/unassigned">  Dispositifs
+          <Link href="/admin/devices/unassigned">  Associer un dispositif
           </Link>
 
           </Button>

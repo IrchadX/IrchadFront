@@ -14,7 +14,11 @@ const Header = () => {
       return "Gestion des utilisateurs";
     } else if (pathname.startsWith("/admin/environment")) {
       return "Gestion des environnements";
-    } else if (pathname.startsWith("/admin/devices")) {
+    }
+    else if (pathname.startsWith("/admin/devices/unassigned")) {
+      return "Dispositifs non associés";
+    }
+     else if (pathname.startsWith("/admin/devices")) {
       return "Dispositifs";
     } else if (pathname.startsWith("/admin/settings")) {
       return "Paramètres";
