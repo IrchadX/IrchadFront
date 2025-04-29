@@ -96,33 +96,29 @@ export async function fetchUserEnvironmentsWithPricing(userId: number) {
     return totalEnvironmentsPrice + devicePrice + parseFloat(public_access);
   }
 
-    export async function fetchTotalPrice(userId: number): Promise<number> {
-      try {
-        // Fetch environments with pricing
-        const environments = await fetchUserEnvironmentsWithPricing(userId);
-    
-        // Fetch the user's device
-        const device = await fetchUserDevice(userId);
-    
-        // Fetch public access pricing
-        const public_access = await fetchUserPublicEnvironmentsPricing(userId);
-    
-        // Calculate the total price
-        const totalEnvironmentsPrice = environments.length > 0
-          ? environments.reduce((sum : number, env : {price : string}) => sum + parseFloat(env.price), 0)
-          : 0;
-    
-        const devicePrice = device?.price ? parseFloat(device.price) : 0;
-    
-        const totalPrice = totalEnvironmentsPrice + devicePrice + parseFloat(public_access || "0");
-    
-        console.log(`Total price for user ID ${userId}: ${totalPrice}`);
-        return totalPrice;
-      } catch (error) {
-        console.error(`Error fetching total price for user ID ${userId}:`, error);
-        return 0; // Return 0 in case of an error
-      }
+  export async function fetchTotalPrice(userId: number): Promise<number> {
+    try {
+      // Fetch environments with pricing
+      const environments = await fetchUserEnvironmentsWithPricing(userId);
+  
+      // Fetch the user's device
+      const device = await fetchUserDevice(userId);
+  
+      // Fetch public access pricing
+      const public_access = await fetchUserPublicEnvironmentsPricing(userId);
+  
+      // Prepare data for estimateTotalPrice
+      const surfaces = environments.map((env: { surface: string }) => ({ surface: parseFloat(env.surface) || 0 }));
+      // Call estimateTotalPrice
+      const totalPrice = await estimateTotalPrice(surfaces, !!public_access, device[0]);
+  
+      console.log(`Total price for user ID ${userId}: ${totalPrice}`);
+      return totalPrice;
+    } catch (error) {
+      console.error(`Error fetching total price for user ID ${userId}:`, error);
+      return 0; // Return 0 in case of an error
     }
+  }
 
     export async function estimateTotalPrice(
       environments: { surface: number }[],
