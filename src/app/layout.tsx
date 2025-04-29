@@ -4,6 +4,7 @@ import "./globals.css";
 import localFont from "next/font/local";
 import Sidebar from "@/components/layout/decideursidebar";
 import Header from "@/components/layout/header";
+import {Toaster} from "react-hot-toast";
 
 const futura = localFont({
   src: "../../public/fonts/futura/futur.ttf",
@@ -33,6 +34,7 @@ export default function RootLayout({
       <body
         className={`${futura.variable} ${montserrat.variable} antialiased font-montserrat bg-white w-screen`}>
         <div className="flex min-h-screen w-full">{children}</div>
+        <Toaster position="top-right" reverseOrder={false} />
       </body>
     </html>
   );

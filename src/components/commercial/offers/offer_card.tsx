@@ -55,6 +55,12 @@ export function OfferCard() {
 
   const handleSubmit = async () => {
     try {
+      // Vérifiez qu'il y a au moins un environnement
+      if (environments.length === 0) {
+        toast.error("Veuillez saisir au moins un environnement.");
+        return;
+      }
+
       // Préparer les données pour le calcul du prix total
       const surfaces = environments.map((env) => ({ surface: parseFloat(env.surface) || 0 }));
       const selectedDeviceObject = devices.find((device) => device.id.toString() === selectedDevice);
@@ -73,22 +79,31 @@ export function OfferCard() {
 
   const handleConfirmOffer = async () => {
     try {
+      // Vérifiez que les champs prénom et nom sont remplis
       if (!firstName || !lastName) {
         setUserError("Veuillez remplir le prénom et le nom.");
         toast.error("Veuillez remplir le prénom et le nom.");
         return;
       }
-
-      // Vérifier si l'utilisateur existe
-      const users = await fetchUserByName(firstName, lastName);
-      if (!users) {
+  
+      // Vérifiez si l'utilisateur existe
+      const user = await fetchUserByName(firstName, lastName);
+      if (!user) {
         setUserError("Utilisateur introuvable ou non valide.");
         toast.error("Utilisateur introuvable ou non valide.");
         return;
       }
-
-      const userId = users.id;
-
+  
+      setUserError(""); // Clear the error if the user exists
+  
+      const userId = user.id;
+  
+      // Vérifiez qu'il y a au moins un environnement
+      if (environments.length === 0) {
+        toast.error("Veuillez saisir au moins un environnement.");
+        return;
+      }
+  
       // Confirm environments
       const promises = environments.map(async (env) => {
         return await createBasicEnvironment(
@@ -100,22 +115,22 @@ export function OfferCard() {
           parseFloat(env.surface) || 0
         );
       });
-
+  
       const results = await Promise.all(promises);
       console.log("Environments created successfully:", results);
       toast.success("Les environnements ont été créés avec succès !");
-
+  
       if (selectedDevice) {
         await updateDeviceUser(Number(selectedDevice), userId);
         console.log(`Device ID ${selectedDevice} assigned to user ID ${userId}`);
         toast.success("Dispositif assigné avec succès !");
-
+  
         // Create purchase history
         await createPurchaseHistory(userId, Number(selectedDevice), accessPublic);
         console.log("Purchase history created successfully.");
         toast.success("Historique d'achat créé avec succès !");
       }
-
+  
       alert("Les environnements ont été confirmés avec succès !");
     } catch (error) {
       console.error("Error confirming the environments:", error);
@@ -159,6 +174,13 @@ export function OfferCard() {
                   />
                 </div>
               </div>
+
+              {/* Display User Error */}
+              {userError && (
+                <div className="text-red-500 text-sm mt-2">
+                  {userError}
+                </div>
+              )}
 
               {/* Device Selection */}
               <div className="flex flex-col space-y-1.5">

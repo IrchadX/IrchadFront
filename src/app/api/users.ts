@@ -183,7 +183,7 @@ function calculateAge(birthDate: string): number {
   return today.getFullYear() - birth.getFullYear();
 }
 
-export async function fetchUserByName(first_name: string, family_name : string) {
+export async function fetchUserByName(first_name: string, family_name: string) {
   try {
     const requestUrl = `${API_URL}/users/by-name/${first_name},${family_name}`;
     console.log(`Fetching user by name from: ${requestUrl}`);
@@ -196,6 +196,11 @@ export async function fetchUserByName(first_name: string, family_name : string) 
       credentials: "include", // this is needed for the cookie to be sent
     });
 
+    if (response.status === 404) {
+      console.warn("User not found.");
+      return null; // Retourne null si l'utilisateur n'est pas trouvé
+    }
+
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`API Error (${response.status}): ${errorText}`);
@@ -206,12 +211,9 @@ export async function fetchUserByName(first_name: string, family_name : string) 
     console.log(`Received user by name:`, user);
 
     return user;
-  } catch (error : any) {
+  } catch (error) {
     console.error("Error fetching user by name:", error);
-    if (error.message.includes("404")) {
-      return null; // Retourne null si l'utilisateur n'est pas trouvé
-    }
-    throw error;
+    throw error; 
   }
 }
 
