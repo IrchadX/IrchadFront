@@ -5,12 +5,30 @@ import { useEffect, useState } from "react";
 const Metrics = () => {
   const [inactiveDevicesCount, setInactiveDevicesCount] = useState(0);
   const [avgMaintenanceTime, setAvgMaintenanceTime] = useState<number | null>(null);
+  const [chiffre_affaire, setChiffre_affaire] = useState(0);
+  const [Disponibilite, setDisponibilite] = useState(0);
 
   useEffect(() => {
     fetch("http://localhost:3001/statistics/inactive-device-count")
       .then((res) => res.json())
       .then((data) => setInactiveDevicesCount(data.totalInactiveDevices))
       .catch((err) => console.error("Erreur :", err));
+
+      fetch("http://localhost:3001/statistics/disponibilite")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Revenu API:", data); // <= ajoute ce log
+        setDisponibilite(data.Disponibilite);
+      })
+      .catch((err) => console.error("Erreur :", err));
+      fetch("http://localhost:3001/statistics/revenue")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Revenu API:", data); // <= ajoute ce log
+        setChiffre_affaire(data.chiffre_affaire);
+      })
+      .catch((err) => console.error("Erreur :", err));
+    
 
       fetch("http://localhost:3001/statistics/average-intervention-duration")
       .then((res) => res.json())
@@ -23,20 +41,20 @@ const Metrics = () => {
 
   const metrics = [
     {
-      title: "Utilisateurs inactifs",
+      title: "Dispositifs bloqués",
       value: inactiveDevicesCount,
       textColor: "text-blue-500",
       icon: "/assets/UserIIcon.png",
     },
     {
       title: "Chiffre d'Affaires",
-      value: "10000 CA",
+      value: `${chiffre_affaire} DA` ,
       textColor: "text-yellow-500",
       icon: "/assets/MoneyIcon.png",
     },
     {
-      title: "Compteur",
-      value: "1",
+      title: "Taux de Disponibilité",
+      value: `${Disponibilite} %` ,
       textColor: "text-pink-500",
       icon: "/assets/AffaireIcon.png",
     },

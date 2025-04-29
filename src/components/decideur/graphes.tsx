@@ -51,8 +51,19 @@ export default function StatsCharts() {
     fetchData();
   }, []);
 
-  const colors = ["#F7B7C0", "#78C2C3", "#8064E9"];
-
+  const colors = [
+    "#F7B7C0", // Pêche pastel
+    "#78C2C3", // Bleu pastel
+    "#8064E9", // Lavande
+    "#FAD02E", // Jaune pâle
+    "#D4A5A5", // Rose doux
+    "#F4A300", // Orange doux
+    "#7A9E9F", // Bleu-gris pastel
+    "#D9BF77", // Beige doré
+    "#9C7B4F", // Marron clair
+    "#A1C4E8", // Bleu ciel doux
+  ];
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
       {/* Secteurs */}

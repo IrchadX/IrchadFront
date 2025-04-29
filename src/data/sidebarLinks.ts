@@ -2,7 +2,9 @@ import { IconType } from "react-icons";
 import { FiUsers, FiSettings } from "react-icons/fi";
 import { MdDevices, MdOutlineDashboard, MdLocalOffer } from "react-icons/md";
 import { FaMoneyBillTrendUp } from "react-icons/fa6";
+import { MdLocationOn, MdOutlineDescription } from "react-icons/md";
 import { TbWorld } from "react-icons/tb";
+import { FiUser } from "react-icons/fi";
 
 export interface SidebarLink {
   name: string;
@@ -69,26 +71,22 @@ export const decideurSidebarLinks: SidebarLink[] = [
   {
     name: "Tableau de Bord",
     href: "/decideur/dashboard",
-    Icon: FiSettings,
+    Icon: MdOutlineDashboard,
   },
+
   {
-    name: "Utilisateurs",
-    href: "/decideur/users",
-    Icon: FiSettings,
-  },
-  {
-    name: "Fréquentation des zones",
+    name: "Zones",
     href: "/decideur/zones",
-    Icon: FiSettings,
+    Icon: MdLocationOn, 
   },
   {
     name: "Rapports",
     href: "/decideur/rapports",
-    Icon: FiSettings,
-  },
+    Icon: MdOutlineDescription, 
+    },
   {
-    name: "Paramètres",
-    href: "/decideur/settings",
-    Icon: FiSettings,
+    name: "Profil",
+    href: "/decideur/profile",
+    Icon: FiUser,
   },
 ];

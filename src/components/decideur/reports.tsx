@@ -1,13 +1,20 @@
 "use client";
-
 import React, { useState } from "react";
-import Image from "next/image";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { DownloadIcon, ChevronLeftIcon, ChevronRightIcon, CalendarIcon, ChevronDownIcon } from "lucide-react";
+import { CalendarIcon, DownloadIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import axios from 'axios';
+import Image from "next/image"; // Assurez-vous d'importer Image de next/image pour les projets Next.js
+
+
+
+const Reports = () => {
+  
 const handleDownload = async (reportId) => {
   try {
-    const response = await fetch(`http://localhost:3001/reports/pdf`, {
+    const selectedYear = selectedDates[reportId - 1]?.getFullYear() || new Date().getFullYear();
+    
+    const response = await fetch(`http://localhost:3001/reports/pdf?year=${selectedYear}`, {
       method: "GET",
     });
 
@@ -20,7 +27,7 @@ const handleDownload = async (reportId) => {
     
     const link = document.createElement("a");
     link.href = url;
-    link.download = "rapport_dispositifs.pdf"; // Tu peux le rendre dynamique selon `report.title`
+    link.download = `rapport_${selectedYear}.pdf`; // Dynamique selon l'année sélectionnée
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -29,8 +36,6 @@ const handleDownload = async (reportId) => {
     console.error("Erreur téléchargement:", error);
   }
 };
-
-const Reports = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedDates, setSelectedDates] = useState(Array(10).fill(new Date())); 
   const [selectedObjective, setSelectedObjective] = useState(""); 
@@ -174,9 +179,12 @@ const Reports = () => {
                     newDates[report.id - 1] = date;
                     setSelectedDates(newDates);
                   }}
+                  showYearPicker
+                  dateFormat="yyyy"
+                  locale="fr"
                   className="bg-transparent border-b border-gray-400 text-gray-700 text-sm 
                              pl-9 py-1 focus:outline-none focus:border-blue-500 
-                             hover:border-gray-600 transition-all w-32"
+                             hover:border-gray-600 transition-all w-24"
                 />
               </div>
 
@@ -184,23 +192,17 @@ const Reports = () => {
               <div className="text-center">
               <button 
   onClick={() => {
-    if (report.id === 1) {
-      handleDownload(report.id);
-    } else {
-      alert("Téléchargement non disponible pour ce rapport.");
-    }
+    handleDownload(report.id);
   }}
   className="text-red-500 hover:text-red-600 transition-colors p-2 rounded-full hover:bg-red-50"
 >
   <DownloadIcon size={20} />
 </button>
-
               </div>
             </div>
           ))}
         </div>
 
-        {/* Pagination */}
         <div className="flex items-center justify-between pt-4 border-t border-gray-200 mt-3">
           <div className="text-sm text-gray-500">
             {indexOfFirstReport + 1}-{Math.min(indexOfLastReport, filteredReports.length)} de {filteredReports.length}
