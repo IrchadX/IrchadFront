@@ -134,7 +134,7 @@ export async function fetchUserEnvironmentsWithPricing(userId: number) {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include", // this is needed for the cookie to be sent
+          credentials: "include", 
           body: JSON.stringify({ environments, includePublicAccess, device }),
         });
   
