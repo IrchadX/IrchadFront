@@ -11,12 +11,17 @@ export async function fetchUsers(searchTerm = "", filters = {}) {
         queryParams.append(key, value as string);
       }
     });
-    
 
     const requestUrl = `${API_URL}/users?${queryParams.toString()}`;
     console.log(`Making request to: ${requestUrl}`);
     
-    const response = await fetch(requestUrl);
+    const response = await fetch(requestUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // Ajout du paramètre credentials
+    });
     
     if (!response.ok) {
       const errorText = await response.text();
@@ -37,7 +42,7 @@ export async function fetchUsers(searchTerm = "", filters = {}) {
       street: user.street ?? "N/A",
       phone: user.phone_number,
       email: user.email,
-      userType: user.userType ?? "N/A",
+      userType: user.user_type.type ?? "N/A",
       registrationDate: new Date(user.created_at).toLocaleDateString(),
     }));
   } catch (error) {
