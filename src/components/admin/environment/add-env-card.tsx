@@ -14,6 +14,7 @@ import { Label } from "@/components/shared/label";
 import Title from "@/components/shared/title";
 import { TextArea } from "@/components/shared/text-area";
 import Image from "next/image";
+import {fetchMalvoyantUsers} from "@/app/api/users";
 
 interface User {
   id: number;
@@ -86,7 +87,6 @@ const AddEnvCard = ({
       ? `${user.first_name} ${user.family_name}`
       : "Utilisateur inconnu";
   };
-
   return (
     <div className="p-6 bg-white rounded-lg shadow-md max-w-md mx-auto border-main-40 border">
       <Title text="Informations" lineLength="0" />
@@ -218,5 +218,4 @@ const AddEnvCard = ({
     </div>
   );
 };
-
 export default AddEnvCard;

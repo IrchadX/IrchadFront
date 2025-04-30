@@ -13,7 +13,6 @@ export default function OffersPage() {
         <div className="flex-1">
           <OfferCard />
         </div>
-        <DevisCard />
       </div>
     </div>
   );

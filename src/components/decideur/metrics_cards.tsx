@@ -7,12 +7,12 @@ const Metrics = () => {
   const [avgMaintenanceTime, setAvgMaintenanceTime] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:3001/statistics/inactive-device-count")
+    fetch("http://localhost:5000/statistics/inactive-device-count")
       .then((res) => res.json())
       .then((data) => setInactiveDevicesCount(data.totalInactiveDevices))
       .catch((err) => console.error("Erreur :", err));
 
-      fetch("http://localhost:3001/statistics/average-intervention-duration")
+      fetch("http://localhost:5000/statistics/average-intervention-duration")
       .then((res) => res.json())
       .then((data) => {
         console.log("Réponse API avg maintenance:", data);

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import EnvironmentCard from "./env-card";
+import { deleteEnvironment } from "@/app/api/environments";
 
 interface Environment {
   id: string;
@@ -19,14 +20,7 @@ const EnvsList = ({ environments: initialEnvs }: EnvsListProps) => {
 
   const handleDeleteEnvironment = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:3000/environments/${id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Échec de la suppression");
-      }
-
+      const response = await deleteEnvironment(id);
       setEnvironments((prev) => prev.filter((env) => env.id !== id));
       toast.success("Environnement supprimé avec succès !");
     } catch (error) {

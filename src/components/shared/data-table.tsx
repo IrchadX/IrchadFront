@@ -6,7 +6,11 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
+  ColumnFiltersState,
+  getFilteredRowModel,
+  VisibilityState,
 } from "@tanstack/react-table";
+import { useState } from "react";
 
 import {
   Table,
@@ -29,17 +33,32 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  columnVisibility?: VisibilityState;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  columnVisibility = {},
 }: DataTableProps<TData, TValue>) {
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  
+  // Initialize column visibility with the provided config
+  const [visibility, setVisibility] = useState<VisibilityState>(columnVisibility);
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setVisibility,
+    // Use the visibility state for controlling column visibility
+    state: {
+      columnFilters,
+      columnVisibility: visibility,
+    },
   });
 
   return (
@@ -95,7 +114,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <Pagination className=" mt-3 py-4 flex justify-end">
+      <Pagination className="mt-3 py-4 flex justify-end">
         <PaginationContent className="flex items-center space-x-1">
           <PaginationItem>
             <PaginationPrevious

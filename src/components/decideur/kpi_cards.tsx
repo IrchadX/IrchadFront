@@ -12,10 +12,10 @@ const KpiCards = () => {
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:3001/statistics/users-count").then((res) => res.json()),
-      fetch("http://localhost:3001/statistics/device-count").then((res) => res.json()),
-      fetch("http://localhost:3001/statistics/alerts-count").then((res) => res.json()),
-      fetch("http://localhost:3001/statistics/interventions").then((res) => res.json()),
+      fetch("http://localhost:5000/statistics/users-count").then((res) => res.json()),
+      fetch("http://localhost:5000/statistics/device-count").then((res) => res.json()),
+      fetch("http://localhost:5000/statistics/alerts-count").then((res) => res.json()),
+      fetch("http://localhost:5000/statistics/interventions").then((res) => res.json()),
     ])
       .then(([usersData, devicesData, alertsData, techInterventionData]) => {
         setStats({

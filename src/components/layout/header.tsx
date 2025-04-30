@@ -1,12 +1,11 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { BiBell } from "react-icons/bi"; // BoxIcons (Outline)
+import { BiBell } from "react-icons/bi"; 
 import Image from "next/image";
 
 const Header = () => {
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith("/auth");
-
   const getTitle = () => {
     if (pathname.startsWith("/dashboard")) {
       return "Tableau de bord";
@@ -14,7 +13,11 @@ const Header = () => {
       return "Gestion des utilisateurs";
     } else if (pathname.startsWith("/admin/environment")) {
       return "Gestion des environnements";
-    } else if (pathname.startsWith("/admin/devices")) {
+    }
+    else if (pathname.startsWith("/admin/devices/unassigned")) {
+      return "Dispositifs non associés";
+    }
+     else if (pathname.startsWith("/admin/devices")) {
       return "Dispositifs";
     } else if (pathname.startsWith("/admin/settings")) {
       return "Paramètres";
