@@ -17,7 +17,7 @@ const montserrat = Montserrat({
 });
 
 //user role is specified here for testing purposes
-const userRole = "commercial";
+
 
 export const metadata: Metadata = {
   title: "Irchad",
