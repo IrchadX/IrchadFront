@@ -30,8 +30,8 @@ const KpiCards = () => {
   
   const kpis = [
     { title: "Utilisateurs actifs", value: stats.users, trend: "8.5% Up", icon: "/assets/UserIcon.png", trendColor: "text-green-500" },
-    { title: "Dispositifs vendus ce mois", value: stats.devices, trend: "1.3% Up", icon: "/assets/DeviceIcon.png", trendColor: "text-green-500" },
-    { title: "Alertes signalées ce mois", value: stats.alerts, trend: "4.3% Down", icon: "/assets/CourbeIcon.png", trendColor: "text-red-500" },
+    { title: "Dispositifs vendus ", value: stats.devices, trend: "1.3% Up", icon: "/assets/DeviceIcon.png", trendColor: "text-green-500" },
+    { title: "Alertes signalées", value: stats.alerts, trend: "4.3% Down", icon: "/assets/CourbeIcon.png", trendColor: "text-red-500" },
     { title: "% Interventions techniques", value: `${stats.technicalPercentage}%`, trend: "2% Up", icon: "/assets/TimeIcon.png", trendColor: "text-green-500" },
   ];
 

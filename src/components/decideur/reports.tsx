@@ -80,71 +80,7 @@ const handleDownload = async (reportId) => {
 
   return (
     <div className="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow">
-      {/* Filtre par Objectifs - Redesigned */}
-      <div className="mb-6 relative">
-        <div className="flex items-center justify-between">
-          <label htmlFor="objectiveFilter" className="block text-sm font-medium text-gray-700">Filtrer par Objectif</label>
-          <div className="relative">
-            <button 
-              onClick={toggleFilter}
-              className="flex items-center justify-between w-64 px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-            >
-              <span className="text-gray-700 text-sm">
-                {selectedObjective || "Tous les Objectifs"}
-              </span>
-              <ChevronDownIcon 
-                size={16} 
-                className={`text-gray-500 transition-transform duration-300 ${isFilterOpen ? 'rotate-180' : ''}`} 
-              />
-            </button>
-            
-            {isFilterOpen && (
-              <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
-                <ul className="py-1">
-                  <li 
-                    className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 ${selectedObjective === "" ? "bg-blue-50 text-blue-600" : ""}`}
-                    onClick={() => {
-                      setSelectedObjective("");
-                      setIsFilterOpen(false);
-                    }}
-                  >
-                    Tous les Objectifs
-                  </li>
-                  <li 
-                    className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 ${selectedObjective === "Amélioration" ? "bg-blue-50 text-blue-600" : ""}`}
-                    onClick={() => {
-                      setSelectedObjective("Amélioration");
-                      setIsFilterOpen(false);
-                    }}
-                  >
-                    Amélioration
-                  </li>
-                  <li 
-                    className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 ${selectedObjective === "Suivi" ? "bg-blue-50 text-blue-600" : ""}`}
-                    onClick={() => {
-                      setSelectedObjective("Suivi");
-                      setIsFilterOpen(false);
-                    }}
-                  >
-                    Suivi
-                  </li>
-                  <li 
-                    className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 ${selectedObjective === "Stratégie" ? "bg-blue-50 text-blue-600" : ""}`}
-                    onClick={() => {
-                      setSelectedObjective("Stratégie");
-                      setIsFilterOpen(false);
-                    }}
-                  >
-                    Stratégie
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Table Container with Gray Background */}
+    
       <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
         {/* Table Header */}
         <div className="grid grid-cols-[2fr_1fr_1fr_0.5fr] gap-4 border-b border-gray-200 pb-3 mb-2 text-sm text-gray-600">

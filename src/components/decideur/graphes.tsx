@@ -1,5 +1,4 @@
-"use client"; // Important pour Next.js 13+ en mode app
-
+"use client"; 
 import { useState, useEffect } from "react";
 import {
   PieChart,
@@ -52,16 +51,16 @@ export default function StatsCharts() {
   }, []);
 
   const colors = [
-    "#F7B7C0", // Pêche pastel
-    "#78C2C3", // Bleu pastel
-    "#8064E9", // Lavande
-    "#FAD02E", // Jaune pâle
-    "#D4A5A5", // Rose doux
-    "#F4A300", // Orange doux
-    "#7A9E9F", // Bleu-gris pastel
-    "#D9BF77", // Beige doré
-    "#9C7B4F", // Marron clair
-    "#A1C4E8", // Bleu ciel doux
+    "#F7B7C0", 
+    "#78C2C3", 
+    "#8064E9", 
+    "#FAD02E", 
+    "#D4A5A5", 
+    "#F4A300", 
+    "#7A9E9F", 
+    "#D9BF77", 
+    "#9C7B4F", 
+    "#A1C4E8",
   ];
   
   return (

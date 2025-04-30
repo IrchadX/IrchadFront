@@ -15,11 +15,14 @@ const Sidebar = ({ userRole }: { userRole: string }) => {
   const isAuthRoute = pathname.startsWith("/auth");
 
   const sidebarLinks: SidebarLink[] =
-    userRole === "admin"
-      ? adminSidebarLinks
-      : userRole === "commercial"
-      ? commercialSidebarLinks
-      : decideurSidebarLinks;
+  userRole === "admin"
+    ? adminSidebarLinks
+    : userRole === "commercial"
+    ? commercialSidebarLinks
+    : userRole === "decideur"
+    ? decideurSidebarLinks
+    : []; 
+
 
   return (
     <>
