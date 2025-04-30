@@ -2,7 +2,7 @@ import { API_URL } from "../../config/api";
 
 export async function fetchAvailableDevices() {
     try { 
-      const requestUrl = `${API_URL}/devices/user/null`;
+      const requestUrl = `${API_URL}/devices/notAssigned/`;
       console.log(`Fetching available devices from: ${requestUrl}`);
   
       const response = await fetch(requestUrl, {
