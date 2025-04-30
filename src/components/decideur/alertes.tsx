@@ -11,7 +11,7 @@ const Alerts = () => {
   useEffect(() => {
     const fetchAlerts = async () => {
       try {
-        const response = await fetch("http://localhost:3001/statistics/all-alerts");
+        const response = await fetch("http://localhost:5000/statistics/all-alerts");
         const data = await response.json(); 
         setAlerts(data.alerts || []);
       } catch (error) {

@@ -22,7 +22,7 @@ export default function StatsCharts() {
     async function fetchData() {
       try {
 
-        const pieRes = await fetch("http://localhost:3001/graphics/cercle");
+        const pieRes = await fetch("http://localhost:5000/graphics/cercle");
         if (!pieRes.ok) throw new Error("Échec de la récupération des données Pie");
         const pieRaw = await pieRes.json();
 
@@ -34,7 +34,7 @@ export default function StatsCharts() {
         }));
         setPieData(formattedPie);
 
-        const salesRes = await fetch("http://localhost:3001/graphics/courbe");
+        const salesRes = await fetch("http://localhost:5000/graphics/courbe");
         if (!salesRes.ok) throw new Error("Échec de la récupération des données Line");
         const salesData = await salesRes.json();
 
