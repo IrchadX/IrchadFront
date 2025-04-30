@@ -6,7 +6,7 @@ import { User, columns } from "@/components/commercial/clients/columns";
 import { DataTable } from "@/components/shared/data-table";
 import SearchInput from "@/components/shared/search-input";
 import FilterButton, { Filters } from "@/components/shared/filter-button";
-import { fetchAidantAndClientUsers } from "@/data/users";
+import { fetchAidantAndClientUsers } from "@/app/api/users";
 import { ButtonSecondary } from "@/components/shared/secondary-button";
 
 const filterSections: {
@@ -103,6 +103,7 @@ export default function Page() {
     userType: [],
     city: [],
     ageGroup: [],
+    visibility: [],
   });
 
   // Direct 1:1 mapping to match exactly what backend expects
@@ -191,7 +192,7 @@ export default function Page() {
         </div>
         <div className="flex justify-between items-start">
           <Link href={`/commercial/clients/add_client`}>
-            <ButtonSecondary title="Ajouter" onClick={() => {}} />
+            <ButtonSecondary title="Ajouter" onClick={() => {} } disabled={false}/>
           </Link>
         </div>
       </div>

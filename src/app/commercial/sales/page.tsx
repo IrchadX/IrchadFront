@@ -6,8 +6,7 @@ import { Sale, columns } from "@/components/commercial/sales/columns";
 import { DataTable } from "@/components/shared/data-table";
 import SearchInput from "@/components/shared/search-input";
 import FilterButton, { Filters } from "@/components/shared/filter-button";
-import { fetchSalesData } from "@/data/sales";
-import { ButtonSecondary } from "@/components/shared/secondary-button";
+import { fetchSalesData } from "@/app/api/sales";
 
 const filterSections: {
   label: string;
@@ -97,6 +96,7 @@ export default function Page() {
     userType: [],
     city: [],
     ageGroup: [],
+    visibility: [],
   });
 
   // Direct 1:1 mapping to match exactly what backend expects
@@ -182,11 +182,6 @@ export default function Page() {
             onApply={handleApplyFilters}
             filterSections={filterSections}
           />
-        </div>
-        <div className="flex justify-between items-start">
-          <Link href={`/commercial/clients/add_client`}>
-            <ButtonSecondary title="Ajouter" onClick={() => {}} />
-          </Link>
         </div>
       </div>
 
