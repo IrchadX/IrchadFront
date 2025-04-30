@@ -37,14 +37,14 @@ export const createColumns = (
     accessorKey: "comm_state",
     header: "État de connexion",
   },
-  {
+  /*{
     accessorKey: "battery",
     header: "Batterie",
   },
   {
     accessorKey: "last_position",
     header: "Dernière position",
-  },
+  },*/
   {
     accessorKey: "actual_state",
     header: "État actuel",

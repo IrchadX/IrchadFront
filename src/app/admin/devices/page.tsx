@@ -103,7 +103,9 @@ const Page = () => {
     const fetchDevices = async () => {
       try {
         const fetchedDevices = await DeviceService.fetchAssignedDevices();
-    
+        console.log( "***************************");
+
+        console.log( fetchedDevices);
         const updatedDevices = await Promise.all(
           fetchedDevices.map(async (device) => {
             const user = await DeviceService.getUserByDeviceId(device.user_id);
