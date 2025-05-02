@@ -2,18 +2,17 @@
 import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
-import ZoneTypeCard from "./zone-type-card";
-import { zoneTypes } from "@/data/zoneTypes";
+import POICard from "./poi-card";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-const ZoneTypesSwiper = () => {
+const POIsSwiper = ({ pois }) => {
   const [swiperWidth, setSwiperWidth] = useState(0);
 
   useEffect(() => {
-    // Calculate 75% of the screen width
+    // Calculate width based on screen size
     const width =
       window.innerWidth > 1570
         ? window.innerWidth * 0.8
@@ -33,12 +32,23 @@ const ZoneTypesSwiper = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const handleEditPOI = (poiId) => {
+    console.log("Edit POI:", poiId);
+    // Add your edit POI logic here
+  };
+
+  const handleDeletePOI = (poiId) => {
+    console.log("Delete POI:", poiId);
+    // Add your delete POI logic here
+  };
+
   return (
     <div style={{ width: `${swiperWidth}px` }} className="p-4">
       <Swiper
         modules={[Navigation]}
         spaceBetween={10}
         slidesPerView={3}
+        navigation
         breakpoints={{
           640: {
             slidesPerView: 2,
@@ -51,20 +61,19 @@ const ZoneTypesSwiper = () => {
           1400: { slidesPerView: 3 },
           1500: { slidesPerView: 3.5 },
         }}>
-        {zoneTypes.map((zone, index) => (
-          <SwiperSlide key={index}>
-            <ZoneTypeCard
-              icon={zone.icon}
-              color={zone.color}
-              maxSpeed={zone.maxSpeed}
-              title={zone.title}
-              dropdownOptions={zone.dropdownOptions}
-            />
-          </SwiperSlide>
-        ))}
+        {pois &&
+          pois.map((poi) => (
+            <SwiperSlide key={poi.id}>
+              <POICard
+                poi={poi}
+                onEdit={() => handleEditPOI(poi.id)}
+                onDelete={() => handleDeletePOI(poi.id)}
+              />
+            </SwiperSlide>
+          ))}
       </Swiper>
     </div>
   );
 };
 
-export default ZoneTypesSwiper;
+export default POIsSwiper;

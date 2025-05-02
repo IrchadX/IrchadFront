@@ -1,6 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { BiBell } from "react-icons/bi"; 
+import { BiBell } from "react-icons/bi";
 import Image from "next/image";
 
 const Header = () => {
@@ -13,11 +13,9 @@ const Header = () => {
       return "Gestion des utilisateurs";
     } else if (pathname.startsWith("/admin/environment")) {
       return "Gestion des environnements";
-    }
-    else if (pathname.startsWith("/admin/devices/unassigned")) {
+    } else if (pathname.startsWith("/admin/devices/unassigned")) {
       return "Dispositifs non associés";
-    }
-     else if (pathname.startsWith("/admin/devices")) {
+    } else if (pathname.startsWith("/admin/devices")) {
       return "Dispositifs";
     } else if (pathname.startsWith("/admin/settings")) {
       return "Paramètres";
@@ -34,17 +32,17 @@ const Header = () => {
   return (
     <>
       {!isAuthRoute && (
-        <div className="z-50 bg-white py-6 xl:py-8 mb-4 border-b-[#E6EFF5] border-b-[1px] lg:text-2xl xl:text-3xl sticky font-montserrat top-0 w-full items-center text-main font-semibold  grid grid-cols-[90%,5%,5%]">
+        <div className="z-[100] bg-white py-6 xl:py-8 mb-4 border-b-[#E6EFF5] border-b-[1px] lg:text-2xl xl:text-3xl sticky font-montserrat top-0 w-full items-center text-main font-semibold  grid grid-cols-[90%,5%,5%]">
           <div>{getTitle()}</div>
-          <div className="w-14 h-14 flex items-center justify-center rounded-full bg-main/5 shadow-sm">
+          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-main/5 shadow-sm">
             <BiBell className="w-6 h-6 text-gray-500" />
           </div>
           <Image
             src="/assets/layout/avatar.svg"
-            width={50}
-            height={50}
+            width={40}
+            height={40}
             alt=""
-            className="xl:scale-100 scale-75 mx-auto"
+            className=" scale-75 mx-auto"
           />{" "}
         </div>
       )}{" "}

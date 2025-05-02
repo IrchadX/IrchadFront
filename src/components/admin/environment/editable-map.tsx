@@ -180,7 +180,7 @@ export default function EditableMap({
             position: "absolute",
             bottom: "10px",
             left: "50px",
-            zIndex: 1000,
+            zIndex: 50,
             display: "flex",
             gap: "10px",
             alignItems: "center",
