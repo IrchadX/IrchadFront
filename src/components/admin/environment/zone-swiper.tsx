@@ -23,52 +23,75 @@ const ZonesSwiper = ({ zones: initialZones }) => {
   }, [initialZones]);
 
   useEffect(() => {
-    // Calculate width based on screen size
-    const width =
-      window.innerWidth > 1570
-        ? window.innerWidth * 0.8
-        : window.innerWidth * 0.75;
-    setSwiperWidth(width);
-
-    const handleResize = () => {
-      const newWidth =
+    const updateWidth = () => {
+      const width =
         window.innerWidth > 1570
           ? window.innerWidth * 0.8
           : window.innerWidth * 0.75;
-      setSwiperWidth(newWidth);
+      setSwiperWidth(width);
     };
 
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
   }, []);
 
-  const handleEditZone = (zoneId) => {
-    const zoneToEdit = zones.find((zone) => zone.id === zoneId);
-    if (zoneToEdit) {
-      setEditingZone(zoneToEdit);
-      setIsEditModalOpen(true);
+  // ✅ Open Edit Modal
+  const openEditModal = (zone) => {
+    setEditingZone(zone);
+    setIsEditModalOpen(true);
+  };
+
+  // ✅ Open Delete Modal
+  const openDeleteModal = (zone) => {
+    setDeletingZone(zone);
+    setIsDeleteModalOpen(true);
+  };
+
+  // ✅ Actual Edit Request
+  const handleEditZone = async (updatedZone) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/zones/${updatedZone.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(updatedZone),
+        }
+      );
+      if (!response.ok) throw new Error("Failed to update zone");
+
+      // Update local state
+      setZones((prev) =>
+        prev.map((z) => (z.id === updatedZone.id ? updatedZone : z))
+      );
+      setIsEditModalOpen(false);
+      setEditingZone(null);
+    } catch (error) {
+      console.error("Error updating zone:", error);
     }
   };
 
-  const handleDeleteZone = (zoneId) => {
-    const zoneToDelete = zones.find((zone) => zone.id === zoneId);
-    if (zoneToDelete) {
-      setDeletingZone(zoneToDelete);
-      setIsDeleteModalOpen(true);
+  // ✅ Actual Delete Request
+  const handleDeleteZone = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/zones/${deletingZone.id}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        }
+      );
+      if (!response.ok) throw new Error("Failed to delete zone");
+
+      setZones((prev) => prev.filter((z) => z.id !== deletingZone.id));
+      setIsDeleteModalOpen(false);
+      setDeletingZone(null);
+    } catch (error) {
+      console.error("Error deleting zone:", error);
     }
-  };
-
-  const handleSaveZone = (updatedZone) => {
-    setZones((prevZones) =>
-      prevZones.map((zone) => (zone.id === updatedZone.id ? updatedZone : zone))
-    );
-  };
-
-  const handleConfirmDelete = (deletedZoneId) => {
-    setZones((prevZones) =>
-      prevZones.filter((zone) => zone.id !== deletedZoneId)
-    );
   };
 
   return (
@@ -79,30 +102,25 @@ const ZonesSwiper = ({ zones: initialZones }) => {
         slidesPerView={3}
         navigation
         breakpoints={{
-          640: {
-            slidesPerView: 2,
-          },
-          1024: {
-            slidesPerView: 2.25,
-          },
+          640: { slidesPerView: 2 },
+          1024: { slidesPerView: 2.25 },
           1233: { slidesPerView: 3 },
           1300: { slidesPerView: 2.9 },
           1400: { slidesPerView: 3 },
           1500: { slidesPerView: 3.5 },
         }}>
-        {zones &&
-          zones.map((zone) => (
-            <SwiperSlide key={zone.id}>
-              <ZoneCard
-                zone={zone}
-                onEdit={() => handleEditZone(zone.id)}
-                onDelete={() => handleDeleteZone(zone.id)}
-              />
-            </SwiperSlide>
-          ))}
+        {zones.map((zone) => (
+          <SwiperSlide key={zone.id}>
+            <ZoneCard
+              zone={zone}
+              onEdit={() => openEditModal(zone)}
+              onDelete={() => openDeleteModal(zone)}
+            />
+          </SwiperSlide>
+        ))}
       </Swiper>
 
-      {/* Edit Modal */}
+      {/* ✅ Edit Modal */}
       {editingZone && (
         <ZoneEditModal
           zone={editingZone}
@@ -111,11 +129,11 @@ const ZonesSwiper = ({ zones: initialZones }) => {
             setIsEditModalOpen(false);
             setEditingZone(null);
           }}
-          onSave={handleSaveZone}
+          onSave={handleEditZone}
         />
       )}
 
-      {/* Delete Confirmation Modal */}
+      {/* ✅ Delete Modal */}
       {deletingZone && (
         <ZoneDeleteConfirm
           zone={deletingZone}
@@ -124,7 +142,7 @@ const ZonesSwiper = ({ zones: initialZones }) => {
             setIsDeleteModalOpen(false);
             setDeletingZone(null);
           }}
-          onConfirm={handleConfirmDelete}
+          onConfirm={handleDeleteZone}
         />
       )}
     </div>

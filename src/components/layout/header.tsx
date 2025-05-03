@@ -32,7 +32,7 @@ const Header = () => {
   return (
     <>
       {!isAuthRoute && (
-        <div className="z-[100] bg-white py-6 xl:py-8 mb-4 border-b-[#E6EFF5] border-b-[1px] lg:text-2xl xl:text-3xl sticky font-montserrat top-0 w-full items-center text-main font-semibold  grid grid-cols-[90%,5%,5%]">
+        <div className="z-50 bg-white py-4 mb-4 border-b-[#E6EFF5] border-b-[1px] lg:text-2xl xl:text-3xl sticky font-montserrat top-0 w-full items-center text-main font-semibold  grid grid-cols-[90%,5%,5%]">
           <div>{getTitle()}</div>
           <div className="w-12 h-12 flex items-center justify-center rounded-full bg-main/5 shadow-sm">
             <BiBell className="w-6 h-6 text-gray-500" />
@@ -45,7 +45,7 @@ const Header = () => {
             className=" scale-75 mx-auto"
           />{" "}
         </div>
-      )}{" "}
+      )}
     </>
   );
 };

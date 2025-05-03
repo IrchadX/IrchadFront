@@ -165,14 +165,14 @@ export default function EditableMap({
   };
 
   return (
-    <div className="font-montserrat">
+    <div className="font-montserrat  ">
       <ToastContainer />
-
       <MapContainer
         zoom={18}
         maxZoom={22}
         center={[geoData.lat, geoData.lng]}
         zoom={18}
+        className="z-80"
         maxZoom={22}
         style={{ height: "70vh", width: "800px" }}>
         <div
@@ -180,7 +180,7 @@ export default function EditableMap({
             position: "absolute",
             bottom: "10px",
             left: "50px",
-            zIndex: 50,
+            zIndex: 100,
             display: "flex",
             gap: "10px",
             alignItems: "center",

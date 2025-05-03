@@ -183,6 +183,7 @@ const Page = () => {
 
           const data = await response.json();
           setPois(data);
+          console.log(data);
         } catch (error) {
           console.error("Error fetching environment:", error);
           toast.error("Failed to load environment data");
@@ -419,7 +420,7 @@ const Page = () => {
   }, [isPoiFormOpen, isZoneFormOpen]);
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="z-0 flex flex-col w-full">
       <div className="grid grid-cols-[2fr,1fr] gap-4 w-full">
         {/* Left Column */}
         <div className="col-span-1">

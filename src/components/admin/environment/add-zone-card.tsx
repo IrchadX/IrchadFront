@@ -12,7 +12,6 @@ import { Input } from "@/components/shared/input";
 import { Label } from "@/components/shared/label";
 import { TextArea } from "@/components/shared/text-area";
 import Title from "@/components/shared/title";
-import { zoneTypes } from "@/data/zoneTypes";
 import { Button } from "@/components/shared/button";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -29,23 +28,76 @@ const AddZoneCard = ({
   selectedItem,
   handleSaveItem,
 }: AddZoneCardProps) => {
-  const [name, setname] = useState(
+  const [name, setName] = useState(
     selectedItem?.properties?.name || "name de la zone"
   );
-  const [type, setType] = useState(selectedItem?.properties?.type || "");
+  const [zoneTypeId, setZoneTypeId] = useState(
+    selectedItem?.properties?.typeId || ""
+  );
+  const [zoneTypeName, setZoneTypeName] = useState(
+    selectedItem?.properties?.type || ""
+  );
   const [description, setDescription] = useState(
     selectedItem?.properties?.description || "Description de la zone"
   );
+  const [zoneTypes, setZoneTypes] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
+  // Fetch zone types from API
+  useEffect(() => {
+    const fetchZoneTypes = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/zone-types`,
+
+          {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+          }
+        );
+        if (!response.ok) {
+          throw new Error(`Failed to fetch zone types: ${response.status}`);
+        }
+        const data = await response.json();
+        setZoneTypes(data);
+      } catch (err) {
+        console.error("Error fetching zone types:", err);
+        setError(err.message);
+        toast.error("Erreur lors du chargement des types de zones");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchZoneTypes();
+  }, []);
+
+  // Update form when selected item changes
   useEffect(() => {
     if (selectedItem) {
-      setname(selectedItem.properties?.name || "Nom de la zone");
-      setType(selectedItem.properties?.type || "");
+      setName(selectedItem.properties?.name || "Nom de la zone");
+      setZoneTypeId(selectedItem.properties?.typeId || "");
+      setZoneTypeName(selectedItem.properties?.type || "");
       setDescription(
         selectedItem.properties?.description || "Description de la zone"
       );
     }
   }, [selectedItem]);
+
+  const handleZoneTypeChange = (value) => {
+    // Find the selected zone type to get both id and name
+    const selectedZoneType = zoneTypes.find(
+      (zone) => zone.id.toString() === value
+    );
+    if (selectedZoneType) {
+      setZoneTypeId(selectedZoneType.id);
+      setZoneTypeName(selectedZoneType.title);
+    }
+  };
 
   const handleSave = () => {
     const updatedItem = {
@@ -53,17 +105,19 @@ const AddZoneCard = ({
       properties: {
         ...selectedItem.properties,
         name,
-        type,
+        type: zoneTypeName, // Store the name for display
+        typeId: zoneTypeId, // Store the ID for backend reference
         description,
         id: 0,
       },
     };
 
     handleSaveItem(updatedItem);
-    toast.success("Zone ajoutee");
-    setname("");
+    toast.success("Zone ajoutée");
+    setName("");
     setDescription("");
-    setType("");
+    setZoneTypeId("");
+    setZoneTypeName("");
     console.log("Updated item:", updatedItem);
   };
 
@@ -74,7 +128,7 @@ const AddZoneCard = ({
 
       {/* name */}
       <div className="mb-4 gap-2">
-        <Label htmlFor="name">name</Label>
+        <Label htmlFor="name">Zone</Label>
         {showValues ? (
           <p className="mt-1 text-gray-700">{name}</p>
         ) : (
@@ -82,7 +136,7 @@ const AddZoneCard = ({
             id="name"
             placeholder="name de la zone..."
             value={name}
-            onChange={(e) => setname(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             className="bg-white"
           />
         )}
@@ -93,19 +147,37 @@ const AddZoneCard = ({
         <Label htmlFor="type">Type</Label>
         {showValues ? (
           <p className="mt-1 text-gray-700">
-            {type || "Aucun type sélectionné"}
+            {zoneTypeName || "Aucun type sélectionné"}
           </p>
         ) : (
-          <Select onValueChange={setType} value={type}>
+          <Select
+            onValueChange={handleZoneTypeChange}
+            value={zoneTypeId?.toString()}>
             <SelectTrigger className="mt-1">
-              <SelectValue placeholder="Sélectionnez un type" />
+              <SelectValue
+                placeholder={
+                  isLoading ? "Chargement..." : "Sélectionnez un type"
+                }
+              />
             </SelectTrigger>
             <SelectContent>
-              {zoneTypes.map((zone, index) => (
-                <SelectItem key={index} value={zone.title}>
-                  {zone.title}
+              {error && (
+                <SelectItem value="error" disabled>
+                  Erreur de chargement
                 </SelectItem>
-              ))}
+              )}
+              {isLoading && (
+                <SelectItem value="loading" disabled>
+                  Chargement...
+                </SelectItem>
+              )}
+              {!isLoading &&
+                !error &&
+                zoneTypes.map((zone) => (
+                  <SelectItem key={zone.id} value={zone.id.toString()}>
+                    {zone.type}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
         )}
@@ -130,7 +202,7 @@ const AddZoneCard = ({
       {/* Save Button (Only visible in edit mode) */}
       <div className="items-end flex justify-end">
         {!showValues && (
-          <Button variant="secondary" onClick={handleSave}>
+          <Button variant="secondary" onClick={handleSave} disabled={isLoading}>
             Ajouter la zone
           </Button>
         )}
