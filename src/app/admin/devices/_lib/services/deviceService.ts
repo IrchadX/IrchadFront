@@ -191,7 +191,8 @@ export const DeviceService = {
       formattedData.type_id = Number(updateData.type_id);
     if (updateData.user_id !== undefined)
       formattedData.user_id = Number(updateData.user_id);
-
+    
+      console.log("Formatted data for update:", formattedData);
     const response = await fetch(`${API_URL}/devices/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
