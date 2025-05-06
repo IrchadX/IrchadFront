@@ -39,11 +39,27 @@ const ZoneTypeEditModal = ({ zoneType, isOpen, onClose, onSave }) => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setIsLoading(true);
-      await onSave(formData);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/zone-types/${formData.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la mise à jour.");
+      }
+
+      const updated = await response.json();
+      onSave(updated); // Pass updated data back to parent
     } catch (error) {
       console.error("Failed to update zone type:", error);
     } finally {

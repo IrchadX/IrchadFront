@@ -2,7 +2,26 @@
 import React, { useState } from "react";
 import { ButtonPrimary } from "@/components/shared/primary-button";
 
-const ZoneDeleteConfirm = ({ zoneType, isOpen, onClose, onConfirm }) => {
+interface PoiCategory {
+  id: number;
+  category: string;
+  icon?: string | null;
+  color?: string | null;
+}
+
+interface PoiCategoryDeleteConfirmProps {
+  poiCategory: PoiCategory;
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: (poiCategoryId: number) => void;
+}
+
+const PoiCategoryDeleteConfirm: React.FC<PoiCategoryDeleteConfirmProps> = ({
+  poiCategory,
+  isOpen,
+  onClose,
+  onConfirm,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -12,9 +31,11 @@ const ZoneDeleteConfirm = ({ zoneType, isOpen, onClose, onConfirm }) => {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/zone-types/${zoneType.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/poi-categories/${poiCategory.id}`,
         {
           method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
         }
       );
 
@@ -22,10 +43,10 @@ const ZoneDeleteConfirm = ({ zoneType, isOpen, onClose, onConfirm }) => {
         throw new Error(`Error: ${response.status}`);
       }
 
-      onConfirm(zoneType.id);
+      onConfirm(poiCategory.id);
       onClose();
     } catch (err: any) {
-      setError(`Failed to delete zone: ${err.message}`);
+      setError(`Failed to delete POI category: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -36,7 +57,7 @@ const ZoneDeleteConfirm = ({ zoneType, isOpen, onClose, onConfirm }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-96 max-w-lg">
-        <h2 className="text-xl font-bold mb-4">Supprimer le type</h2>
+        <h2 className="text-xl font-bold mb-4">Supprimer la catégorie</h2>
 
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -45,8 +66,9 @@ const ZoneDeleteConfirm = ({ zoneType, isOpen, onClose, onConfirm }) => {
         )}
 
         <p className="mb-6">
-          Êtes-vous sûr de vouloir supprimerle type de zone{" "}
-          <strong>{zoneType.name}</strong>? Cette action est irréversible.
+          Êtes-vous sûr de vouloir supprimer la catégorie de POI{" "}
+          <strong>{poiCategory.category}</strong>? Cette action est
+          irréversible.
         </p>
 
         <div className="flex justify-end space-x-2">
@@ -70,4 +92,4 @@ const ZoneDeleteConfirm = ({ zoneType, isOpen, onClose, onConfirm }) => {
   );
 };
 
-export default ZoneDeleteConfirm;
+export default PoiCategoryDeleteConfirm;

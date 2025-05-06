@@ -23,26 +23,29 @@ export interface AddZoneCardProps {
   selectedItem: any;
 }
 
+interface ZoneType {
+  id: number;
+  title: string; // Changed from 'type' to match your API response
+}
+
 const AddZoneCard = ({
   showValues,
   selectedItem,
   handleSaveItem,
 }: AddZoneCardProps) => {
-  const [name, setName] = useState(
-    selectedItem?.properties?.name || "name de la zone"
-  );
-  const [zoneTypeId, setZoneTypeId] = useState(
+  const [name, setName] = useState(selectedItem?.properties?.name || "");
+  const [zoneTypeId, setZoneTypeId] = useState<number | string>(
     selectedItem?.properties?.typeId || ""
   );
   const [zoneTypeName, setZoneTypeName] = useState(
     selectedItem?.properties?.type || ""
   );
   const [description, setDescription] = useState(
-    selectedItem?.properties?.description || "Description de la zone"
+    selectedItem?.properties?.description || ""
   );
-  const [zoneTypes, setZoneTypes] = useState([]);
+  const [zoneTypes, setZoneTypes] = useState<ZoneType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch zone types from API
   useEffect(() => {
@@ -52,7 +55,6 @@ const AddZoneCard = ({
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/zone-types`,
-
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -62,7 +64,7 @@ const AddZoneCard = ({
         if (!response.ok) {
           throw new Error(`Failed to fetch zone types: ${response.status}`);
         }
-        const data = await response.json();
+        const data: ZoneType[] = await response.json();
         setZoneTypes(data);
       } catch (err) {
         console.error("Error fetching zone types:", err);
@@ -79,46 +81,56 @@ const AddZoneCard = ({
   // Update form when selected item changes
   useEffect(() => {
     if (selectedItem) {
-      setName(selectedItem.properties?.name || "Nom de la zone");
+      setName(selectedItem.properties?.name || "");
       setZoneTypeId(selectedItem.properties?.typeId || "");
-      setZoneTypeName(selectedItem.properties?.type || "");
-      setDescription(
-        selectedItem.properties?.description || "Description de la zone"
-      );
+      setZoneTypeName(selectedItem.properties?.typeName || "");
+      setDescription(selectedItem.properties?.description || "");
     }
   }, [selectedItem]);
 
-  const handleZoneTypeChange = (value) => {
-    // Find the selected zone type to get both id and name
+  const handleZoneTypeChange = (value: string) => {
     const selectedZoneType = zoneTypes.find(
       (zone) => zone.id.toString() === value
     );
     if (selectedZoneType) {
       setZoneTypeId(selectedZoneType.id);
-      setZoneTypeName(selectedZoneType.title);
+      setZoneTypeName(selectedZoneType.title); // Using 'title' instead of 'type'
     }
   };
 
   const handleSave = () => {
+    if (!name.trim()) {
+      toast.error("Veuillez entrer un nom pour la zone");
+      return;
+    }
+
+    if (!zoneTypeId) {
+      toast.error("Veuillez sélectionner un type de zone");
+      return;
+    }
+
     const updatedItem = {
       ...selectedItem,
       properties: {
         ...selectedItem.properties,
-        name,
-        type: zoneTypeName, // Store the name for display
-        typeId: zoneTypeId, // Store the ID for backend reference
-        description,
-        id: 0,
+        name: name.trim(),
+        type: zoneTypeName,
+        typeId: zoneTypeId,
+        description: description.trim(),
+        id: selectedItem?.properties?.id || 0,
       },
     };
 
     handleSaveItem(updatedItem);
-    toast.success("Zone ajoutée");
-    setName("");
-    setDescription("");
-    setZoneTypeId("");
-    setZoneTypeName("");
-    console.log("Updated item:", updatedItem);
+    toast.success("Zone ajoutée avec succès");
+
+    // Only reset if creating a new item
+    if (!selectedItem) {
+      setName("");
+      setDescription("");
+      setZoneTypeId("");
+      setZoneTypeName("");
+    }
   };
 
   return (
@@ -126,7 +138,7 @@ const AddZoneCard = ({
       <ToastContainer />
       <Title text="Créer une zone" lineLength="0" />
 
-      {/* name */}
+      {/* Name */}
       <div className="mb-4 gap-2">
         <Label htmlFor="name">Zone</Label>
         {showValues ? (
@@ -134,7 +146,7 @@ const AddZoneCard = ({
         ) : (
           <Input
             id="name"
-            placeholder="name de la zone..."
+            placeholder="Nom de la zone..."
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="bg-white"
@@ -152,7 +164,7 @@ const AddZoneCard = ({
         ) : (
           <Select
             onValueChange={handleZoneTypeChange}
-            value={zoneTypeId?.toString()}>
+            value={zoneTypeId?.toString() || ""}>
             <SelectTrigger className="mt-1">
               <SelectValue
                 placeholder={
@@ -175,7 +187,7 @@ const AddZoneCard = ({
                 !error &&
                 zoneTypes.map((zone) => (
                   <SelectItem key={zone.id} value={zone.id.toString()}>
-                    {zone.type}
+                    {zone.title} {/* Changed from zone.type to zone.title */}
                   </SelectItem>
                 ))}
             </SelectContent>
@@ -199,11 +211,11 @@ const AddZoneCard = ({
         )}
       </div>
 
-      {/* Save Button (Only visible in edit mode) */}
+      {/* Save Button */}
       <div className="items-end flex justify-end">
         {!showValues && (
           <Button variant="secondary" onClick={handleSave} disabled={isLoading}>
-            Ajouter la zone
+            {selectedItem ? "Mettre à jour" : "Ajouter la zone"}
           </Button>
         )}
       </div>

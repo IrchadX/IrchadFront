@@ -100,7 +100,7 @@ const ZoneTypeCard: React.FC<
       {/* Description */}
       {description && (
         <div className="text-gray-700 text-sm leading-relaxed">
-          OR use truncate: <p className="truncate">{description}</p>
+          <p className="truncate">{description}</p>
         </div>
       )}
 

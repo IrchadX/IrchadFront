@@ -99,15 +99,14 @@ const AddPoiCard = ({
       setCategoryName(selectedCategory.category);
     }
   };
-
   const handleSave = () => {
     const updatedItem = {
       ...selectedItem,
       properties: {
         ...selectedItem.properties,
         name,
-        categorie: category,
-        categoryId: id,
+        categorie: categoryName, // Changed from 'category' to 'categoryName'
+        categoryId: categoryId, // Changed from 'id' to 'categoryId'
         description,
         id: 0,
         envId: envId,
@@ -122,7 +121,6 @@ const AddPoiCard = ({
     setDescription("");
     console.log("Updated item:", updatedItem);
   };
-
   return (
     <div className="p-6 bg-main-20 rounded-lg shadow-md max-w-md mx-auto border-main-40 border">
       <ToastContainer />
