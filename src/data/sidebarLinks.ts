@@ -1,6 +1,6 @@
 import { IconType } from "react-icons";
 import { FiUsers, FiSettings } from "react-icons/fi";
-import { MdDevices, MdOutlineDashboard, MdLocalOffer } from "react-icons/md";
+import { MdDevices, MdOutlineDashboard, MdLocalOffer ,MdInsights } from "react-icons/md";
 import { FaMoneyBillTrendUp } from "react-icons/fa6";
 import { MdLocationOn, MdOutlineDescription } from "react-icons/md";
 import { TbWorld } from "react-icons/tb";
@@ -79,6 +79,10 @@ export const decideurSidebarLinks: SidebarLink[] = [
     href: "/decideur/zones",
     Icon: MdLocationOn, 
   },
+  {    name: "Analyse de données",
+    href: "/decideur/annalyse",
+    Icon: MdInsights , 
+    },
   {
     name: "Rapports",
     href: "/decideur/rapports",
