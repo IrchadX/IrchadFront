@@ -17,13 +17,29 @@ const POIDeleteConfirm = ({ poi, isOpen, onClose, onConfirm }) => {
     if (poi?.name) return poi.name;
     return `POI ${poi?.id}`;
   };
+  const [error, setError] = useState("");
 
   const handleDelete = async () => {
+    setIsLoading(true);
+    setError("");
+
     try {
-      setIsLoading(true);
-      await onConfirm();
-    } catch (error) {
-      console.error("Failed to delete POI:", error);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/pois/${poi.id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      onConfirm(poi.id);
+      onClose();
+    } catch (err: any) {
+      setError(`Failed to delete zone: ${err.message}`);
     } finally {
       setIsLoading(false);
     }

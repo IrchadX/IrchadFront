@@ -116,6 +116,45 @@ const Page = () => {
   const [selectedItem, setSelectedItem] = useState<MapLayer | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  const handleLayersDeleted = (deletedLayerData: any[]) => {
+    if (!geoJSON) {
+      console.error("Cannot delete items: geoJSON is null");
+      return;
+    }
+
+    // Create a copy of the features array that we'll filter
+    let updatedFeatures = [...geoJSON.features];
+
+    // Process each deleted layer
+    deletedLayerData.forEach((deletedItem) => {
+      if (deletedItem.properties?.id) {
+        // If we have an ID, remove features matching this ID
+        const deletedId = deletedItem.properties.id;
+        updatedFeatures = updatedFeatures.filter(
+          (feature) => feature.properties.id !== deletedId
+        );
+        console.log(`Removed feature with ID: ${deletedId}`);
+      } else if (deletedItem.leafletId && deletedItem.geometry) {
+        // For items without ID but with geometry, try to match by coordinates
+        const deletedCoords = JSON.stringify(deletedItem.geometry.coordinates);
+        updatedFeatures = updatedFeatures.filter((feature) => {
+          const featureCoords = JSON.stringify(feature.geometry.coordinates);
+          return featureCoords !== deletedCoords;
+        });
+        console.log(`Removed feature by geometry match`);
+      }
+    });
+
+    // Update the geoJSON state with the filtered features
+    const updatedGeoJSON = {
+      ...geoJSON,
+      features: updatedFeatures,
+    };
+
+    setGeoJSON(updatedGeoJSON);
+    console.log("Updated GeoJSON after deletion:", updatedGeoJSON);
+  };
+
   // Fetch environment data based on ID
   useEffect(() => {
     if (id) {
@@ -143,7 +182,7 @@ const Page = () => {
             name: data.environment.name,
             description: data.environment.description || "",
             isPublic: data.environment.is_public,
-            userId: data.environment.user_id,
+            userId: data.environment.env_user[0].user_id,
             address: data.environment.address || "",
           });
 
@@ -400,6 +439,27 @@ const Page = () => {
       setIsSaving(false);
     }
   };
+  const handleDeleteItem = (leafletIds: number[]) => {
+    if (!geoJSON) {
+      console.error("Cannot delete item: geoJSON is null");
+      return;
+    }
+
+    // Filter out features that have _leaflet_id in the list of deleted ids
+    const updatedFeatures = geoJSON.features.filter((feature) => {
+      return !leafletIds.includes(feature._leaflet_id || -1);
+    });
+
+    const updatedGeoJSON = {
+      ...geoJSON,
+      features: updatedFeatures,
+    };
+
+    setGeoJSON(updatedGeoJSON);
+    setSelectedItem(null);
+    console.log("Items deleted from GeoJSON:", leafletIds);
+    console.log("Updated GeoJSON:", updatedGeoJSON);
+  };
 
   const handleSaveItem = (item: FeatureItem) => {
     if (!geoJSON) {
@@ -590,6 +650,8 @@ const Page = () => {
               setIsZoneFormOpen={setIsZoneFormOpen}
               file={geoJSON}
               setSelectedItem={setSelectedItem}
+              handleDeleteItem={handleDeleteItem}
+              onLayersDeleted={handleLayersDeleted}
             />
           ) : (
             <div className="bg-[#DEDEDE] flex flex-col items-center justify-center h-[75vh] gap-4">

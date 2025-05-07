@@ -11,9 +11,13 @@ const ZoneDeleteConfirm = ({ zone, isOpen, onClose, onConfirm }) => {
     setError("");
 
     try {
-      const response = await fetch(`/zones/${zone.id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/zones/${zone.id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -21,7 +25,7 @@ const ZoneDeleteConfirm = ({ zone, isOpen, onClose, onConfirm }) => {
 
       onConfirm(zone.id);
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       setError(`Failed to delete zone: ${err.message}`);
     } finally {
       setIsLoading(false);

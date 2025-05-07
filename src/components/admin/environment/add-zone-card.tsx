@@ -187,7 +187,7 @@ const AddZoneCard = ({
                 !error &&
                 zoneTypes.map((zone) => (
                   <SelectItem key={zone.id} value={zone.id.toString()}>
-                    {zone.title} {/* Changed from zone.type to zone.title */}
+                    {zone.type} {/* Changed from zone.type to zone.title */}
                   </SelectItem>
                 ))}
             </SelectContent>

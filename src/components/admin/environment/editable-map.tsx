@@ -71,13 +71,18 @@ interface EditableMapProps {
   setIsPoiFormOpen?: (isOpen: boolean) => void;
   setIsZoneFormOpen?: (isOpen: boolean) => void;
   setSelectedItem: (item: MapLayer | null) => void;
+  handleDeleteItem?: (layerIds: number[]) => void; // Add this prop
+  handleLayersDeleted?: (deletedLayerData: any[]) => void;
 }
+
 export default function EditableMap({
   geoData,
   file = null,
   setIsPoiFormOpen = () => {},
   setIsZoneFormOpen = () => {},
   setSelectedItem,
+  handleDeleteItem,
+  onLayersDeleted,
 }: EditableMapProps) {
   const [drawingMode, setDrawingMode] = useState<string | null>(null);
   const [map, setMap] = useState<LeafletMap | null>(null);
@@ -98,7 +103,6 @@ export default function EditableMap({
 
   useEffect(() => {}, [drawingMode]);
 
-  console.log(file);
   // Handle drawing mode selection
   const handleDrawingMode = (mode: string) => {
     if (drawingMode === mode) {
@@ -156,24 +160,51 @@ export default function EditableMap({
     console.log("Layers updated:", updatedLayers);
   };
 
+  // In your EditableMap.tsx component:
+
+  // 1. Modify the _onDeleted function to store more information about the deleted layers
   const _onDeleted = (e: any) => {
     const { layers } = e;
+
+    // Extract deleted layers and their data
+    const deletedLayerData = [];
+    layers.eachLayer((layer: any) => {
+      if (layer.feature) {
+        // Store the feature properties for identification
+        deletedLayerData.push({
+          leafletId: layer._leaflet_id,
+          properties: layer.feature.properties,
+          geometry: layer.toGeoJSON().geometry,
+        });
+      } else {
+        // For layers without feature data, just store the ID
+        deletedLayerData.push({
+          leafletId: layer._leaflet_id,
+        });
+      }
+    });
+
+    // Update local state to remove deleted layers
+    const deletedIds = Object.keys(layers._layers).map(Number);
     const remainingLayers = mapLayer.filter(
-      (layer) => !layers.getLayer(layer._leaflet_id)
+      (layer) => !deletedIds.includes(layer._leaflet_id)
     );
     setMapLayer(remainingLayers);
-    console.log("Layers deleted:", remainingLayers);
+
+    // Notify parent component about the deletion with detailed information
+    if (onLayersDeleted && deletedLayerData.length > 0) {
+      onLayersDeleted(deletedLayerData);
+    }
+    console.log("Layers deleted data:", deletedLayerData);
   };
 
   return (
-    <div className="font-montserrat  z-0">
+    <div className="font-montserrat z-0">
       <ToastContainer />
       <MapContainer
-        zoom={18}
-        maxZoom={22}
         center={[geoData.lat, geoData.lng]}
         zoom={18}
-        maxZoom={22}
+        maxZoom={24}
         style={{ height: "70vh", width: "800px" }}>
         <div
           style={{
