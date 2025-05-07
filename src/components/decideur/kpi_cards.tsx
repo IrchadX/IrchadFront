@@ -39,38 +39,14 @@ const KpiCards = () => {
   }, []);
 
   const kpis = [
-    {
-      title: "Utilisateurs actifs",
-      value: stats.users,
-      trend: "8.5% Up",
-      icon: "/assets/UserIcon.png",
-      trendColor: "text-green-500",
-    },
-    {
-      title: "Dispositifs vendus ce mois",
-      value: stats.devices,
-      trend: "1.3% Up",
-      icon: "/assets/DeviceIcon.png",
-      trendColor: "text-green-500",
-    },
-    {
-      title: "Alertes signalées ce mois",
-      value: stats.alerts,
-      trend: "4.3% Down",
-      icon: "/assets/CourbeIcon.png",
-      trendColor: "text-red-500",
-    },
-    {
-      title: "% Interventions techniques",
-      value: `${stats.technicalPercentage}%`,
-      trend: "2% Up",
-      icon: "/assets/TimeIcon.png",
-      trendColor: "text-green-500",
-    },
+    { title: "Utilisateurs actifs", value: stats.users, trend: "8.5% Up", icon: "/assets/UserIcon.png", trendColor: "text-green-500" },
+    { title: "Dispositifs vendus ", value: stats.devices, trend: "1.3% Up", icon: "/assets/DeviceIcon.png", trendColor: "text-green-500" },
+    { title: "Alertes signalées", value: stats.alerts, trend: "4.3% Down", icon: "/assets/CourbeIcon.png", trendColor: "text-red-500" },
+    { title: "% Interventions techniques", value: `${stats.technicalPercentage}%`, trend: "2% Up", icon: "/assets/TimeIcon.png", trendColor: "text-green-500" },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
+    <div className="grid grid-cols-1 my-2 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
       {kpis.map(({ title, value, trend, icon, trendColor }, index) => (
         <div
           key={index}

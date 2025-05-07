@@ -1,5 +1,4 @@
-"use client"; // Important pour Next.js 13+ en mode app
-
+"use client"; 
 import { useState, useEffect } from "react";
 import {
   PieChart,
@@ -62,8 +61,19 @@ export default function StatsCharts() {
     fetchData();
   }, []);
 
-  const colors = ["#F7B7C0", "#78C2C3", "#8064E9"];
-
+  const colors = [
+    "#F7B7C0", 
+    "#78C2C3", 
+    "#8064E9", 
+    "#FAD02E", 
+    "#D4A5A5", 
+    "#F4A300", 
+    "#7A9E9F", 
+    "#D9BF77", 
+    "#9C7B4F", 
+    "#A1C4E8",
+  ];
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
       {/* Secteurs */}

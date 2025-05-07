@@ -1,24 +1,22 @@
 "use client";
-
 import React, { useState } from "react";
-import Image from "next/image";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  DownloadIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  CalendarIcon,
-  ChevronDownIcon,
-} from "lucide-react";
+import { CalendarIcon, DownloadIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import axios from 'axios';
+import Image from "next/image"; // Assurez-vous d'importer Image de next/image pour les projets Next.js
+
+
+
+const Reports = () => {
+  
 const handleDownload = async (reportId) => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/reports/pdf`,
-      {
-        method: "GET",
-      }
-    );
+    const selectedYear = selectedDates[reportId - 1]?.getFullYear() || new Date().getFullYear();
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reports/pdf?year=${selectedYear}`, {
+      method: "GET",
+    });
 
     if (!response.ok) {
       throw new Error("Erreur lors du téléchargement");
@@ -29,7 +27,7 @@ const handleDownload = async (reportId) => {
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "rapport_dispositifs.pdf"; // Tu peux le rendre dynamique selon `report.title`
+    link.download = `rapport_${selectedYear}.pdf`; // Dynamique selon l'année sélectionnée
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -38,8 +36,6 @@ const handleDownload = async (reportId) => {
     console.error("Erreur téléchargement:", error);
   }
 };
-
-const Reports = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedDates, setSelectedDates] = useState(
     Array(10).fill(new Date())
@@ -118,86 +114,7 @@ const Reports = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow">
-      {/* Filtre par Objectifs - Redesigned */}
-      <div className="mb-6 relative">
-        <div className="flex items-center justify-between">
-          <label
-            htmlFor="objectiveFilter"
-            className="block text-sm font-medium text-gray-700">
-            Filtrer par Objectif
-          </label>
-          <div className="relative">
-            <button
-              onClick={toggleFilter}
-              className="flex items-center justify-between w-64 px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-              <span className="text-gray-700 text-sm">
-                {selectedObjective || "Tous les Objectifs"}
-              </span>
-              <ChevronDownIcon
-                size={16}
-                className={`text-gray-500 transition-transform duration-300 ${
-                  isFilterOpen ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-
-            {isFilterOpen && (
-              <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
-                <ul className="py-1">
-                  <li
-                    className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 ${
-                      selectedObjective === "" ? "bg-blue-50 text-blue-600" : ""
-                    }`}
-                    onClick={() => {
-                      setSelectedObjective("");
-                      setIsFilterOpen(false);
-                    }}>
-                    Tous les Objectifs
-                  </li>
-                  <li
-                    className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 ${
-                      selectedObjective === "Amélioration"
-                        ? "bg-blue-50 text-blue-600"
-                        : ""
-                    }`}
-                    onClick={() => {
-                      setSelectedObjective("Amélioration");
-                      setIsFilterOpen(false);
-                    }}>
-                    Amélioration
-                  </li>
-                  <li
-                    className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 ${
-                      selectedObjective === "Suivi"
-                        ? "bg-blue-50 text-blue-600"
-                        : ""
-                    }`}
-                    onClick={() => {
-                      setSelectedObjective("Suivi");
-                      setIsFilterOpen(false);
-                    }}>
-                    Suivi
-                  </li>
-                  <li
-                    className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 ${
-                      selectedObjective === "Stratégie"
-                        ? "bg-blue-50 text-blue-600"
-                        : ""
-                    }`}
-                    onClick={() => {
-                      setSelectedObjective("Stratégie");
-                      setIsFilterOpen(false);
-                    }}>
-                    Stratégie
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Table Container with Gray Background */}
+    
       <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
         {/* Table Header */}
         <div className="grid grid-cols-[2fr_1fr_1fr_0.5fr] gap-4 border-b border-gray-200 pb-3 mb-2 text-sm text-gray-600">
@@ -242,31 +159,30 @@ const Reports = () => {
                     newDates[report.id - 1] = date;
                     setSelectedDates(newDates);
                   }}
+                  showYearPicker
+                  dateFormat="yyyy"
+                  locale="fr"
                   className="bg-transparent border-b border-gray-400 text-gray-700 text-sm 
                              pl-9 py-1 focus:outline-none focus:border-blue-500 
-                             hover:border-gray-600 transition-all w-32"
+                             hover:border-gray-600 transition-all w-24"
                 />
               </div>
 
               {/* Bouton Télécharger */}
               <div className="text-center">
-                <button
-                  onClick={() => {
-                    if (report.id === 1) {
-                      handleDownload(report.id);
-                    } else {
-                      alert("Téléchargement non disponible pour ce rapport.");
-                    }
-                  }}
-                  className="text-red-500 hover:text-red-600 transition-colors p-2 rounded-full hover:bg-red-50">
-                  <DownloadIcon size={20} />
-                </button>
+              <button 
+  onClick={() => {
+    handleDownload(report.id);
+  }}
+  className="text-red-500 hover:text-red-600 transition-colors p-2 rounded-full hover:bg-red-50"
+>
+  <DownloadIcon size={20} />
+</button>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Pagination */}
         <div className="flex items-center justify-between pt-4 border-t border-gray-200 mt-3">
           <div className="text-sm text-gray-500">
             {indexOfFirstReport + 1}-
