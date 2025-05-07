@@ -21,9 +21,14 @@ export default function StatsCharts() {
   useEffect(() => {
     async function fetchData() {
       try {
-
-        const pieRes = await fetch("http://localhost:5000/graphics/cercle");
-        if (!pieRes.ok) throw new Error("Échec de la récupération des données Pie");
+        const pieRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/graphics/cercle`,
+          {
+            credentials: "include",
+          }
+        );
+        if (!pieRes.ok)
+          throw new Error("Échec de la récupération des données Pie");
         const pieRaw = await pieRes.json();
 
         const totalCount = pieRaw.reduce((acc, item) => acc + item.count, 0);
@@ -34,8 +39,14 @@ export default function StatsCharts() {
         }));
         setPieData(formattedPie);
 
-        const salesRes = await fetch("http://localhost:5000/graphics/courbe");
-        if (!salesRes.ok) throw new Error("Échec de la récupération des données Line");
+        const salesRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/graphics/courbe`,
+          {
+            credentials: "include",
+          }
+        );
+        if (!salesRes.ok)
+          throw new Error("Échec de la récupération des données Line");
         const salesData = await salesRes.json();
 
         const formattedLine = salesData.map((item) => ({
@@ -69,8 +80,7 @@ export default function StatsCharts() {
               cx="50%"
               cy="50%"
               outerRadius={70}
-              label={(entry) => `${entry.percentage}%`}
-            >
+              label={(entry) => `${entry.percentage}%`}>
               {pieData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}

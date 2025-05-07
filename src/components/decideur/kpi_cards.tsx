@@ -7,15 +7,23 @@ const KpiCards = () => {
     users: 0,
     devices: 0,
     alerts: 0,
-  technicalPercentage: 0,
+    technicalPercentage: 0,
   });
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:5000/statistics/users-count").then((res) => res.json()),
-      fetch("http://localhost:5000/statistics/device-count").then((res) => res.json()),
-      fetch("http://localhost:5000/statistics/alerts-count").then((res) => res.json()),
-      fetch("http://localhost:5000/statistics/interventions").then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/statistics/users-count`, {
+        credentials: "include",
+      }).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/statistics/device-count`, {
+        credentials: "include",
+      }).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/statistics/alerts-count`, {
+        credentials: "include",
+      }).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/statistics/interventions`, {
+        credentials: "include",
+      }).then((res) => res.json()),
     ])
       .then(([usersData, devicesData, alertsData, techInterventionData]) => {
         setStats({
@@ -25,25 +33,59 @@ const KpiCards = () => {
           technicalPercentage: techInterventionData.percentage || 0,
         });
       })
-      .catch((err) => console.error("Erreur de chargement des statistiques :", err));
+      .catch((err) =>
+        console.error("Erreur de chargement des statistiques :", err)
+      );
   }, []);
-  
+
   const kpis = [
-    { title: "Utilisateurs actifs", value: stats.users, trend: "8.5% Up", icon: "/assets/UserIcon.png", trendColor: "text-green-500" },
-    { title: "Dispositifs vendus ce mois", value: stats.devices, trend: "1.3% Up", icon: "/assets/DeviceIcon.png", trendColor: "text-green-500" },
-    { title: "Alertes signalées ce mois", value: stats.alerts, trend: "4.3% Down", icon: "/assets/CourbeIcon.png", trendColor: "text-red-500" },
-    { title: "% Interventions techniques", value: `${stats.technicalPercentage}%`, trend: "2% Up", icon: "/assets/TimeIcon.png", trendColor: "text-green-500" },
+    {
+      title: "Utilisateurs actifs",
+      value: stats.users,
+      trend: "8.5% Up",
+      icon: "/assets/UserIcon.png",
+      trendColor: "text-green-500",
+    },
+    {
+      title: "Dispositifs vendus ce mois",
+      value: stats.devices,
+      trend: "1.3% Up",
+      icon: "/assets/DeviceIcon.png",
+      trendColor: "text-green-500",
+    },
+    {
+      title: "Alertes signalées ce mois",
+      value: stats.alerts,
+      trend: "4.3% Down",
+      icon: "/assets/CourbeIcon.png",
+      trendColor: "text-red-500",
+    },
+    {
+      title: "% Interventions techniques",
+      value: `${stats.technicalPercentage}%`,
+      trend: "2% Up",
+      icon: "/assets/TimeIcon.png",
+      trendColor: "text-green-500",
+    },
   ];
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
       {kpis.map(({ title, value, trend, icon, trendColor }, index) => (
-        <div key={index} className="bg-white shadow-md rounded-xl p-4 flex items-center justify-between hover:scale-95 hover:shadow-lg">
+        <div
+          key={index}
+          className="bg-white shadow-md rounded-xl p-4 flex items-center justify-between hover:scale-95 hover:shadow-lg">
           <div className="flex flex-col text-left space-y-1">
             <h3 className="text-gray-500">{title}</h3>
             <p className="text-xl font-bold">{value}</p>
           </div>
-          <Image src={icon} alt={title} width={50} height={50} className="self-start mt-2" />
+          <Image
+            src={icon}
+            alt={title}
+            width={50}
+            height={50}
+            className="self-start mt-2"
+          />
         </div>
       ))}
     </div>

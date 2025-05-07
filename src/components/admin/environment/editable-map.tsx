@@ -286,16 +286,23 @@ export default function EditableMap({
 
             if (!props || !geom || !coords) return null;
 
-            const toLatLng = ([lng, lat]: [number, number]) => [lat, lng];
+            // Enhanced coordinate converter with proper typing
+            const toLatLng = (coord: [number, number]): [number, number] => {
+              return [coord[1], coord[0]]; // Convert from [lng, lat] to [lat, lng]
+            };
 
             const renderPolygon = (
               color: string,
               title: string,
               name?: string
-            ) =>
-              Array.isArray(coords[0]) && (
+            ) => {
+              // Check for Polygon coordinates structure (array of rings)
+              if (!Array.isArray(coords[0]) || !Array.isArray(coords[0][0]))
+                return null;
+
+              return (
                 <Polygon
-                  key={index}
+                  key={`polygon-${index}`}
                   positions={coords[0].map(toLatLng)}
                   pathOptions={{ color }}>
                   <Popup>
@@ -315,11 +322,16 @@ export default function EditableMap({
                   </Popup>
                 </Polygon>
               );
+            };
 
-            const renderPolyline = (color: string, title: string) =>
-              Array.isArray(coords) && (
+            const renderPolyline = (color: string, title: string) => {
+              // Check for LineString coordinates structure (array of points)
+              if (!Array.isArray(coords[0]) || coords[0].length !== 2)
+                return null;
+
+              return (
                 <Polyline
-                  key={index}
+                  key={`polyline-${index}`}
                   positions={coords.map(toLatLng)}
                   pathOptions={{ color }}>
                   <Popup>
@@ -336,15 +348,39 @@ export default function EditableMap({
                   </Popup>
                 </Polyline>
               );
+            };
+
+            const renderPoint = (title: string) => {
+              // Check for Point coordinates structure (single [lng, lat] pair)
+              if (!Array.isArray(coords) || coords.length !== 2) return null;
+
+              return (
+                <Marker key={`marker-${index}`} position={toLatLng(coords)}>
+                  <Popup>
+                    <strong>{title}</strong>
+                    <br />
+                    <p>{props.description}</p>
+                    {props.image && (
+                      <img
+                        src={props.image}
+                        alt={title}
+                        style={{ width: "100px" }}
+                      />
+                    )}
+                  </Popup>
+                </Marker>
+              );
+            };
 
             switch (props.type) {
               case "wall":
                 return renderPolygon("black", "Wall");
               case "environment":
                 return (
-                  Array.isArray(coords[0]) && (
+                  Array.isArray(coords[0]) &&
+                  Array.isArray(coords[0][0]) && (
                     <Polygon
-                      key={index}
+                      key={`environment-${index}`}
                       positions={coords[0].map(toLatLng)}
                       pathOptions={{
                         color: "gray",
@@ -364,31 +400,13 @@ export default function EditableMap({
               case "window":
                 return renderPolyline("blue", "Window");
               case "poi":
-                switch (layer.type?.toLowerCase()) {
+                switch (geom.type?.toLowerCase()) {
                   case "point":
-                    return (
-                      Array.isArray(coords) &&
-                      coords.length >= 2 && (
-                        <Marker key={index} position={[coords[1], coords[0]]}>
-                          <Popup>
-                            <strong>PoI : {props.name}</strong>
-                            <br />
-                            <p>{props.description}</p>
-                            {props.image && (
-                              <img
-                                src={props.image}
-                                alt="POI"
-                                style={{ width: "100px" }}
-                              />
-                            )}
-                          </Popup>
-                        </Marker>
-                      )
-                    );
+                    return renderPoint(`POI: ${props.name}`);
                   case "linestring":
-                    return renderPolyline("orange", "POI");
+                    return renderPolyline("orange", `POI: ${props.name}`);
                   case "polygon":
-                    return renderPolygon("yellow", "POI");
+                    return renderPolygon("yellow", "POI", props.name);
                   default:
                     return null;
                 }
