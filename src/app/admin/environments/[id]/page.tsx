@@ -589,7 +589,7 @@ const Page = () => {
     reader.readAsText(file);
   };
   return (
-    <div className="z-0 flex flex-col w-full">
+    <div className="flex flex-col w-full">
       <div className="grid grid-cols-[2fr,1fr] gap-4 w-full">
         {/* Left Column */}
         <div className="col-span-1">

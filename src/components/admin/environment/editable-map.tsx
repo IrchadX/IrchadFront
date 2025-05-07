@@ -199,7 +199,7 @@ export default function EditableMap({
   };
 
   return (
-    <div className="font-montserrat z-0">
+    <div className="font-montserrat">
       <ToastContainer />
       <MapContainer
         center={[geoData.lat, geoData.lng]}
@@ -208,6 +208,7 @@ export default function EditableMap({
         style={{ height: "70vh", width: "800px" }}>
         <div
           style={{
+            zIndex: 1000,
             position: "absolute",
             bottom: "10px",
             left: "50px",
@@ -222,7 +223,7 @@ export default function EditableMap({
           <button
             onClick={() => handleDrawingMode("zone")}
             style={{
-              zIndex: 100,
+              zIndex: 0,
               padding: "8px 16px",
               borderRadius: "6px",
               border: "none",
@@ -254,7 +255,7 @@ export default function EditableMap({
           </button>
 
           {/* Wall Button */}
-          <button
+          {/* <button
             onClick={() => handleDrawingMode("wall")}
             style={{
               padding: "8px 16px",
@@ -268,7 +269,7 @@ export default function EditableMap({
               transition: "background-color 0.3s ease, transform 0.2s ease",
             }}>
             Wall
-          </button>
+          </button> */}
         </div>
 
         <TileLayer
