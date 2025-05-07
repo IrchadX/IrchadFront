@@ -724,9 +724,9 @@ const Page = () => {
       {!isPending && isFileUploaded && (
         <>
           <Title text="Zones" lineLength="40px" />
-          <ZonesSwiper zones={zones} />
+          {zones && <ZonesSwiper zones={zones} />}
           <Title text="Points d'Interet" lineLength="100px" />
-          <POIsSwiper pois={pois} />
+          {pois && <POIsSwiper pois={pois} />}
         </>
       )}
     </div>
