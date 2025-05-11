@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Role-based redirect logic
-  if (pathname === "/admin") {
+  if (pathname === "/admin" || pathname === "/super_admin") {
     return NextResponse.redirect(new URL("/admin/environments", request.url));
   }
 

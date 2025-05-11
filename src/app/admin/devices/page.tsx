@@ -53,8 +53,33 @@ const Page = () => {
         // Update the device in the backend
         await DeviceService.updateDevice(updatedDevice);
         
+        // Fetch the new state if state_type_id was updated
+        let newState = null;
+        if (updatedDevice.state_type_id !== modalDevice.state_type_id) {
+          newState = await DeviceService.getStateTypeById(updatedDevice.state_type_id.toString());
+        }
+        
+        // Fetch the new type if type_id was updated
+        let newType = null;
+        if (updatedDevice.type_id !== modalDevice.type_id) {
+          newType = await DeviceService.getTypeByTypeId(updatedDevice.type_id.toString());
+        }
+        
         setDevices(prev => 
-          prev.map(device => device.id === updatedDevice.id ? updatedDevice : device)
+          prev.map(device => {
+            if (device.id === updatedDevice.id) {
+              // If we fetched a new state, use it, otherwise keep the existing one
+              const actual_state = newState ? newState.state : device.actual_state;
+              // If we fetched a new type, use it, otherwise keep the existing one
+              const type = newType ? newType.type : device.type;
+              return {
+                ...updatedDevice,
+                actual_state,
+                type
+              };
+            }
+            return device;
+          })
         );
         
         console.log("Device updated successfully", updatedDevice);
@@ -97,7 +122,7 @@ const Page = () => {
     }
     
     setIsModalOpen(false);
-  };
+  }
 
   useEffect(() => {
     const fetchDevices = async () => {

@@ -1,5 +1,4 @@
-"use client"; // Important pour Next.js 13+ en mode app
-
+"use client"; 
 import { useState, useEffect } from "react";
 import {
   PieChart,
@@ -21,9 +20,14 @@ export default function StatsCharts() {
   useEffect(() => {
     async function fetchData() {
       try {
-
-        const pieRes = await fetch("http://localhost:5000/graphics/cercle");
-        if (!pieRes.ok) throw new Error("Échec de la récupération des données Pie");
+        const pieRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/graphics/cercle`,
+          {
+            credentials: "include",
+          }
+        );
+        if (!pieRes.ok)
+          throw new Error("Échec de la récupération des données Pie");
         const pieRaw = await pieRes.json();
 
         const totalCount = pieRaw.reduce((acc, item) => acc + item.count, 0);
@@ -34,8 +38,14 @@ export default function StatsCharts() {
         }));
         setPieData(formattedPie);
 
-        const salesRes = await fetch("http://localhost:5000/graphics/courbe");
-        if (!salesRes.ok) throw new Error("Échec de la récupération des données Line");
+        const salesRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/graphics/courbe`,
+          {
+            credentials: "include",
+          }
+        );
+        if (!salesRes.ok)
+          throw new Error("Échec de la récupération des données Line");
         const salesData = await salesRes.json();
 
         const formattedLine = salesData.map((item) => ({
@@ -51,8 +61,19 @@ export default function StatsCharts() {
     fetchData();
   }, []);
 
-  const colors = ["#F7B7C0", "#78C2C3", "#8064E9"];
-
+  const colors = [
+    "#F7B7C0", 
+    "#78C2C3", 
+    "#8064E9", 
+    "#FAD02E", 
+    "#D4A5A5", 
+    "#F4A300", 
+    "#7A9E9F", 
+    "#D9BF77", 
+    "#9C7B4F", 
+    "#A1C4E8",
+  ];
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
       {/* Secteurs */}
@@ -69,8 +90,7 @@ export default function StatsCharts() {
               cx="50%"
               cy="50%"
               outerRadius={70}
-              label={(entry) => `${entry.percentage}%`}
-            >
+              label={(entry) => `${entry.percentage}%`}>
               {pieData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}

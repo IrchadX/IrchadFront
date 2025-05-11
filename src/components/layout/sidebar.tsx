@@ -9,6 +9,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { decideurSidebarLinks } from "@/data/sidebarLinks";
+import { useEffect } from "react";
 
 const Sidebar = () => {
   const router = useRouter();
@@ -18,7 +19,8 @@ const Sidebar = () => {
       ? JSON.parse(sessionStorage.getItem("user") || "{}")
       : null;
 
-  const userRole = userData?.role || "guest"; // Default to 'guest' if not logged in
+  const userRole = userData?.role || "guest";
+  console.log(userRole);
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith("/auth");
 
@@ -29,7 +31,7 @@ const Sidebar = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/auth/logout`,
         {
           method: "POST",
-          credentials: "include", // Important for cookie-based auth
+          credentials: "include",
         }
       );
 
@@ -49,11 +51,13 @@ const Sidebar = () => {
   };
 
   const sidebarLinks: SidebarLink[] =
-    userRole === "admin"
+    userRole === "admin" || userRole === "super_admin"
       ? adminSidebarLinks
       : userRole === "commercial"
       ? commercialSidebarLinks
       : decideurSidebarLinks;
+
+  useEffect(() => {}, [userRole]);
 
   return (
     <>

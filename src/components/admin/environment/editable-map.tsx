@@ -71,13 +71,18 @@ interface EditableMapProps {
   setIsPoiFormOpen?: (isOpen: boolean) => void;
   setIsZoneFormOpen?: (isOpen: boolean) => void;
   setSelectedItem: (item: MapLayer | null) => void;
+  handleDeleteItem?: (layerIds: number[]) => void; // Add this prop
+  handleLayersDeleted?: (deletedLayerData: any[]) => void;
 }
+
 export default function EditableMap({
   geoData,
   file = null,
   setIsPoiFormOpen = () => {},
   setIsZoneFormOpen = () => {},
   setSelectedItem,
+  handleDeleteItem,
+  onLayersDeleted,
 }: EditableMapProps) {
   const [drawingMode, setDrawingMode] = useState<string | null>(null);
   const [map, setMap] = useState<LeafletMap | null>(null);
@@ -155,32 +160,58 @@ export default function EditableMap({
     console.log("Layers updated:", updatedLayers);
   };
 
+  // In your EditableMap.tsx component:
+
+  // 1. Modify the _onDeleted function to store more information about the deleted layers
   const _onDeleted = (e: any) => {
     const { layers } = e;
+
+    // Extract deleted layers and their data
+    const deletedLayerData = [];
+    layers.eachLayer((layer: any) => {
+      if (layer.feature) {
+        // Store the feature properties for identification
+        deletedLayerData.push({
+          leafletId: layer._leaflet_id,
+          properties: layer.feature.properties,
+          geometry: layer.toGeoJSON().geometry,
+        });
+      } else {
+        // For layers without feature data, just store the ID
+        deletedLayerData.push({
+          leafletId: layer._leaflet_id,
+        });
+      }
+    });
+
+    // Update local state to remove deleted layers
+    const deletedIds = Object.keys(layers._layers).map(Number);
     const remainingLayers = mapLayer.filter(
-      (layer) => !layers.getLayer(layer._leaflet_id)
+      (layer) => !deletedIds.includes(layer._leaflet_id)
     );
     setMapLayer(remainingLayers);
-    console.log("Layers deleted:", remainingLayers);
+
+    // Notify parent component about the deletion with detailed information
+    if (onLayersDeleted && deletedLayerData.length > 0) {
+      onLayersDeleted(deletedLayerData);
+    }
+    console.log("Layers deleted data:", deletedLayerData);
   };
 
   return (
     <div className="font-montserrat">
       <ToastContainer />
-
       <MapContainer
-        zoom={18}
-        maxZoom={22}
         center={[geoData.lat, geoData.lng]}
         zoom={18}
-        maxZoom={22}
+        maxZoom={24}
         style={{ height: "70vh", width: "800px" }}>
         <div
           style={{
+            zIndex: 1000,
             position: "absolute",
             bottom: "10px",
             left: "50px",
-            zIndex: 1000,
             display: "flex",
             gap: "10px",
             alignItems: "center",
@@ -192,6 +223,7 @@ export default function EditableMap({
           <button
             onClick={() => handleDrawingMode("zone")}
             style={{
+              zIndex: 0,
               padding: "8px 16px",
               borderRadius: "6px",
               border: "none",
@@ -223,7 +255,7 @@ export default function EditableMap({
           </button>
 
           {/* Wall Button */}
-          <button
+          {/* <button
             onClick={() => handleDrawingMode("wall")}
             style={{
               padding: "8px 16px",
@@ -237,10 +269,11 @@ export default function EditableMap({
               transition: "background-color 0.3s ease, transform 0.2s ease",
             }}>
             Wall
-          </button>
+          </button> */}
         </div>
 
         <TileLayer
+          zIndex={0}
           maxNativeZoom={22}
           maxZoom={25}
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -248,165 +281,141 @@ export default function EditableMap({
         />
         <FeatureGroup>
           {mapLayer.map((layer, index) => {
-            if (layer.properties.type === "wall") {
+            const props = layer?.properties;
+            const geom = layer?.geometry;
+            const coords = geom?.coordinates;
+
+            if (!props || !geom || !coords) return null;
+
+            // Enhanced coordinate converter with proper typing
+            const toLatLng = (coord: [number, number]): [number, number] => {
+              return [coord[1], coord[0]]; // Convert from [lng, lat] to [lat, lng]
+            };
+
+            const renderPolygon = (
+              color: string,
+              title: string,
+              name?: string
+            ) => {
+              // Check for Polygon coordinates structure (array of rings)
+              if (!Array.isArray(coords[0]) || !Array.isArray(coords[0][0]))
+                return null;
+
               return (
                 <Polygon
-                  key={index}
-                  positions={layer.geometry.coordinates[0].map(
-                    ([lng, lat]: [number, number]) => [lat, lng]
-                  )}
-                  pathOptions={{ color: "black" }}>
+                  key={`polygon-${index}`}
+                  positions={coords[0].map(toLatLng)}
+                  pathOptions={{ color }}>
                   <Popup>
-                    <strong>Wall</strong>
+                    <strong>
+                      {title}
+                      {name ? ` : ${name}` : ""}
+                    </strong>
                     <br />
-                    <p>{layer.properties.description}</p>
+                    <p>{props.description}</p>
+                    {props.image && (
+                      <img
+                        src={props.image}
+                        alt={title}
+                        style={{ width: "100px" }}
+                      />
+                    )}
                   </Popup>
                 </Polygon>
               );
-            } else if (layer.properties.type === "environment") {
-              return (
-                <Polygon
-                  key={index}
-                  positions={layer.geometry.coordinates[0].map(
-                    ([lng, lat]: [number, number]) => [lat, lng]
-                  )}
-                  pathOptions={{
-                    color: "gray",
-                    fillOpacity: 0.2,
-                    weight: 2,
-                  }}>
-                  <Popup>
-                    <strong>Environment Boundary</strong>
-                    <br />
-                    <p>{layer.properties.description}</p>
-                  </Popup>
-                </Polygon>
-              );
-            } else if (layer.properties.type === "door") {
+            };
+
+            const renderPolyline = (color: string, title: string) => {
+              // Check for LineString coordinates structure (array of points)
+              if (!Array.isArray(coords[0]) || coords[0].length !== 2)
+                return null;
+
               return (
                 <Polyline
-                  key={index}
-                  positions={layer.geometry.coordinates.map(
-                    ([lng, lat]: [number, number]) => [lat, lng]
-                  )}
-                  pathOptions={{ color: "green" }}>
+                  key={`polyline-${index}`}
+                  positions={coords.map(toLatLng)}
+                  pathOptions={{ color }}>
                   <Popup>
-                    <strong>Door</strong>
+                    <strong>{title}</strong>
                     <br />
-                    <p>{layer.properties.description}</p>
+                    <p>{props.description}</p>
+                    {props.image && (
+                      <img
+                        src={props.image}
+                        alt={title}
+                        style={{ width: "100px" }}
+                      />
+                    )}
                   </Popup>
                 </Polyline>
               );
-            } else if (layer.properties.type === "window") {
+            };
+
+            const renderPoint = (title: string) => {
+              // Check for Point coordinates structure (single [lng, lat] pair)
+              if (!Array.isArray(coords) || coords.length !== 2) return null;
+
               return (
-                <Polyline
-                  key={index}
-                  positions={layer.geometry.coordinates.map(
-                    ([lng, lat]: [number, number]) => [lat, lng]
-                  )}
-                  pathOptions={{ color: "blue" }}>
+                <Marker key={`marker-${index}`} position={toLatLng(coords)}>
                   <Popup>
-                    <strong>Window</strong>
+                    <strong>{title}</strong>
                     <br />
-                    <p>{layer.properties.description}</p>
+                    <p>{props.description}</p>
+                    {props.image && (
+                      <img
+                        src={props.image}
+                        alt={title}
+                        style={{ width: "100px" }}
+                      />
+                    )}
                   </Popup>
-                </Polyline>
+                </Marker>
               );
-            } else if (
-              layer.properties.type.startsWith("Zone") ||
-              layer.properties.type.startsWith("zone")
-            ) {
-              return (
-                <Polygon
-                  key={index}
-                  positions={layer.geometry.coordinates[0].map(
-                    ([lng, lat]: [number, number]) => [lat, lng]
-                  )}
-                  pathOptions={{ color: "purple" }}>
-                  <Popup>
-                    <strong>Zone : {layer.properties.name}</strong>
-                    <br />
-                    <p>{layer.properties.description}</p>
-                  </Popup>
-                </Polygon>
-              );
-            } else if (layer.properties.type === "poi") {
-              switch (layer.type) {
-                case "point":
-                  return (
-                    <Marker
-                      key={index}
-                      position={[
-                        layer.geometry.coordinates[1],
-                        layer.geometry.coordinates[0],
-                      ]}>
-                      <Popup>
-                        <strong>PoI : {layer.properties.name}</strong>
-                        <br />
-                        <p>{layer.properties.description}</p>
-                        {layer.properties.image && (
-                          <img
-                            src={layer.properties.image}
-                            alt="POI"
-                            style={{ width: "100px" }}
-                          />
-                        )}
-                      </Popup>
-                    </Marker>
-                  );
-                case "linestring":
-                  return (
-                    <Polyline
-                      key={index}
-                      positions={layer.geometry.coordinates.map(
-                        ([lng, lat]) => [lat, lng]
-                      )}
-                      color="orange">
-                      <Popup>
-                        <strong>POI</strong>
-                        <br />
-                        <p>{layer.properties.description}</p>
-                        {layer.properties.image && (
-                          <img
-                            src={layer.properties.image}
-                            alt="POI"
-                            style={{ width: "100px" }}
-                          />
-                        )}
-                      </Popup>
-                    </Polyline>
-                  );
-                case "polygon":
-                  {
-                    console.log(layer);
-                  }
-                  return (
+            };
+
+            switch (props.type) {
+              case "wall":
+                return renderPolygon("black", "Wall");
+              case "environment":
+                return (
+                  Array.isArray(coords[0]) &&
+                  Array.isArray(coords[0][0]) && (
                     <Polygon
-                      key={index}
-                      positions={layer.geometry.coordinates[0].map(
-                        ([lng, lat]: [number, number]) => [lat, lng]
-                      )}
-                      pathOptions={{ color: "yellow" }}>
+                      key={`environment-${index}`}
+                      positions={coords[0].map(toLatLng)}
+                      pathOptions={{
+                        color: "gray",
+                        fillOpacity: 0.2,
+                        weight: 2,
+                      }}>
                       <Popup>
-                        <strong>POI</strong>
+                        <strong>Environment Boundary</strong>
                         <br />
-                        <p>{layer.properties.description}</p>
-                        {layer.properties.image && (
-                          <img
-                            src={layer.properties.image}
-                            alt="POI"
-                            style={{ width: "100px" }}
-                          />
-                        )}
+                        <p>{props.description}</p>
                       </Popup>
                     </Polygon>
-                  );
-                default:
-                  return null;
-              }
+                  )
+                );
+              case "door":
+                return renderPolyline("green", "Door");
+              case "window":
+                return renderPolyline("blue", "Window");
+              case "poi":
+                switch (geom.type?.toLowerCase()) {
+                  case "point":
+                    return renderPoint(`POI: ${props.name}`);
+                  case "linestring":
+                    return renderPolyline("orange", `POI: ${props.name}`);
+                  case "polygon":
+                    return renderPolygon("yellow", "POI", props.name);
+                  default:
+                    return null;
+                }
+              default:
+                return renderPolygon("purple", "Zone", props.name);
             }
-            return null;
           })}
+
           <EditControl
             position="bottomleft"
             onEdited={_onEditPath}

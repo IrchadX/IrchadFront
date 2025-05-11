@@ -13,7 +13,6 @@ import { Label } from "@/components/shared/label";
 import { TextArea } from "@/components/shared/text-area";
 import Title from "@/components/shared/title";
 import { Button } from "@/components/shared/button";
-import { poiCategories } from "@/data/poiCategories";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -31,47 +30,97 @@ const AddPoiCard = ({
   handleSaveItem,
   envId,
 }: AddPoiCardProps) => {
-  const [Name, setName] = useState(
-    selectedItem?.properties?.Name || "Name du POI"
+  const [name, setName] = useState(
+    selectedItem?.properties?.name || "Nom du POI"
   );
-  const [categorie, setCategorie] = useState(
-    selectedItem?.properties?.categorie || ""
+  const [categoryId, setCategoryId] = useState(
+    selectedItem?.properties?.categoryId || ""
+  );
+  const [categoryName, setCategoryName] = useState(
+    selectedItem?.properties?.category || ""
   );
   const [description, setDescription] = useState(
     selectedItem?.properties?.description || "Description du POI"
   );
+  const [poiCategories, setPoiCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
+  // Fetch POI categories from API
+  useEffect(() => {
+    const fetchPoiCategories = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/poi-categories`,
+          {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+          }
+        );
+        if (!response.ok) {
+          throw new Error(`Failed to fetch POI categories: ${response.status}`);
+        }
+        const data = await response.json();
+        setPoiCategories(data);
+      } catch (err) {
+        console.error("Error fetching POI categories:", err);
+        setError(err.message);
+        toast.error("Erreur lors du chargement des catégories de POI");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPoiCategories();
+  }, []);
+
+  // Update form when selected item changes
   useEffect(() => {
     if (selectedItem) {
       setName(selectedItem.properties?.name || "Nom du POI");
-      setCategorie(selectedItem.properties?.categorie || "");
+      setCategoryId(selectedItem.properties?.categoryId || "");
+      setCategoryName(selectedItem.properties?.category || "");
       setDescription(
         selectedItem.properties?.description || "Description du POI"
       );
     }
   }, [selectedItem]);
 
+  const handleCategoryChange = (value) => {
+    // Find the selected category to get both id and name
+    const selectedCategory = poiCategories.find(
+      (category) => category.id.toString() === value
+    );
+    if (selectedCategory) {
+      setCategoryId(selectedCategory.id);
+      setCategoryName(selectedCategory.category);
+    }
+  };
   const handleSave = () => {
     const updatedItem = {
       ...selectedItem,
       properties: {
         ...selectedItem.properties,
         name,
-        categorie,
+        categorie: categoryName, // Changed from 'category' to 'categoryName'
+        categoryId: categoryId, // Changed from 'id' to 'categoryId'
         description,
         id: 0,
+        envId: envId,
       },
     };
 
     handleSaveItem(updatedItem);
+    toast.success("POI ajouté");
     setName("");
-    setCategorie("");
+    setCategoryId("");
+    setCategoryName("");
     setDescription("");
-    toast.success("PoI ajoute");
-
     console.log("Updated item:", updatedItem);
   };
-
   return (
     <div className="p-6 bg-main-20 rounded-lg shadow-md max-w-md mx-auto border-main-40 border">
       <ToastContainer />
@@ -80,14 +129,14 @@ const AddPoiCard = ({
 
       {/* Name */}
       <div className="mb-4 gap-2">
-        <Label htmlFor="Name">Name</Label>
+        <Label htmlFor="name">Nom</Label>
         {showValues ? (
-          <p className="mt-1 text-gray-700">{Name}</p>
+          <p className="mt-1 text-gray-700">{name}</p>
         ) : (
           <Input
-            id="Name"
-            placeholder="Name du POI..."
-            value={Name}
+            id="name"
+            placeholder="Nom du POI..."
+            value={name}
             onChange={(e) => setName(e.target.value)}
             className="bg-white"
           />
@@ -99,19 +148,37 @@ const AddPoiCard = ({
         <Label htmlFor="categorie">Catégorie</Label>
         {showValues ? (
           <p className="mt-1 text-gray-700">
-            {categorie || "Aucune catégorie sélectionnée"}
+            {categoryName || "Aucune catégorie sélectionnée"}
           </p>
         ) : (
-          <Select onValueChange={setCategorie} value={categorie}>
+          <Select
+            onValueChange={handleCategoryChange}
+            value={categoryId?.toString()}>
             <SelectTrigger className="mt-1">
-              <SelectValue placeholder="Sélectionnez une catégorie" />
+              <SelectValue
+                placeholder={
+                  isLoading ? "Chargement..." : "Sélectionnez une catégorie"
+                }
+              />
             </SelectTrigger>
             <SelectContent>
-              {poiCategories.map((category, index) => (
-                <SelectItem key={index} value={category.title}>
-                  {category.title}
+              {error && (
+                <SelectItem value="error" disabled>
+                  Erreur de chargement
                 </SelectItem>
-              ))}
+              )}
+              {isLoading && (
+                <SelectItem value="loading" disabled>
+                  Chargement...
+                </SelectItem>
+              )}
+              {!isLoading &&
+                !error &&
+                poiCategories.map((category) => (
+                  <SelectItem key={category.id} value={category.id.toString()}>
+                    {category.category}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
         )}
@@ -136,8 +203,8 @@ const AddPoiCard = ({
       {/* Save Button (Only visible in edit mode) */}
       <div className="items-end flex justify-end">
         {!showValues && (
-          <Button variant="secondary" onClick={handleSave}>
-            Ajouter le PoI
+          <Button variant="secondary" onClick={handleSave} disabled={isLoading}>
+            Ajouter le POI
           </Button>
         )}
       </div>

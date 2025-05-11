@@ -13,28 +13,38 @@ interface Environment {
 
 interface EnvsListProps {
   environments: Environment[];
+  sectionType?: "pending" | "all"; // Identify which section this is
 }
 
-const EnvsList = ({ environments: initialEnvs }: EnvsListProps) => {
+const EnvsList = ({
+  environments: initialEnvs,
+  sectionType = "all",
+}: EnvsListProps) => {
   const [environments, setEnvironments] = useState<Environment[]>(initialEnvs);
+
+  // Update environments when props change
+  useEffect(() => {
+    setEnvironments(initialEnvs);
+  }, [initialEnvs]);
 
   const handleDeleteEnvironment = async (id: string) => {
     try {
-      const response = await deleteEnvironment(id);
+      await deleteEnvironment(id);
       setEnvironments((prev) => prev.filter((env) => env.id !== id));
-      toast.success("Environnement supprimé avec succès !");
     } catch (error) {
       console.error("Erreur de suppression:", error);
-      toast.error(
-        error instanceof Error
-          ? `Erreur: ${error.message}`
-          : "Une erreur inconnue est survenue"
-      );
+      throw error; // Let the EnvironmentCard component handle the error
     }
   };
 
   if (environments.length === 0) {
-    return <div className="text-gray-500">Aucun environnement disponible.</div>;
+    return (
+      <div className="text-gray-500 my-4">
+        {sectionType === "pending"
+          ? "Aucun environnement en attente."
+          : "Aucun environnement disponible."}
+      </div>
+    );
   }
 
   return (
@@ -42,12 +52,13 @@ const EnvsList = ({ environments: initialEnvs }: EnvsListProps) => {
       {environments &&
         environments.map((env) => (
           <EnvironmentCard
-            onDelete={handleDeleteEnvironment}
             key={env.id}
             id={env.id}
             title={env.name}
             address={env.address}
-            imgSrc={env.imgSrc || ""}
+            imgSrc={env.imgSrc || "/assets/admin/environments/env-map.png"}
+            onDelete={handleDeleteEnvironment}
+            isPending={sectionType === "pending"}
           />
         ))}
     </div>

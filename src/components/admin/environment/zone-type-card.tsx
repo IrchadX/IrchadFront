@@ -4,72 +4,108 @@ import Image from "next/image";
 import { ButtonPrimary } from "@/components/shared/primary-button";
 
 interface ZoneTypeCardProps {
-  icon: string;
-  color: string;
-  maxSpeed: string;
-  title: string;
-  dropdownOptions: string[];
+  id: number;
+  icon: string | null;
+  color: string | null;
+  type: string | null;
+  name: string | null;
+  description: string | null;
+  priority: string | null;
+  accessible: boolean | null;
 }
-
-const handleEditZoneType = () => {};
-const ZoneTypeCard: React.FC<ZoneTypeCardProps> = ({
+const ZoneTypeCard: React.FC<
+  ZoneTypeCardProps & {
+    onEdit: () => void;
+    onDelete: () => void;
+  }
+> = ({
+  id,
   icon,
   color,
-  maxSpeed,
-  title,
-  dropdownOptions,
+  type,
+  name,
+  description,
+  priority,
+  accessible,
+  onEdit,
+  onDelete,
 }) => {
+  const handleEditZoneType = () => {
+    console.log("Edit zone type:", id);
+  };
+
+  const defaultColor = "#e0e0e0";
+  const backgroundColor =
+    color && color.startsWith("#")
+      ? `rgba(${hexToRgb(color)}, 0.2)`
+      : `rgba(${hexToRgb(defaultColor)}, 0.2)`;
+
+  const displayName = name || type || "Zone type";
+  const displayPriority = priority || "Non définie";
+  const displayAccessible = accessible ? "Oui" : "Non";
+
   return (
     <div
-      style={{
-        backgroundColor: `rgba(${hexToRgb(color)}, 0.2)`,
-      }}
-      className={`text-sm xl:text-md text-black text-md w-[280px] xl:w-[300px] p-4 border-[1px] border-main-10 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center justify-center`}>
-      <div className="w-full flex items-center space-x-4 pb-4">
-        <div className="w-[10%]">
+      style={{ backgroundColor }}
+      className="text-sm xl:text-md text-black w-full max-w-[320px] p-5 rounded-2xl border border-main-10 shadow hover:shadow-lg transition-shadow duration-300 flex flex-col space-y-4 relative">
+      {/* Delete Icon (optional action) */}
+      {/* <div className="absolute top-4 right-4 cursor-pointer">
+        <Image
+          src="/assets/shared/delete.png"
+          alt="Delete Icon"
+          width={20}
+          height={20}
+        />
+      </div> */}
+
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        {/* {icon && typeof icon === "string" ? (
           <Image
             src={icon}
             alt="Zone Icon"
-            width={45}
-            height={45}
-            className="scale-110"
+            width={50}
+            height={50}
+            className="rounded-full object-cover"
           />
+        ) : (
+          <div className="w-[50px] h-[50px] bg-gray-200 rounded-full" />
+        )} */}
+        <div className="w-full flex items-center space-x-4 pb-4">
+          <div className="w-[90%]">
+            <h3 className="w-full text-start text-md xl:text-lg font-bold text-black">
+              {displayName}
+            </h3>
+          </div>
+          <div className="w-[10%] cursor-pointer" onClick={onDelete}>
+            <Image
+              src="/assets/shared/delete.png"
+              alt="Delete Icon"
+              width={23}
+              height={23}
+            />
+          </div>
         </div>
+      </div>
 
-        <div className="w-[80%]">
-          <h3 className=" w-full text-start text-md xl:text-lg font-bold text-black">
-            {title}
-          </h3>
-        </div>
-        <div className="w-[10%]">
-          <Image
-            src="/assets/shared/delete.png"
-            alt="Delete Icon"
-            width={23}
-            height={23}
-          />
-        </div>
+      {/* Info Grid */}
+      <div className="grid grid-cols-2 gap-y-2 text-sm">
+        <div className="text-gray-600">Priorité</div>
+        <div className="text-end font-medium">{displayPriority}</div>
+
+        <div className="text-gray-600">Accessible</div>
+        <div className="text-end font-medium">{displayAccessible}</div>
       </div>
-      <div className="grid grid-cols-2 w-full items-center">
-        <div>Vitesse maximale</div>
-        <div className="text-end font-bold">{maxSpeed}</div>
-      </div>
-      <div className="grid grid-cols-2 w-full items-center">
-        <div>Affichage des PoIs</div>
-        <div>
-          <select
-            id="zone-dropdown"
-            className="w-full p-2 border bg-black text-white font-futura font-light border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            {dropdownOptions.map((option, index) => (
-              <option key={index} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+
+      {/* Description */}
+      {description && (
+        <div className="text-gray-700 text-sm leading-relaxed">
+          <p className="truncate">{description}</p>
         </div>
-      </div>
+      )}
+
       <div className="flex items-end justify-end w-full pt-6">
-        <ButtonPrimary title="Modifier" onClick={handleEditZoneType} />
+        <ButtonPrimary title="Modifier" onClick={onEdit} />
       </div>
     </div>
   );

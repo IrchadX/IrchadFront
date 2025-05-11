@@ -8,7 +8,8 @@ interface EnvironmentCardProps {
   address: string;
   id: string;
   imgSrc: string;
-  onDelete: (id: string) => Promise<void>; // Add onDelete callback prop
+  onDelete: (id: string) => Promise<void>;
+  isPending?: boolean; // Add isPending flag
 }
 
 const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
@@ -17,6 +18,7 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
   id,
   imgSrc,
   onDelete,
+  isPending = false,
 }) => {
   const handleDelete = async () => {
     try {
@@ -33,7 +35,9 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
   return (
     <div
       key={id}
-      className="lg:w-[230px] xl:w-[300px] 2xl:w-[280px] p-3 border-[1px] border-black-10 bg-main-5 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center justify-center">
+      className={`lg:w-[230px] xl:w-[300px] 2xl:w-[280px] p-3 border-[1px] ${
+        isPending ? "border-orange-400 border-2" : "border-black-10"
+      } bg-main-5 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center justify-center`}>
       <div className="flex w-full">
         <h3 className="font-bold w-[80%] text-start text-md xl:text-lg text-black">
           {title}
@@ -47,7 +51,7 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
           />
         </div>
         <div className="w-[10%] flex items-end justify-end">
-          <Link href={`/admin/environments/${id}`}>
+          <Link href={`/admin/environments/${id}?pending=${isPending}`}>
             <Image
               src="/assets/shared/open-arrow.svg"
               width={30}
@@ -59,6 +63,15 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
         </div>
       </div>
       <p className="w-full text-start text-sm text-black-30">{address}</p>
+
+      {isPending && (
+        <div className="w-full mt-1">
+          <span className="bg-orange-100 text-orange-800 text-xs font-medium py-0.5 px-2 rounded">
+            En attente de délimitation
+          </span>
+        </div>
+      )}
+
       <Image
         src="/assets/admin/environments/env-map.png"
         width={320}
