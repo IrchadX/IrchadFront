@@ -43,7 +43,7 @@ export const adminSidebarLinks: SidebarLink[] = [
 export const commercialSidebarLinks: SidebarLink[] = [
   {
     name: "Tableau de Bord",
-    href: "/commercial/dashboard",
+    href: "/commercial/dashboard/performance",
     Icon: MdOutlineDashboard,
   },
   {
