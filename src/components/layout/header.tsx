@@ -24,7 +24,6 @@ const Header = () => {
     } else if (pathname.startsWith("/commercial/offers")) {
       return "Offres";
     }
-    return "Décideur";
   };
 
   return (
