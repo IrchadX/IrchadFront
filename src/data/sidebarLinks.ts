@@ -79,8 +79,8 @@ export const decideurSidebarLinks: SidebarLink[] = [
     href: "/decideur/zones",
     Icon: MdLocationOn, 
   },
-  {    name: "Analyse de données",
-    href: "/decideur/annalyse",
+  { name: "Analyse de données",
+    href: "/decideur/analyse",
     Icon: MdInsights , 
     },
   {

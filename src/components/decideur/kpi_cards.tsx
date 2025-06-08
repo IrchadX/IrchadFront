@@ -29,15 +29,15 @@ const KpiCards = () => {
   }, []);
   
   const kpis = [
-    { title: "Utilisateurs actifs", value: stats.users, trend: "8.5% Up", icon: "/assets/UserIcon.png", trendColor: "text-green-500" },
-    { title: "Dispositifs vendus ", value: stats.devices, trend: "1.3% Up", icon: "/assets/DeviceIcon.png", trendColor: "text-green-500" },
-    { title: "Alertes signalées", value: stats.alerts, trend: "4.3% Down", icon: "/assets/CourbeIcon.png", trendColor: "text-red-500" },
-    { title: "% Interventions techniques", value: `${stats.technicalPercentage}%`, trend: "2% Up", icon: "/assets/TimeIcon.png", trendColor: "text-green-500" },
+    { title: "Utilisateurs", value: stats.users,  icon: "/assets/UserIcon.png" },
+    { title: "Devices activées ", value: stats.devices, icon: "/assets/DeviceIcon.png" },
+    { title: "Alertes signalées", value: stats.alerts, icon: "/assets/CourbeIcon.png" },
+    { title: "% Interventions techniques", value: `${stats.technicalPercentage}%`, icon: "/assets/TimeIcon.png"},
   ];
 
   return (
     <div className="grid grid-cols-1 my-2 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
-      {kpis.map(({ title, value, trend, icon, trendColor }, index) => (
+      {kpis.map(({ title, value ,icon}, index) => (
         <div key={index} className="bg-white shadow-md rounded-xl p-4 flex items-center justify-between hover:scale-95 hover:shadow-lg">
           <div className="flex flex-col text-left space-y-1">
             <h3 className="text-gray-500">{title}</h3>

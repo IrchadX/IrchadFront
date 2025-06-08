@@ -1,28 +1,34 @@
 "use client";
+
 import {
   adminSidebarLinks,
   commercialSidebarLinks,
   SidebarLink,
+  decideurSidebarLinks,
 } from "@/data/sidebarLinks";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { decideurSidebarLinks } from "@/data/sidebarLinks";
 
 const Sidebar = ({ userRole }: { userRole: string }) => {
   const pathname = usePathname();
+  const router = useRouter();
   const isAuthRoute = pathname.startsWith("/auth");
 
   const sidebarLinks: SidebarLink[] =
-  userRole === "admin"
-    ? adminSidebarLinks
-    : userRole === "commercial"
-    ? commercialSidebarLinks
-    : userRole === "decideur"
-    ? decideurSidebarLinks
-    : []; 
+    userRole === "admin"
+      ? adminSidebarLinks
+      : userRole === "commercial"
+      ? commercialSidebarLinks
+      : userRole === "decideur"
+      ? decideurSidebarLinks
+      : [];
 
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    router.push("/login");
+  };
 
   return (
     <>
@@ -46,7 +52,8 @@ const Sidebar = ({ userRole }: { userRole: string }) => {
                 <motion.div
                   key={index}
                   whileHover={{ scale: 1.05 }}
-                  className={`items-center relative mb-2 flex gap-4 w-full font-medium p-4 rounded-lg transition-colors duration-200`}>
+                  className="items-center relative mb-2 flex gap-4 w-full font-medium p-4 rounded-lg transition-colors duration-200"
+                >
                   {/* Active Link Indicator */}
                   {pathname.startsWith(link.href) && (
                     <div className="absolute left-0 top-1/2 -translate-y-1/2">
@@ -73,7 +80,10 @@ const Sidebar = ({ userRole }: { userRole: string }) => {
             {/* Logout Section */}
             <motion.div className="h-[40%] flex flex-col items-center justify-end w-full">
               <div className="flex flex-col border-t-border border-t-[1px] py-6 mx-auto w-full">
-                <div className="flex gap-2 mx-auto">
+                <div
+                  className="flex gap-2 mx-auto cursor-pointer"
+                  onClick={handleLogout}
+                >
                   <Image
                     src="/assets/layout/logout.svg"
                     width={20}

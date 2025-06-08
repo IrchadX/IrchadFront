@@ -35,6 +35,19 @@ const Alerts = () => {
     }
   };
 
+  const getLevelColorClass = (level) => {
+    switch (level) {
+      case "critique":
+        return "text-red-600";
+      case "modere":
+        return "text-orange-500"; 
+      case "mineur":
+        return "text-green-600";
+      default:
+        return "text-gray-600";
+    }
+  };
+
   return (
     <div className="w-1/2 bg-white rounded-lg shadow-md overflow-hidden">
       <div className="p-3 border-b">
@@ -48,12 +61,12 @@ const Alerts = () => {
           <div className="grid grid-cols-3 text-sm font-medium text-gray-600 px-4 py-3 border-b">
             <div>Type d'alerte</div>
             <div>Zone concernée</div>
-            <div className="pl-11">Niveau / Statut</div>
+            <div className="pl-11">Statut / Niveau </div>
           </div>
 
           <div className="divide-y divide-gray-200">
             {currentAlerts.map((alert, index) => {
-              const levelClass = alert.level === "Critique" ? "text-red-600" : alert.level === "Modéré" ? "text-yellow-600" : "text-green-600";
+              const levelClass = getLevelColorClass(alert.level);
               return (
                 <div key={index} className="grid grid-cols-3 px-4 py-3 text-sm">
                   <div>
@@ -65,7 +78,7 @@ const Alerts = () => {
                   </div>
                   <div className="text-right">
                     <div className="font-medium text-gray-800">{alert.status}</div>
-                    <div className={`text-xs ${levelClass}`}>{alert.level}</div>
+                    <div className={`text-xs font-semibold ${levelClass}`}>{alert.level}</div>
                   </div>
                 </div>
               );
@@ -73,9 +86,7 @@ const Alerts = () => {
           </div>
 
           <div className="flex justify-between items-center px-4 py-3 border-t">
-            <div className="text-sm text-gray-500">
-              {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, alerts.length)} de {alerts.length}
-            </div>
+        
             <div className="flex space-x-1">
               <button
                 onClick={() => paginate(currentPage - 1)}
