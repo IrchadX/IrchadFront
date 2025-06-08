@@ -13,7 +13,7 @@ interface Environment {
 
 interface EnvsListProps {
   environments: Environment[];
-  sectionType?: "pending" | "all"; // Identify which section this is
+  sectionType?: "pending" | "all";
 }
 
 const EnvsList = ({

@@ -49,7 +49,7 @@ export default function Login() {
   interface LoginResponse {
     access_token: string;
     user: {
-      id: string;
+      userId: string;
       email: string;
       role: string;
     };
@@ -79,10 +79,11 @@ export default function Login() {
         throw new Error(data.message || "Authentication failed");
       }
 
-      const user = data.user;
+      // const user = data.user;
+      const user = data;
 
       const safeUserData = {
-        id: user.id,
+        id: user.userId,
         email: user.email,
         role: user.role,
       };

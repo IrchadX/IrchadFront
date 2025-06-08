@@ -8,6 +8,7 @@ import SearchInput from "@/components/shared/search-input";
 import FilterButton, { Filters } from "@/components/shared/filter-button";
 import { fetchUsers } from "@/app/api/users";
 import { ButtonSecondary } from "@/components/shared/secondary-button";
+import LoadingSpinner from "@/components/shared/loading";
 
 const filterSections: {
   label: string;
@@ -103,7 +104,7 @@ export default function Page() {
     userType: [],
     city: [],
     ageGroup: [],
-    visibility:[],
+    visibility: [],
   });
 
   // Direct 1:1 mapping to match exactly what backend expects
@@ -185,18 +186,18 @@ export default function Page() {
         </div>
         <div className="flex justify-between items-start">
           <Link href={`/admin/users/add_user`}>
-            <ButtonSecondary disabled={false} title="Ajouter" onClick={() => {}} />
+            <ButtonSecondary
+              disabled={false}
+              title="Ajouter"
+              onClick={() => {}}
+            />
           </Link>
         </div>
       </div>
 
-    
-
       <div className="container mx-auto py-10">
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-main-10"></div>
-          </div>
+          <LoadingSpinner />
         ) : (
           <DataTable columns={columns} data={data} />
         )}

@@ -29,17 +29,17 @@ const PoiCategoryCard: React.FC<
       {/* Header */}
       <div className="flex items-center gap-4">
         <div className="w-full flex items-center space-x-4 pb-4">
-          <div className="w-[90%]">
-            <h3 className="w-full text-start text-md xl:text-lg font-bold text-black">
+          <div className="w-[95%]">
+            <h3 className="w-full text-start text-md xl:text-md font-bold text-black">
               {category}
             </h3>
           </div>
-          <div className="w-[10%] cursor-pointer" onClick={onDelete}>
+          <div className="w-[7%] cursor-pointer" onClick={onDelete}>
             <Image
               src="/assets/shared/delete.png"
               alt="Delete Icon"
-              width={23}
-              height={23}
+              width={20}
+              height={20}
             />
           </div>
         </div>

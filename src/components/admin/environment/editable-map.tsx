@@ -461,7 +461,7 @@ export default function EditableMap({
           })}
 
           <EditControl
-            position="bottomleft"
+            position="topright"
             onEdited={_onEditPath}
             onCreated={_onCreate}
             onDeleted={_onDeleted}

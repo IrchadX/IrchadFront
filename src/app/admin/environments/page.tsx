@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AddZoneTypeModal } from "@/components/admin/environment/add-zone-type";
 import { AddPoiCategoryModal } from "@/components/admin/environment/add-poi-category";
+import LoadingSpinner from "@/components/shared/loading";
 
 interface Environment {
   id: string;
@@ -201,7 +202,7 @@ const Page = () => {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-4">Chargement...</div>
+        <LoadingSpinner />
       ) : (
         <EnvsList
           environments={filteredPendingEnvironments}
@@ -215,7 +216,7 @@ const Page = () => {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-4">Chargement...</div>
+        <LoadingSpinner />
       ) : (
         <EnvsList environments={filteredAllEnvironments} sectionType="all" />
       )}

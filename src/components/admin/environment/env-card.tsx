@@ -9,7 +9,7 @@ interface EnvironmentCardProps {
   id: string;
   imgSrc: string;
   onDelete: (id: string) => Promise<void>;
-  isPending?: boolean; // Add isPending flag
+  isPending?: boolean;
 }
 
 const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
@@ -38,15 +38,15 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
       className={`lg:w-[230px] xl:w-[300px] 2xl:w-[280px] p-3 border-[1px] ${
         isPending ? "border-orange-400 border-2" : "border-black-10"
       } bg-main-5 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center justify-center`}>
-      <div className="flex w-full">
-        <h3 className="font-bold w-[80%] text-start text-md xl:text-lg text-black">
+      <div className="flex w-full items-center justify-center">
+        <h3 className="font-bold w-[90%] text-start text-md xl:text-md text-black h-[50px]">
           {title}
         </h3>
         <div className="w-[10%] cursor-pointer" onClick={handleDelete}>
           <Image
             src="/assets/shared/delete.png"
-            width={23}
-            height={23}
+            width={15}
+            height={15}
             alt="delete"
           />
         </div>
@@ -54,8 +54,8 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
           <Link href={`/admin/environments/${id}?pending=${isPending}`}>
             <Image
               src="/assets/shared/open-arrow.svg"
-              width={30}
-              height={30}
+              width={20}
+              height={20}
               alt="open arrow"
               className="scale-150"
             />
