@@ -46,14 +46,19 @@ export default function Login() {
     hover: { scale: 1.05 },
   };
 
+  // interface LoginResponse {
+  //   access_token: string;
+  //   user: {
+  //     userId: string;
+  //     email: string;
+  //     role: string;
+  //   };
+  //   message?: string;
+  // }
   interface LoginResponse {
-    access_token: string;
-    user: {
-      id: string;
-      email: string;
-      role: string;
-    };
-    message?: string;
+    userId: string;
+    email: string;
+    role: string;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,13 +81,14 @@ export default function Login() {
       const data: LoginResponse = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Authentication failed");
+        throw new Error("Authentication failed");
       }
 
-      const user = data.user;
+      // const user = data.user;
+      const user = data;
 
       const safeUserData = {
-        id: user.id,
+        id: user.userId,
         email: user.email,
         role: user.role,
       };
