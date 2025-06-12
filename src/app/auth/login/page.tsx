@@ -46,6 +46,15 @@ export default function Login() {
     hover: { scale: 1.05 },
   };
 
+  // interface LoginResponse {
+  //   access_token: string;
+  //   user: {
+  //     userId: string;
+  //     email: string;
+  //     role: string;
+  //   };
+  //   message?: string;
+  // }
   interface LoginResponse {
     access_token: string;
     user: {
@@ -76,7 +85,7 @@ export default function Login() {
       const data: LoginResponse = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Authentication failed");
+        throw new Error("Authentication failed");
       }
 
       // const user = data.user;
@@ -113,7 +122,7 @@ export default function Login() {
       transition={{ duration: 0.5 }}
       className=" md:py-0 flex flex-col md:flex-row h-screen bg-cover bg-no-repeat justify-center xl:bg-black"
       style={{ backgroundColor: "#fff", color: "#000" }}>
-      <div className="pt-10 w-full xl:w-[48%] md:m-8 xl:m-0 flex flex-col justify-center items-center bg-white px-[25px] sm:px-[50px] md:px-[107px] gap-[60px] xl:overflow-hidden xl:h-full z-20">
+      <div className="pt-10 w-full xl:w-[48%] md:m-8 xl:m-0 flex flex-col justify-center items-center  px-[25px] sm:px-[50px] md:px-[107px] gap-[60px] xl:overflow-hidden xl:h-full z-20">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

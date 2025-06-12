@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { AddZoneTypeModal } from "@/components/admin/environment/add-zone-type";
 import { AddPoiCategoryModal } from "@/components/admin/environment/add-poi-category";
 import LoadingSpinner from "@/components/shared/loading";
+import { useLanguage } from "@/hooks/use-language";
 
 interface Environment {
   id: string;
@@ -49,14 +50,39 @@ const Page = () => {
   const [isZoneModalOpen, setZoneModalOpen] = useState(false);
   const [isPoiModalOpen, setPoiModalOpen] = useState(false);
 
-  // Filter sections configuration
+  // Use language hook for settings and translations
+  const { settings, translations: t, isRTL } = useLanguage();
+
+  // Filter sections configuration - now using translations
   const filterSections = [
     {
-      label: "Visibilité",
+      label: t.environments.filterByStatus || "Visibilité", // Fallback for existing French text
       key: "visibility" as const,
-      options: ["Public", "Privé"],
+      options: [
+        t.environments.active || "Public",
+        t.environments.inactive || "Privé",
+      ],
     },
   ];
+
+  // Apply theme when settings change
+  useEffect(() => {
+    const root = document.documentElement;
+    if (settings.theme === "dark") {
+      root.classList.add("dark");
+    } else if (settings.theme === "light") {
+      root.classList.remove("dark");
+    } else if (settings.theme === "system") {
+      const systemPrefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      if (systemPrefersDark) {
+        root.classList.add("dark");
+      } else {
+        root.classList.remove("dark");
+      }
+    }
+  }, [settings.theme]);
 
   useEffect(() => {
     const fetchEnvironments = async () => {
@@ -122,8 +148,25 @@ const Page = () => {
       }
     };
 
+    // Add auto-refresh if enabled
+    let intervalId: NodeJS.Timeout;
+    if (settings.autoRefreshInterval > 0) {
+      intervalId = setInterval(
+        fetchEnvironments,
+        settings.autoRefreshInterval * 1000
+      );
+    }
+
     fetchEnvironments();
-  }, [searchValue, filters, router]);
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [
+    searchValue,
+    filters,
+    settings.itemsPerPage,
+    settings.autoRefreshInterval,
+  ]);
 
   // Apply filters and search
   useEffect(() => {
@@ -150,14 +193,17 @@ const Page = () => {
     // Apply visibility filter to both
     if (filters.visibility.length > 0) {
       const filterFn = (env: Environment) => {
+        const publicText = t.environments.active || "Public";
+        const privateText = t.environments.inactive || "Privé";
+
         if (
-          filters.visibility.includes("Public") &&
-          filters.visibility.includes("Privé")
+          filters.visibility.includes(publicText) &&
+          filters.visibility.includes(privateText)
         ) {
           return true;
         }
-        if (filters.visibility.includes("Public")) return env.isPublic;
-        if (filters.visibility.includes("Privé")) return !env.isPublic;
+        if (filters.visibility.includes(publicText)) return env.isPublic;
+        if (filters.visibility.includes(privateText)) return !env.isPublic;
         return true;
       };
 
@@ -167,19 +213,20 @@ const Page = () => {
 
     setFilteredAllEnvironments(allResults);
     setFilteredPendingEnvironments(pendingResults);
-  }, [searchValue, filters, allEnvironments, pendingEnvironments]);
+  }, [searchValue, filters, allEnvironments, pendingEnvironments, t]);
 
   const handleApplyFilters = (newFilters: Filters) => {
     setFilters(newFilters);
   };
 
   return (
-    <div className="">
+    <div className={`${isRTL ? "rtl" : "ltr"}`}>
       {/* Search and Filter Section */}
       <div className="flex gap-2">
         <SearchInput
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
+          placeholder={t.environments.searchPlaceholder || "Rechercher..."}
         />
         <FilterButton
           filters={filters}
@@ -191,11 +238,14 @@ const Page = () => {
 
       {/* Pending Environments Section */}
       <div className="flex justify-between items-start mt-4">
-        <Title text="Environnements en attente" lineLength="150px" />
+        <Title
+          text={t.environments.title || "Environnements en attente"}
+          lineLength="150px"
+        />
         <Link href="/admin/environments/create_environment" passHref>
           <ButtonSecondary
             disabled={false}
-            title="Ajouter"
+            title={t.add || "Ajouter"}
             onClick={() => console.log("Navigating to add environment page")}
           />
         </Link>
@@ -212,7 +262,10 @@ const Page = () => {
 
       {/* All Environments Section */}
       <div className="flex justify-between items-start mt-8">
-        <Title text="Tous les environnements" lineLength="150px" />
+        <Title
+          text={t.environments.subtitle || "Tous les environnements"}
+          lineLength="150px"
+        />
       </div>
 
       {isLoading ? (
@@ -226,7 +279,7 @@ const Page = () => {
         <Title text="Types de Zones" lineLength="60px" />
         <>
           <ButtonSecondary
-            title="Ajouter"
+            title={t.add || "Ajouter"}
             onClick={() => setZoneModalOpen(true)}
             disabled={false}
           />
@@ -244,7 +297,7 @@ const Page = () => {
         <Title text="Catégories de POI" lineLength="80px" />
         <>
           <ButtonSecondary
-            title="Ajouter"
+            title={t.add || "Ajouter"}
             onClick={() => setPoiModalOpen(true)}
             disabled={false}
           />

@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class"],
+  darkMode: "class",
   mode: "jit",
   content: [
     "./src/**/*.{js,ts,jsx,tsx}", // Only scan your source files
@@ -24,6 +24,16 @@ module.exports = {
         "main-40": "rgba(43, 122, 120, 0.4)",
         "main-20": "rgba(43, 122, 120, 0.2)",
         "black-30": "rgba(23, 37, 42, 0.30)",
+        "black-5": "#f8f9fa",
+        "black-10": "#e9ecef",
+        "black-20": "#dee2e6",
+        "black-30": "#ced4da",
+        "black-40": "#adb5bd",
+        "black-50": "#6c757d",
+        "black-60": "#495057",
+        "black-70": "#343a40",
+        "black-80": "#212529",
+        "black-90": "#000000",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

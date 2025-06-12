@@ -9,7 +9,7 @@ export default function AuthLayout({
   return (
     <div
       className={`flex min-h-screen w-full
-antialiased font-montserrat bg-white`}>
+antialiased font-montserrat `}>
       <div className="flex min-h-screen w-full">
         <div className=" h-screen overflow-hidden sticky top-0">
           <Sidebar />

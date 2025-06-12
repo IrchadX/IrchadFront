@@ -39,7 +39,7 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
         isPending ? "border-orange-400 border-2" : "border-black-10"
       } bg-main-5 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center justify-center`}>
       <div className="flex w-full items-center justify-center">
-        <h3 className="font-bold w-[90%] text-start text-md xl:text-md text-black h-[50px]">
+        <h3 className="font-bold w-[90%] text-start text-md xl:text-md  h-[50px]">
           {title}
         </h3>
         <div className="w-[10%] cursor-pointer" onClick={handleDelete}>
@@ -62,7 +62,7 @@ const EnvironmentCard: React.FC<EnvironmentCardProps> = ({
           </Link>
         </div>
       </div>
-      <p className="w-full text-start text-sm text-black-30">{address}</p>
+      <p className="w-full text-start text-sm -30">{address}</p>
 
       {isPending && (
         <div className="w-full mt-1">
