@@ -14,7 +14,6 @@ antialiased font-montserrat `}>
         <div className=" h-screen overflow-hidden sticky top-0">
           <Sidebar />
         </div>
-
         <div className="flex-1 flex flex-col px-8 xl:px-10 w-full">
           <Header />
           <main className="flex-1 overflow-y-auto w-full">{children}</main>

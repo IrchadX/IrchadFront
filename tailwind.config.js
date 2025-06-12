@@ -10,7 +10,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        main: "#2B7A78",
+        main: {
+          DEFAULT: "#2B7A78",
+          500: "#3A8C8A",
+          600: "#1E6A68",
+          700: "#125A58",
+          800: "#0A4A48",
+        },
+        gray: {
+          700: "#374151",
+          800: "#1F2937",
+        },
         black: "#17252A",
         secondary: {
           DEFAULT: "hsl(var(--secondary))",

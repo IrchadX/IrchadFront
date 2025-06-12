@@ -23,13 +23,17 @@ const Header = () => {
       return "Gestion des ventes";
     } else if (pathname.startsWith("/commercial/offers")) {
       return "Offres";
+    } else if (pathname.startsWith("/admin/environments")) {
+      return "Gestion des environnements";
+    } else if (pathname.startsWith("/admin/users")) {
+      return "Gestion des utilisateurs";
     }
   };
 
   return (
     <>
       {!isAuthRoute && (
-        <div className="z-50 bg-white py-2 xl:py-3 mb-4 border-b border-[#E6EFF5] text-black font-futura sticky top-0 w-full flex items-center justify-between px-4 xl:px-8">
+        <div className="bg-white dark:bg-black text-black dark:text-white  z-50 py-2 xl:py-3 mb-4 border-b border-[#E6EFF5] text-black font-futura sticky top-0 w-full flex items-center justify-between ">
           <div className="text-xl xl:text-2xl">{getTitle()}</div>
           <div className="flex items-center gap-4">
             <Image

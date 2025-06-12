@@ -39,7 +39,7 @@ const EnvsList = ({
 
   if (environments.length === 0) {
     return (
-      <div className="text-gray-500 my-4">
+      <div className=" my-4">
         {sectionType === "pending"
           ? "Aucun environnement en attente."
           : "Aucun environnement disponible."}
@@ -48,7 +48,7 @@ const EnvsList = ({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-6 pb-6">
+    <div className="flex flex-wrap items-center gap-6 xl:gap-4 pb-6">
       {environments &&
         environments.map((env) => (
           <EnvironmentCard

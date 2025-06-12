@@ -150,7 +150,7 @@ function GlowingProgressBar() {
   }, []);
 
   return (
-    <div className="w-64 h-1 bg-[#17252A] bg-opacity-20 rounded-full overflow-hidden mt-4">
+    <div className="w-64 h-1 bg-opacity-20 rounded-full overflow-hidden mt-4">
       <div
         className="h-full bg-gradient-to-r from-[#2B7A78] to-[#3AAFA9] rounded-full transition-all duration-100 ease-out shadow-lg"
         style={{
@@ -164,7 +164,7 @@ function GlowingProgressBar() {
 
 export default function LoadingSpinner() {
   return (
-    <div className="w-full h-[30vh] flex flex-col items-center justify-center bg-[#FCFFFE] relative overflow-hidden">
+    <div className="w-full h-[30vh] flex flex-col items-center justify-center relative overflow-hidden">
       {/* Subtle background animation */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-[#2B7A78] rounded-full animate-pulse blur-xl"></div>

@@ -64,7 +64,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${futura.variable} ${montserrat.variable} antialiased font-montserrat bg-white dark:bg-black w-screen transition-colors duration-300`}>
+        className={`${futura.variable} ${montserrat.variable} antialiased font-montserrat bg-white dark:bg-black w-full transition-colors duration-300`}>
         <div className="flex min-h-screen w-full">
           <ThemeProvider>{children}</ThemeProvider>
         </div>
