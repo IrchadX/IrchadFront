@@ -19,6 +19,16 @@ export interface TranslationStrings {
   updated: string;
   noData: string;
 
+  // Page Titles - NEW SECTION
+  pageTitle: {
+    userManagement: string;
+    zoneAttendance: string;
+    reports: string;
+    clientManagement: string;
+    salesManagement: string;
+    offers: string;
+  };
+
   // Settings (from your existing settings page)
   settings: {
     title: string;
@@ -137,6 +147,15 @@ export interface TranslationStrings {
     settings: string;
     logout: string;
     profile: string;
+    // Sidebar navigation
+    users: string;
+    devices: string;
+    clients: string;
+    sales: string;
+    offers: string;
+    zones: string;
+    dataAnalysis: string;
+    reports: string;
   };
 
   // Date/Time formatting
@@ -173,6 +192,16 @@ export const translations: Record<string, TranslationStrings> = {
     created: "Créé",
     updated: "Mis à jour",
     noData: "Aucune donnée disponible",
+
+    // Page Titles - NEW SECTION
+    pageTitle: {
+      userManagement: "Gestion des utilisateurs",
+      zoneAttendance: "Fréquentation des zones",
+      reports: "Rapports",
+      clientManagement: "Gestion des clients",
+      salesManagement: "Gestion des ventes",
+      offers: "Offres",
+    },
 
     settings: {
       title: "Paramètres",
@@ -280,6 +309,15 @@ export const translations: Record<string, TranslationStrings> = {
       settings: "Paramètres",
       logout: "Déconnexion",
       profile: "Profil",
+      // Sidebar navigation
+      users: "Utilisateurs",
+      devices: "Dispositifs",
+      clients: "Clients",
+      sales: "Ventes",
+      offers: "Offres",
+      zones: "Zones",
+      dataAnalysis: "Analyse de données",
+      reports: "Rapports",
     },
 
     dateTime: {
@@ -314,6 +352,16 @@ export const translations: Record<string, TranslationStrings> = {
     created: "Created",
     updated: "Updated",
     noData: "No data available",
+
+    // Page Titles - NEW SECTION
+    pageTitle: {
+      userManagement: "User Management",
+      zoneAttendance: "Zone Attendance",
+      reports: "Reports",
+      clientManagement: "Client Management",
+      salesManagement: "Sales Management",
+      offers: "Offers",
+    },
 
     settings: {
       title: "Settings",
@@ -420,6 +468,15 @@ export const translations: Record<string, TranslationStrings> = {
       settings: "Settings",
       logout: "Logout",
       profile: "Profile",
+      // Sidebar navigation
+      users: "Users",
+      devices: "Devices",
+      clients: "Clients",
+      sales: "Sales",
+      offers: "Offers",
+      zones: "Zones",
+      dataAnalysis: "Data Analysis",
+      reports: "Reports",
     },
 
     dateTime: {
@@ -454,6 +511,16 @@ export const translations: Record<string, TranslationStrings> = {
     created: "تم الإنشاء",
     updated: "تم التحديث",
     noData: "لا توجد بيانات متاحة",
+
+    // Page Titles - NEW SECTION
+    pageTitle: {
+      userManagement: "إدارة المستخدمين",
+      zoneAttendance: "حضور المناطق",
+      reports: "التقارير",
+      clientManagement: "إدارة العملاء",
+      salesManagement: "إدارة المبيعات",
+      offers: "العروض",
+    },
 
     settings: {
       title: "الإعدادات",
@@ -559,6 +626,15 @@ export const translations: Record<string, TranslationStrings> = {
       settings: "الإعدادات",
       logout: "تسجيل الخروج",
       profile: "الملف الشخصي",
+      // Sidebar navigation
+      users: "المستخدمون",
+      devices: "الأجهزة",
+      clients: "العملاء",
+      sales: "المبيعات",
+      offers: "العروض",
+      zones: "المناطق",
+      dataAnalysis: "تحليل البيانات",
+      reports: "التقارير",
     },
 
     dateTime: {
@@ -584,7 +660,7 @@ export const detectBrowserLanguage = (): string => {
   const browserLang = navigator.language.split("-")[0];
   if (browserLang === "fr") return "fr";
   if (browserLang === "ar") return "ar";
-  return "en"; // Default to English
+  return "fr"; // Default to French
 };
 
 // Hook for using translations in React components

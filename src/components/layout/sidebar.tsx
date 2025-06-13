@@ -1,18 +1,20 @@
 "use client";
 import {
-  adminSidebarLinks,
-  commercialSidebarLinks,
+  getAdminSidebarLinks,
+  getCommercialSidebarLinks,
+  getDecideurSidebarLinks,
   SidebarLink,
 } from "@/data/sidebarLinks";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { decideurSidebarLinks } from "@/data/sidebarLinks";
 import { useEffect } from "react";
+import { useLanguage } from "@/hooks/use-language";
 
 const Sidebar = () => {
   const router = useRouter();
+  const { translations: t } = useLanguage();
   const userData =
     typeof window !== "undefined"
       ? JSON.parse(sessionStorage.getItem("user") || "{}")
@@ -40,18 +42,28 @@ const Sidebar = () => {
     }
   };
 
-  const sidebarLinks: SidebarLink[] =
-    userRole === "admin" || userRole === "super_admin"
-      ? adminSidebarLinks
-      : userRole === "commercial"
-      ? commercialSidebarLinks
-      : decideurSidebarLinks;
+  // Get sidebar links based on user role and current translations
+  const getSidebarLinks = (): {
+    nameKey: string;
+    href: string;
+    Icon: any;
+  }[] => {
+    if (userRole === "admin" || userRole === "super_admin") {
+      return getAdminSidebarLinks(t);
+    } else if (userRole === "commercial") {
+      return getCommercialSidebarLinks(t);
+    } else {
+      return getDecideurSidebarLinks(t);
+    }
+  };
+
+  const sidebarLinks = getSidebarLinks();
 
   return (
     <>
       {!isAuthRoute && (
-        <aside className="text-white h-screen overflow-hidden lg:w-60 xl:w-64 p-2 hidden lg:flex flex-col items-center justify-center bg-black">
-          <div className="lg:text-md h-[100%] bg-main dark:bg-main-800 w-full rounded-[15px] flex flex-col items-center py-4 border border-gray-800">
+        <aside className="text-white h-screen overflow-hidden lg:w-60 xl:w-64 p-2 hidden lg:flex flex-col items-center justify-center ">
+          <div className="lg:text-md h-[100%] bg-main dark:bg-main-800 w-full rounded-[15px] flex flex-col items-center py-4 ">
             {/* Logo Section */}
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -93,7 +105,7 @@ const Sidebar = () => {
                   <Link
                     href={link.href}
                     className="hover:text-gray-200 dark:hover:text-white">
-                    {link.name}
+                    {link.nameKey}
                   </Link>
                 </motion.div>
               ))}
@@ -109,9 +121,9 @@ const Sidebar = () => {
                     src="/assets/layout/logout.svg"
                     width={20}
                     height={20}
-                    alt="Logout"
+                    alt={t.navigation.logout}
                   />
-                  <p>Se déconnecter</p>
+                  <p>{t.navigation.logout}</p>
                 </button>
               </div>
             </motion.div>

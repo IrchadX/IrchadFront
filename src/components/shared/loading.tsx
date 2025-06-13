@@ -1,21 +1,19 @@
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Html, Sphere, Ring } from "@react-three/drei";
-import { Suspense, useRef, useState, useEffect } from "react";
+import { OrbitControls, Html } from "@react-three/drei";
+import { Suspense, useRef, useState, useEffect, useMemo } from "react";
 import * as THREE from "three";
 
 function FloatingParticles() {
   const particlesRef = useRef();
-  const particles = useRef([]);
 
-  useEffect(() => {
-    // Create particle positions
+  const particlePositions = useMemo(() => {
     const positions = new Float32Array(50 * 3);
     for (let i = 0; i < 50; i++) {
       positions[i * 3] = (Math.random() - 0.5) * 8;
       positions[i * 3 + 1] = (Math.random() - 0.5) * 8;
       positions[i * 3 + 2] = (Math.random() - 0.5) * 8;
     }
-    particles.current = positions;
+    return positions;
   }, []);
 
   useFrame((state) => {
@@ -31,7 +29,7 @@ function FloatingParticles() {
         <bufferAttribute
           attach="attributes-position"
           count={50}
-          array={particles.current}
+          array={particlePositions}
           itemSize={3}
         />
       </bufferGeometry>
@@ -42,11 +40,9 @@ function FloatingParticles() {
 
 function MorphingSphere() {
   const meshRef = useRef();
-  const [scale, setScale] = useState(1);
 
   useFrame((state) => {
     if (meshRef.current) {
-      // Morphing animation
       const time = state.clock.elapsedTime;
       meshRef.current.rotation.x = time * 0.3;
       meshRef.current.rotation.y = time * 0.5;
@@ -57,7 +53,9 @@ function MorphingSphere() {
 
       // Color shifting
       const hue = (time * 0.1) % 1;
-      meshRef.current.material.color.setHSL(0.48 + hue * 0.1, 0.6, 0.4);
+      if (meshRef.current.material) {
+        meshRef.current.material.color.setHSL(0.48 + hue * 0.1, 0.6, 0.4);
+      }
     }
   });
 
@@ -82,15 +80,19 @@ function OrbitingRings() {
   const ring3Ref = useRef();
 
   useFrame((state) => {
-    if (ring1Ref.current && ring2Ref.current && ring3Ref.current) {
-      const time = state.clock.elapsedTime;
+    const time = state.clock.elapsedTime;
 
+    if (ring1Ref.current) {
       ring1Ref.current.rotation.x = time * 0.5;
       ring1Ref.current.rotation.z = time * 0.3;
+    }
 
+    if (ring2Ref.current) {
       ring2Ref.current.rotation.y = time * 0.7;
       ring2Ref.current.rotation.x = time * 0.2;
+    }
 
+    if (ring3Ref.current) {
       ring3Ref.current.rotation.z = time * 0.4;
       ring3Ref.current.rotation.y = time * 0.6;
     }
@@ -162,7 +164,28 @@ function GlowingProgressBar() {
   );
 }
 
+function AtomScene() {
+  return (
+    <>
+      <MorphingSphere />
+      <OrbitingRings />
+      <FloatingParticles />
+    </>
+  );
+}
+
 export default function LoadingSpinner() {
+  const [isCanvasReady, setIsCanvasReady] = useState(false);
+
+  useEffect(() => {
+    // Small delay to ensure Canvas is properly mounted
+    const timer = setTimeout(() => {
+      setIsCanvasReady(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="w-full h-[30vh] flex flex-col items-center justify-center relative overflow-hidden">
       {/* Subtle background animation */}
@@ -172,35 +195,52 @@ export default function LoadingSpinner() {
       </div>
 
       <div className="w-60 h-60 mb-8 relative">
-        <Canvas camera={{ position: [5, 5, 5], fov: 50 }}>
-          <ambientLight intensity={0.4} />
-          <directionalLight
-            position={[10, 10, 5]}
-            intensity={1}
-            color="#FCFFFE"
-          />
-          <pointLight position={[-5, -5, -5]} intensity={0.5} color="#3AAFA9" />
+        {isCanvasReady && (
+          <Canvas
+            camera={{ position: [5, 5, 5], fov: 50 }}
+            gl={{
+              antialias: true,
+              alpha: true,
+              powerPreference: "high-performance",
+            }}>
+            <ambientLight intensity={0.4} />
+            <directionalLight
+              position={[10, 10, 5]}
+              intensity={1}
+              color="#FCFFFE"
+            />
+            <pointLight
+              position={[-5, -5, -5]}
+              intensity={0.5}
+              color="#3AAFA9"
+            />
 
-          <Suspense
-            fallback={
-              <Html center>
-                <div className="text-[#2B7A78]">Initializing...</div>
-              </Html>
-            }>
-            <MorphingSphere />
-            <OrbitingRings />
-            <FloatingParticles />
-          </Suspense>
+            <Suspense
+              fallback={
+                <Html center>
+                  <div className="text-[#2B7A78] text-sm">Initializing...</div>
+                </Html>
+              }>
+              <AtomScene />
+            </Suspense>
 
-          <OrbitControls
-            enableZoom={false}
-            enablePan={false}
-            autoRotate
-            autoRotateSpeed={1}
-            enableDamping
-            dampingFactor={0.05}
-          />
-        </Canvas>
+            <OrbitControls
+              enableZoom={false}
+              enablePan={false}
+              autoRotate
+              autoRotateSpeed={1}
+              enableDamping
+              dampingFactor={0.05}
+            />
+          </Canvas>
+        )}
+
+        {/* Fallback content while Canvas loads */}
+        {!isCanvasReady && (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-16 h-16 border-4 border-[#2B7A78] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col items-center space-y-3">

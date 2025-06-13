@@ -135,14 +135,11 @@ const SettingsPage = () => {
 
   return (
     <div
-      className={`w-full p-6 min-h-screen bg-white dark:bg-black transition-colors duration-300 ${
+      className={`w-full p-6 min-h-screen bg-white dark:bg-black transition-colors duration-300 max-w-5xl mx-auto ${
         language === "ar" ? "rtl" : "ltr"
       }`}>
       {/* Header */}
       <div className="mb-8 w-full">
-        <h1 className="text-3xl font-futura font-bold text-black dark:text-white mb-2">
-          {t.settings.title}
-        </h1>
         <p className="text-black-30 dark:text-white/70 font-montserrat">
           {t.settings.subtitle}
         </p>
