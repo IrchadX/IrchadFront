@@ -17,6 +17,8 @@ const Header = () => {
       return "Rapports";
     } else if (pathname.startsWith("/decideur/settings")) {
       return "Paramètres";
+    } else if (pathname.startsWith("/commercial/dashboard")) {
+      return "Tableau de bord";
     } else if (pathname.startsWith("/commercial/clients")) {
       return "Gestion des clients";
     } else if (pathname.startsWith("/commercial/sales")) {
