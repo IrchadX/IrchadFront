@@ -11,12 +11,16 @@ export async function middleware(request: NextRequest) {
     "/auth/register",
     "/_next",
     "/favicon.ico",
-    "/api/auth", // Allow auth API routes
+    "/api/auth",
   ];
 
   // Allow public paths
   if (publicPaths.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
+  }
+
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
   // Role-based redirect logic

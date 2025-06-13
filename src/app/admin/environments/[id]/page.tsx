@@ -42,9 +42,11 @@ interface EnvironmentInfo {
 }
 
 interface Zone {
+  zone_type_zone_type_idTozone_type: any;
   id?: string;
   name: string;
   description: string;
+  color: string;
   coordinates: number[][][];
 }
 
@@ -59,9 +61,10 @@ interface LayerProperties {
   name: string;
   description: string;
   type: string;
-  typeId?: string; // Added typeId for consistent feature identification
+  typeId?: string;
   id?: string;
   image?: string;
+  color: string;
   nom?: string;
 }
 
@@ -116,43 +119,112 @@ const Page = () => {
   const [selectedItem, setSelectedItem] = useState<MapLayer | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Updated handleLayersDeleted function for your Page component
   const handleLayersDeleted = (deletedLayerData: any[]) => {
+    console.log("handleLayersDeleted called with:", deletedLayerData);
+
     if (!geoJSON) {
       console.error("Cannot delete items: geoJSON is null");
       return;
     }
 
-    // Create a copy of the features array that we'll filter
+    // Start with current features
     let updatedFeatures = [...geoJSON.features];
+    console.log("Initial features count:", updatedFeatures.length);
 
     // Process each deleted layer
-    deletedLayerData.forEach((deletedItem) => {
-      if (deletedItem.properties?.id) {
-        // If we have an ID, remove features matching this ID
-        const deletedId = deletedItem.properties.id;
+    deletedLayerData.forEach((deletedItem, index) => {
+      console.log(`Processing deleted item ${index}:`, deletedItem);
+
+      // Try multiple strategies to identify and remove the feature
+      let removed = false;
+
+      // Strategy 1: Match by ID (most reliable)
+      if (deletedItem.id && !removed) {
+        const initialCount = updatedFeatures.length;
         updatedFeatures = updatedFeatures.filter(
-          (feature) => feature.properties.id !== deletedId
+          (feature) => feature.properties.id !== deletedItem.id
         );
-        console.log(`Removed feature with ID: ${deletedId}`);
-      } else if (deletedItem.leafletId && deletedItem.geometry) {
-        // For items without ID but with geometry, try to match by coordinates
-        const deletedCoords = JSON.stringify(deletedItem.geometry.coordinates);
-        updatedFeatures = updatedFeatures.filter((feature) => {
-          const featureCoords = JSON.stringify(feature.geometry.coordinates);
-          return featureCoords !== deletedCoords;
-        });
-        console.log(`Removed feature by geometry match`);
+        if (updatedFeatures.length < initialCount) {
+          console.log(`✓ Removed feature with ID: ${deletedItem.id}`);
+          removed = true;
+        }
+      }
+
+      // Strategy 2: Match by properties.id (backup)
+      if (deletedItem.properties?.id && !removed) {
+        const initialCount = updatedFeatures.length;
+        updatedFeatures = updatedFeatures.filter(
+          (feature) => feature.properties.id !== deletedItem.properties.id
+        );
+        if (updatedFeatures.length < initialCount) {
+          console.log(
+            `✓ Removed feature with properties.id: ${deletedItem.properties.id}`
+          );
+          removed = true;
+        }
+      }
+
+      // Strategy 3: Match by _leaflet_id (for items that exist in both states)
+      if (deletedItem.leafletId && !removed) {
+        const initialCount = updatedFeatures.length;
+        updatedFeatures = updatedFeatures.filter(
+          (feature) => feature._leaflet_id !== deletedItem.leafletId
+        );
+        if (updatedFeatures.length < initialCount) {
+          console.log(
+            `✓ Removed feature with _leaflet_id: ${deletedItem.leafletId}`
+          );
+          removed = true;
+        }
+      }
+
+      // Strategy 4: Match by geometry coordinates (last resort)
+      if (deletedItem.geometry && !removed) {
+        try {
+          const deletedCoords = JSON.stringify(
+            deletedItem.geometry.coordinates
+          );
+          const initialCount = updatedFeatures.length;
+          updatedFeatures = updatedFeatures.filter((feature) => {
+            const featureCoords = JSON.stringify(feature.geometry.coordinates);
+            return featureCoords !== deletedCoords;
+          });
+          if (updatedFeatures.length < initialCount) {
+            console.log(`✓ Removed feature by geometry match`);
+            removed = true;
+          }
+        } catch (error) {
+          console.warn("Could not compare geometry coordinates:", error);
+        }
+      }
+
+      if (!removed) {
+        console.warn(`Could not remove deleted item:`, deletedItem);
       }
     });
 
-    // Update the geoJSON state with the filtered features
-    const updatedGeoJSON = {
-      ...geoJSON,
-      features: updatedFeatures,
-    };
+    console.log(
+      `Features count: ${geoJSON.features.length} → ${updatedFeatures.length}`
+    );
 
-    setGeoJSON(updatedGeoJSON);
-    console.log("Updated GeoJSON after deletion:", updatedGeoJSON);
+    // Only update state if there were actual changes
+    if (updatedFeatures.length !== geoJSON.features.length) {
+      const updatedGeoJSON = {
+        ...geoJSON,
+        features: updatedFeatures,
+      };
+
+      console.log("Updating GeoJSON state with new features:", updatedGeoJSON);
+      setGeoJSON(updatedGeoJSON);
+
+      // Show success toast
+      const deletedCount = geoJSON.features.length - updatedFeatures.length;
+      toast.success(`${deletedCount} élément(s) supprimé(s)`);
+    } else {
+      console.warn("No features were actually removed from the GeoJSON");
+      toast.warning("Aucun élément n'a pu être supprimé");
+    }
   };
 
   // Fetch environment data based on ID
@@ -233,6 +305,7 @@ const Page = () => {
             );
 
             const data = await response.json();
+            console.log(data);
             setZones(data);
           } catch (error) {
             console.error("Error fetching zones:", error);
@@ -286,9 +359,29 @@ const Page = () => {
   }): GeoJSONData => {
     const features: GeoJSONData["features"] = [];
 
+    console.log("Reconstructing GeoJSON with data:", data);
+    console.log("Zones data:", data.zones);
+
     // Add zones as Polygon features with both type and typeId
     if (data.zones && data.zones.length > 0) {
-      data.zones.forEach((zone: Zone) => {
+      data.zones.forEach((zone: Zone, index: number) => {
+        console.log(`Processing zone ${index}:`, zone);
+
+        let zoneColor = "#000000";
+
+        if (
+          zone.zone_type_zone_type_idTozone_type &&
+          zone.zone_type_zone_type_idTozone_type.color
+        ) {
+          zoneColor = zone.zone_type_zone_type_idTozone_type.color;
+        } else {
+          console.warn(
+            `Zone ${zone.name} (ID: ${zone.id}) has no color information. Using default color.`
+          );
+        }
+
+        console.log(`Zone ${zone.name} color:`, zoneColor);
+
         features.push({
           type: "Feature",
           geometry: {
@@ -299,8 +392,9 @@ const Page = () => {
             name: zone.name,
             description: zone.description,
             type: "zone",
-            typeId: "zone", // Add both type and typeId to ensure compatibility
+            typeId: "zone",
             id: zone.id,
+            color: zoneColor,
           },
         });
       });
@@ -308,7 +402,9 @@ const Page = () => {
 
     // Add POIs as Polygon or LineString features with both type and typeId
     if (data.pois && data.pois.length > 0) {
-      data.pois.forEach((poi: Poi) => {
+      data.pois.forEach((poi: Poi, index: number) => {
+        console.log(`Processing POI ${index}:`, poi);
+
         const coordinates = poi.coordinates;
 
         let geometryType = "Polygon"; // default
@@ -333,15 +429,18 @@ const Page = () => {
             coordinates,
           },
           properties: {
+            color: "#FF0000", // Default color for POIs
             name: poi.name,
             description: poi.description,
             type: "poi",
-            typeId: "poi", // Add both type and typeId to ensure compatibility
+            typeId: "poi",
             id: poi.id,
           },
         });
       });
     }
+
+    console.log("Final reconstructed features:", features);
 
     return {
       type: "FeatureCollection",
@@ -357,7 +456,6 @@ const Page = () => {
       },
     };
   };
-
   const saveGeoJSONToFile = async () => {
     if (!geoJSON) {
       toast.error("No data to save.");
@@ -544,10 +642,9 @@ const Page = () => {
           // Merge with existing environment info from database
           setEnvironmentInfo((prev) => ({
             ...prev,
-            name: environment.name || prev.name,
-            description: environment.description || prev.description,
-            address: environment.address || prev.address,
-            // Keep the original isPublic and userId from database
+            name: prev.name,
+            description: prev.description,
+            address: prev.address,
           }));
         }
 

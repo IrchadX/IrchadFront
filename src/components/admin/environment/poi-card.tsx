@@ -15,8 +15,13 @@ const POICard = ({ poi, onEdit, onDelete }) => {
 
   // Determine if the POI is a point or polygon
   const isPOIPoint = () => {
-    if (!poi.coordinates || poi.coordinates.length === 0) return false;
-    return !Array.isArray(poi.coordinates[0][0]);
+    if (!poi?.coordinates || !Array.isArray(poi.coordinates)) return false;
+
+    if (!Array.isArray(poi.coordinates[0])) return true;
+
+    if (Array.isArray(poi.coordinates[0][0])) return false;
+
+    return true;
   };
 
   // Get POI type text
