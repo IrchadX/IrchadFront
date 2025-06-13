@@ -1,3 +1,4 @@
+// Fixed EditableMap.tsx
 "use client";
 
 import dynamic from "next/dynamic";
@@ -46,11 +47,13 @@ interface GeoData {
 }
 
 interface LayerProperties {
+  color: string;
   type: string;
   name?: string;
   description?: string;
   image?: string;
   nom?: string;
+  id?: string;
 }
 
 interface MapLayer {
@@ -71,8 +74,8 @@ interface EditableMapProps {
   setIsPoiFormOpen?: (isOpen: boolean) => void;
   setIsZoneFormOpen?: (isOpen: boolean) => void;
   setSelectedItem: (item: MapLayer | null) => void;
-  handleDeleteItem?: (layerIds: number[]) => void; // Add this prop
-  handleLayersDeleted?: (deletedLayerData: any[]) => void;
+  handleDeleteItem?: (layerIds: number[]) => void;
+  onLayersDeleted?: (deletedLayerData: any[]) => void;
 }
 
 export default function EditableMap({
@@ -88,35 +91,41 @@ export default function EditableMap({
   const [map, setMap] = useState<LeafletMap | null>(null);
   const [mapLayer, setMapLayer] = useState<MapLayer[]>([]);
 
-  // Effect to update map layers when file or geoData changes
+  // Effect to update map layers when file changes
   useEffect(() => {
-    if (file) {
-      setMapLayer(
-        file.features.map((feature) => ({
-          type: feature.geometry.type.toLowerCase(),
-          geometry: feature.geometry,
-          properties: feature.properties,
-        }))
-      );
+    if (file && file.features) {
+      console.log("Updating map layers from file:", file.features);
+      const updatedLayers = file.features.map((feature, index) => ({
+        type: feature.geometry.type.toLowerCase(),
+        geometry: feature.geometry,
+        properties: feature.properties,
+        _leaflet_id: feature._leaflet_id || index + 1000, // Ensure we have a leaflet ID
+      }));
+      setMapLayer(updatedLayers);
+    } else {
+      setMapLayer([]);
     }
-  }, [file, geoData]);
+  }, [file]);
 
-  useEffect(() => {}, [drawingMode]);
+  useEffect(() => {
+    console.log("Current mapLayer state:", mapLayer);
+  }, [mapLayer]);
 
   // Handle drawing mode selection
   const handleDrawingMode = (mode: string) => {
     if (drawingMode === mode) {
       setDrawingMode(null);
+      setIsPoiFormOpen(false);
+      setIsZoneFormOpen(false);
     } else {
       setDrawingMode(mode);
-    }
-
-    if (mode === "poi") {
-      setIsPoiFormOpen(true);
-      setIsZoneFormOpen(false);
-    } else if (mode === "zone") {
-      setIsZoneFormOpen(true);
-      setIsPoiFormOpen(false);
+      if (mode === "poi") {
+        setIsPoiFormOpen(true);
+        setIsZoneFormOpen(false);
+      } else if (mode === "zone") {
+        setIsZoneFormOpen(true);
+        setIsPoiFormOpen(false);
+      }
     }
   };
 
@@ -125,11 +134,21 @@ export default function EditableMap({
 
     // Skip intermediate Polyline features when drawing a Polygon
     if (layerType === "polyline" && drawingMode === "polygon") {
+      layer.remove(); // Remove the intermediate polyline
+      return;
+    }
+
+    // Skip if we're not in a drawing mode or the layer type doesn't match
+    if (
+      !drawingMode ||
+      (drawingMode === "polygon" && layerType !== "polygon")
+    ) {
       return;
     }
 
     const properties = {
       type: drawingMode || "",
+      id: `new-${Date.now()}-${Math.random()}`,
     };
 
     const newLayer: MapLayer = {
@@ -139,7 +158,13 @@ export default function EditableMap({
       _leaflet_id: layer._leaflet_id,
     };
 
-    setMapLayer((prevLayers) => [...prevLayers, newLayer]);
+    // Update local state
+    setMapLayer((prevLayers) => {
+      const updated = [...prevLayers, newLayer];
+      console.log("Added new layer, updated mapLayer:", updated);
+      return updated;
+    });
+
     setSelectedItem(newLayer);
     console.log("New layer added:", newLayer);
   };
@@ -149,53 +174,75 @@ export default function EditableMap({
     const updatedLayers = mapLayer.map((layer) => {
       const editedLayer = layers.getLayer(layer._leaflet_id);
       if (editedLayer) {
-        return {
+        const updatedLayer = {
           ...layer,
           geometry: editedLayer.toGeoJSON().geometry,
         };
+        return updatedLayer;
       }
       return layer;
     });
+
     setMapLayer(updatedLayers);
     console.log("Layers updated:", updatedLayers);
+
+    // Notify parent component about the edit
+    if (onLayersDeleted) {
+      // We can create a custom callback for edits if needed
+      console.log("Layer edited, should notify parent");
+    }
   };
 
-  // In your EditableMap.tsx component:
-
-  // 1. Modify the _onDeleted function to store more information about the deleted layers
   const _onDeleted = (e: any) => {
     const { layers } = e;
+    console.log("Deletion event triggered:", e);
+    console.log("Layers to delete:", layers);
 
-    // Extract deleted layers and their data
-    const deletedLayerData = [];
+    // Extract information about deleted layers
+    const deletedLayerData: any[] = [];
+    const deletedLeafletIds: number[] = [];
+
     layers.eachLayer((layer: any) => {
-      if (layer.feature) {
-        // Store the feature properties for identification
+      const leafletId = layer._leaflet_id;
+      deletedLeafletIds.push(leafletId);
+
+      // Find the corresponding layer in our state
+      const stateLayer = mapLayer.find((l) => l._leaflet_id === leafletId);
+
+      if (stateLayer) {
         deletedLayerData.push({
-          leafletId: layer._leaflet_id,
-          properties: layer.feature.properties,
-          geometry: layer.toGeoJSON().geometry,
+          leafletId: leafletId,
+          properties: stateLayer.properties,
+          geometry: stateLayer.geometry,
+          id: stateLayer.properties.id, // Include the ID for parent component
         });
+        console.log("Found state layer for deletion:", stateLayer);
       } else {
-        // For layers without feature data, just store the ID
+        // Fallback for layers not in state
         deletedLayerData.push({
-          leafletId: layer._leaflet_id,
+          leafletId: leafletId,
+          geometry: layer.toGeoJSON ? layer.toGeoJSON().geometry : null,
         });
+        console.log("Layer not found in state, using fallback");
       }
     });
 
-    // Update local state to remove deleted layers
-    const deletedIds = Object.keys(layers._layers).map(Number);
+    console.log("Deleted layer data:", deletedLayerData);
+    console.log("Deleted leaflet IDs:", deletedLeafletIds);
+
+    // Update local state - remove deleted layers
     const remainingLayers = mapLayer.filter(
-      (layer) => !deletedIds.includes(layer._leaflet_id)
+      (layer) => !deletedLeafletIds.includes(layer._leaflet_id)
     );
+
+    console.log("Remaining layers after deletion:", remainingLayers);
     setMapLayer(remainingLayers);
 
-    // Notify parent component about the deletion with detailed information
+    // Notify parent component with detailed deletion information
     if (onLayersDeleted && deletedLayerData.length > 0) {
+      console.log("Notifying parent component about deletions");
       onLayersDeleted(deletedLayerData);
     }
-    console.log("Layers deleted data:", deletedLayerData);
   };
 
   return (
@@ -253,23 +300,6 @@ export default function EditableMap({
             }}>
             POI
           </button>
-
-          {/* Wall Button */}
-          {/* <button
-            onClick={() => handleDrawingMode("wall")}
-            style={{
-              padding: "8px 16px",
-              borderRadius: "6px",
-              border: "none",
-              backgroundColor: drawingMode === "wall" ? "#17252A" : "#17252A66",
-              color: drawingMode === "wall" ? "#fff" : "#17252A",
-              fontSize: "14px",
-              cursor: "pointer",
-              outline: "none",
-              transition: "background-color 0.3s ease, transform 0.2s ease",
-            }}>
-            Wall
-          </button> */}
         </div>
 
         <TileLayer
@@ -303,7 +333,7 @@ export default function EditableMap({
 
               return (
                 <Polygon
-                  key={`polygon-${index}`}
+                  key={`polygon-${index}-${layer._leaflet_id}`}
                   positions={coords[0].map(toLatLng)}
                   pathOptions={{ color }}>
                   <Popup>
@@ -332,7 +362,7 @@ export default function EditableMap({
 
               return (
                 <Polyline
-                  key={`polyline-${index}`}
+                  key={`polyline-${index}-${layer._leaflet_id}`}
                   positions={coords.map(toLatLng)}
                   pathOptions={{ color }}>
                   <Popup>
@@ -356,7 +386,9 @@ export default function EditableMap({
               if (!Array.isArray(coords) || coords.length !== 2) return null;
 
               return (
-                <Marker key={`marker-${index}`} position={toLatLng(coords)}>
+                <Marker
+                  key={`marker-${index}-${layer._leaflet_id}`}
+                  position={toLatLng(coords)}>
                   <Popup>
                     <strong>{title}</strong>
                     <br />
@@ -381,7 +413,7 @@ export default function EditableMap({
                   Array.isArray(coords[0]) &&
                   Array.isArray(coords[0][0]) && (
                     <Polygon
-                      key={`environment-${index}`}
+                      key={`environment-${index}-${layer._leaflet_id}`}
                       positions={coords[0].map(toLatLng)}
                       pathOptions={{
                         color: "gray",
@@ -411,13 +443,25 @@ export default function EditableMap({
                   default:
                     return null;
                 }
+              case "zone":
+                const zoneColor = props.color || "purple";
+                switch (geom.type?.toLowerCase()) {
+                  case "point":
+                    return renderPoint(`Zone: ${props.name}`);
+                  case "linestring":
+                    return renderPolyline(zoneColor, `Zone: ${props.name}`);
+                  case "polygon":
+                    return renderPolygon(zoneColor, "Zone", props.name);
+                  default:
+                    return renderPolygon(zoneColor, "Zone", props.name);
+                }
               default:
                 return renderPolygon("purple", "Zone", props.name);
             }
           })}
 
           <EditControl
-            position="bottomleft"
+            position="topright"
             onEdited={_onEditPath}
             onCreated={_onCreate}
             onDeleted={_onDeleted}
