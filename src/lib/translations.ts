@@ -59,6 +59,17 @@ export interface TranslationStrings {
     seconds: string;
     minute: string;
     minutes: string;
+    logsSection: string;
+    downloadLogs: string;
+    downloadAllLogs: string;
+    viewLogList: string;
+    downloadByType: string;
+    downloadErrorLogs: string;
+    downloadWarnLogs: string;
+    downloadInfoLogs: string;
+    downloadAllTextLogs: string;
+    downloadSuccess: string;
+    downloadError: string;
   };
 
   // Environments page
@@ -204,6 +215,17 @@ export const translations: Record<string, TranslationStrings> = {
     },
 
     settings: {
+      logsSection: "Gestion des journaux",
+      downloadLogs: "Télécharger les journaux",
+      downloadAllLogs: "Télécharger tous les journaux (ZIP)",
+      viewLogList: "Voir la liste des journaux",
+      downloadByType: "Télécharger par type",
+      downloadErrorLogs: "Journaux d'erreur",
+      downloadWarnLogs: "Journaux d'avertissement",
+      downloadInfoLogs: "Journaux d'information",
+      downloadAllTextLogs: "Tous les journaux (texte)",
+      downloadSuccess: "Téléchargement réussi",
+      downloadError: "Erreur de téléchargement",
       title: "Paramètres",
       subtitle: "Configurez vos préférences d'administration",
       languageSection: "Langue de l'interface",
@@ -364,6 +386,17 @@ export const translations: Record<string, TranslationStrings> = {
     },
 
     settings: {
+      logsSection: "Log Management",
+      downloadLogs: "Download Log Files",
+      downloadAllLogs: "Download All Logs (ZIP)",
+      viewLogList: "View Available Logs",
+      downloadByType: "Download by Log Type",
+      downloadErrorLogs: "Error Logs",
+      downloadWarnLogs: "Warning Logs",
+      downloadInfoLogs: "Info Logs",
+      downloadAllTextLogs: "All Logs (Text)",
+      downloadSuccess: "Download successful",
+      downloadError: "Download failed",
       title: "Settings",
       subtitle: "Configure your administration preferences",
       languageSection: "Interface Language",
@@ -523,6 +556,17 @@ export const translations: Record<string, TranslationStrings> = {
     },
 
     settings: {
+      logsSection: "إدارة السجلات",
+      downloadLogs: "تحميل ملفات السجل",
+      downloadAllLogs: "تحميل جميع السجلات (ZIP)",
+      viewLogList: "عرض السجلات المتاحة",
+      downloadByType: "تحميل حسب النوع",
+      downloadErrorLogs: "سجلات الأخطاء",
+      downloadWarnLogs: "سجلات التحذيرات",
+      downloadInfoLogs: "سجلات المعلومات",
+      downloadAllTextLogs: "جميع السجلات (نص)",
+      downloadSuccess: "تم التحميل بنجاح",
+      downloadError: "فشل التحميل",
       title: "الإعدادات",
       subtitle: "قم بتكوين تفضيلات الإدارة الخاصة بك",
       languageSection: "لغة الواجهة",

@@ -2,6 +2,15 @@
 import { useState, useEffect } from "react";
 import { Moon, Sun, Globe, Monitor, Clock, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
+import {
+  Download,
+  FileArchive,
+  AlertTriangle,
+  AlertCircle,
+  Info,
+} from "lucide-react";
+import Link from "next/link";
+import { logService } from "@/app/api/logs";
 
 interface SettingsData {
   language: string;
@@ -16,6 +25,21 @@ const SettingsPage = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
   const [isAutoLanguage, setIsAutoLanguage] = useState(false);
+  // In your component file
+  const handleDownload = async (type: string) => {
+    console.log(type);
+    try {
+      if (type === "all") {
+        await logService.downloadAllLogs();
+      } else if (type === "all-text") {
+        await logService.downloadAllLogsAsText();
+      } else {
+        await logService.downloadLogFile(type);
+      }
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+  };
 
   // Language options
   const languageOptions = [
@@ -282,7 +306,73 @@ const SettingsPage = () => {
             </div>
           </div>
         </SettingCard>
+        <SettingCard title={t.settings.logsSection || "Log Management"}>
+          <div className="space-y-4">
+            <div>
+              <h4 className="text-sm font-montserrat font-medium text-black dark:text-white mb-3">
+                {t.settings.downloadLogs || "Download Log Files"}
+              </h4>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {/* Download All Logs */}
+                <button
+                  onClick={() => handleDownload("all")}
+                  className={`flex items-center p-3 rounded-lg border-2 cursor-pointer transition-all border-black-10 dark:border-white/20 hover:border-main-20 dark:hover:border-main-40`}>
+                  <FileArchive className="w-5 h-5 mr-3 text-main" />
+                  <span className="font-montserrat text-black dark:text-white">
+                    {t.settings.downloadAllLogs || "Download All Logs (ZIP)"}
+                  </span>
+                </button>
+              </div>
+
+              <h4 className="text-sm font-montserrat font-medium text-black dark:text-white mt-6 mb-3">
+                {t.settings.downloadByType || "Download by Log Type"}
+              </h4>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {/* Error Logs */}
+                <button
+                  onClick={() => handleDownload("error")}
+                  className={`flex items-center p-3 rounded-lg border-2 cursor-pointer transition-all border-black-10 dark:border-white/20 hover:border-main-20 dark:hover:border-main-40`}>
+                  <AlertCircle className="w-5 h-5 mr-3 text-red-500" />
+                  <span className="font-montserrat text-black dark:text-white">
+                    {t.settings.downloadErrorLogs || "Error Logs"}
+                  </span>
+                </button>
+
+                {/* Warning Logs */}
+                <button
+                  onClick={() => handleDownload("warn")}
+                  className={`flex items-center p-3 rounded-lg border-2 cursor-pointer transition-all border-black-10 dark:border-white/20 hover:border-main-20 dark:hover:border-main-40`}>
+                  <AlertTriangle className="w-5 h-5 mr-3 text-yellow-500" />
+                  <span className="font-montserrat text-black dark:text-white">
+                    {t.settings.downloadWarnLogs || "Warning Logs"}
+                  </span>
+                </button>
+
+                {/* Info Logs */}
+                <button
+                  onClick={() => handleDownload("info")}
+                  className={`flex items-center p-3 rounded-lg border-2 cursor-pointer transition-all border-black-10 dark:border-white/20 hover:border-main-20 dark:hover:border-main-40`}>
+                  <Info className="w-5 h-5 mr-3 text-blue-500" />
+                  <span className="font-montserrat text-black dark:text-white">
+                    {t.settings.downloadInfoLogs || "Info Logs"}
+                  </span>
+                </button>
+
+                {/* All Logs (text) */}
+                <button
+                  onClick={() => handleDownload("all-text")}
+                  className={`flex items-center p-3 rounded-lg border-2 cursor-pointer transition-all border-black-10 dark:border-white/20 hover:border-main-20 dark:hover:border-main-40`}>
+                  <Download className="w-5 h-5 mr-3 text-main" />
+                  <span className="font-montserrat text-black dark:text-white">
+                    {t.settings.downloadAllTextLogs || "All Logs (Text)"}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </SettingCard>
         {/* Save Button */}
         <div className="flex justify-end pt-6">
           <button
