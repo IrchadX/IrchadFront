@@ -1,32 +1,68 @@
+"use client"
+
 import { HorizontalMenu } from "@/components/commercial/dashboard/horizontal-menu";
-import { BriefcaseBusiness, CircleDollarSign } from "lucide-react";
+import { Package } from "lucide-react";
 import { KpiCard } from "@/components/shared/kpi-card";
 import { BarChartComponent } from "@/components/commercial/dashboard/products/sales-type-chart";
 import { ProductsTableComponent } from "@/components/commercial/dashboard/products/top-sales-table";
+import { useEffect, useState } from "react";
+import { fetchMonthlyProductsSold, fetchSalesByDeviceType } from "@/app/api/statistics";
 
 export default function ProductsPage() {
+  const [productsData, setProductsData] = useState<any>(null);
+  const [deviceSalesData, setDeviceSalesData] = useState<any[]>([]);
+  const [period, setPeriod] = useState<string>("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Obtenir la date du mois dernier
+        const lastMonth = new Date();
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+        const dateString = lastMonth.toISOString().split('T')[0];
+
+        // Formater la période pour l'affichage
+        const periodText = lastMonth.toLocaleDateString('fr-DZ', {
+          month: 'long',
+          year: 'numeric'
+        });
+        setPeriod(periodText);
+
+        const [products, deviceSales] = await Promise.all([
+          fetchMonthlyProductsSold(dateString),
+          fetchSalesByDeviceType()
+        ]);
+
+        setProductsData(products);
+        setDeviceSalesData(deviceSales);
+      } catch (error) {
+        console.error("Error fetching products data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div className="container mx-auto p-4 flex flex-col gap-8">
       {/* Menu Horizontal */}
-      <div className="flex justify-start">
+      <div className="flex justify-between items-center">
         <HorizontalMenu />
+        {period && (
+          <div className="text-sm text-muted-foreground">
+            Données pour {period}
+          </div>
+        )}
       </div>
 
       {/* Section KPI */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           title="Produits vendus"
-          value="50,000"
-          icon={BriefcaseBusiness}
-          iconColor="#FFBB38"
-          color="#FFF5D9"
-        />
-        <KpiCard
-          title="Taux d'attachement"
-          value="20%"
-          icon={CircleDollarSign}
-          iconColor="#FF82AC"
-          color="#FFE0EB"
+          value={productsData ? productsData.totalProducts.toString() : "Chargement..."}
+          icon={Package}
+          iconColor="#16DBCC"
+          color="#DCFAF8"
         />
       </div>
 
@@ -34,12 +70,12 @@ export default function ProductsPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Bar Chart */}
         <div className="flex flex-col bg-white shadow-md rounded-lg p-4">
-          <BarChartComponent />
+          <BarChartComponent deviceSalesData={deviceSalesData} />
         </div>
 
         {/* Products Table */}
         <div className="flex flex-col bg-white shadow-md rounded-lg p-4">
-          <ProductsTableComponent />
+          <ProductsTableComponent deviceSalesData={deviceSalesData} />
         </div>
       </div>
     </div>

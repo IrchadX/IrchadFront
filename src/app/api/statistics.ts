@@ -168,4 +168,104 @@ export async function fetchSalesByRegion() {
   }
 }
 
+export async function fetchGrossMargin(date: string) {
+  try {
+    const requestUrl = `${API_URL}/sales/gross-margin?date=${date}`;
+    console.log(`Fetching gross margin for date ${date} from: ${requestUrl}`);
+
+    const response = await fetch(requestUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`API Error (${response.status}): ${errorText}`);
+      throw new Error(`API Error (${response.status}): ${errorText}`);
+    }
+
+    const margin = await response.json();
+    console.log(`Received gross margin:`, margin);
+    return margin;
+  } catch (error) {
+    console.error("Error fetching gross margin:", error);
+    throw error;
+  }
+}
+
+export async function fetchNetMargin(date: string) {
+  try {
+    const requestUrl = `${API_URL}/sales/net-margin?date=${date}`;
+    console.log(`Fetching net margin for date ${date} from: ${requestUrl}`);
+
+    const response = await fetch(requestUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`API Error (${response.status}): ${errorText}`);
+      throw new Error(`API Error (${response.status}): ${errorText}`);
+    }
+
+    const margin = await response.json();
+    console.log(`Received net margin:`, margin);
+    return margin;
+  } catch (error) {
+    console.error("Error fetching net margin:", error);
+    throw error;
+  }
+}
+
+export async function fetchMonthlyProductsSold(date: string) {
+  try {
+    const requestUrl = `${API_URL}/sales/monthly-products?date=${date}`;
+    console.log(`Fetching monthly products sold for date ${date} from: ${requestUrl}`);
+
+    const response = await fetch(requestUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`API Error (${response.status}): ${errorText}`);
+      throw new Error(`API Error (${response.status}): ${errorText}`);
+    }
+
+    const data = await response.json();
+    console.log(`Received monthly products sold:`, data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching monthly products sold:", error);
+    throw error;
+  }
+}
+
+export async function fetchMarketPenetration(date: string) {
+  try {
+    console.log('Fetching market penetration data for date:', date);
+    const response = await fetch(`${API_URL}/sales/market-penetration?date=${date}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch market penetration data');
+    }
+    const data = await response.json();
+    console.log('Market penetration data:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching market penetration data:', error);
+    throw error;
+  }
+}
+
 

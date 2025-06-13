@@ -1,12 +1,19 @@
 "use client"
 
 import { TrendingUp } from "lucide-react"
-import { useState, useEffect } from "react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell } from "recharts"
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { fetchSalesByDeviceType } from "@/app/api/statistics"
+
+interface DeviceSalesData {
+  model: string;
+  sales: number;
+}
+
+interface BarChartComponentProps {
+  deviceSalesData: DeviceSalesData[];
+}
 
 // Couleurs pour chaque modèle
 const COLORS = ["#9F9FF8", "#94E9B8", "#AEC7ED"]
@@ -19,33 +26,16 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function BarChartComponent() {
-  const [chartData, setChartData] = useState<{ modele: string; ventes: number }[]>([])
-  const [bestSeller, setBestSeller] = useState<{ modele: string; ventes: number } | null>(null)
+export function BarChartComponent({ deviceSalesData }: BarChartComponentProps) {
+  const chartData = deviceSalesData.map(item => ({
+    modele: item.model,
+    ventes: item.sales
+  }));
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const salesData = await fetchSalesByDeviceType()
-        const formattedData = salesData.map((item: any) => ({
-          modele: item.model,
-          ventes: item.sales
-        }))
-
-        // Trouver le modèle le plus vendu
-        const best = formattedData.reduce((max: any, current: any) => 
-          current.ventes > max.ventes ? current : max
-        , formattedData[0])
-
-        setBestSeller(best)
-        setChartData(formattedData)
-      } catch (error) {
-        console.error("Error fetching sales by device type:", error)
-      }
-    }
-
-    fetchData()
-  }, [])
+  // Trouver le modèle le plus vendu
+  const bestSeller = chartData.reduce((max, current) => 
+    current.ventes > max.ventes ? current : max
+  , chartData[0]);
 
   return (
     <Card className="h-[400px]">

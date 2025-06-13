@@ -16,9 +16,6 @@ export default function ZonesPage() {
           <div className="bg-white shadow-md rounded-lg p-4">
           <BarChartComponent />
           </div>
-          <div className="bg-white shadow-md rounded-lg p-4">
-          <PieChartComponent />
-          </div>
         </div>
 
         {/* Market penetration component */}

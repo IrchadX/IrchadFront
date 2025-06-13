@@ -2,24 +2,19 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shared/table"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 
-// Définition du type pour les données des produits
-interface Produit {
-  id: string
-  nom: string
-  prix: number
-  roi: number
+interface DeviceSalesData {
+  model: string;
+  sales: number;
 }
 
-// Données des produits
-const produits: Produit[] = [
-  { id: "PR001", nom: "Produit 1", prix: 520, roi: 5 },
-  { id: "PR002", nom: "Produit 2", prix: 480, roi: 10 },
-  { id: "PR003", nom: "Produit 3", prix: 350, roi: -3 },
-  { id: "PR004", nom: "Produit 4", prix: 940, roi: 2 },
-  { id: "PR005", nom: "Produit 5", prix: 670, roi: -12 },
-]
+interface ProductsTableComponentProps {
+  deviceSalesData: DeviceSalesData[];
+}
 
-export function ProductsTableComponent() {
+export function ProductsTableComponent({ deviceSalesData }: ProductsTableComponentProps) {
+  // Trier les données par nombre de ventes décroissant
+  const sortedData = [...deviceSalesData].sort((a, b) => b.sales - a.sales);
+
   return (
     <Card className="bg-white shadow-sm rounded-lg overflow-hidden">
       <CardHeader className="pb-0 pt-6 px-6 border-b">
@@ -29,26 +24,28 @@ export function ProductsTableComponent() {
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="font-medium text-gray-600 w-[100px]">Id</TableHead>
-              <TableHead className="font-medium text-gray-600">Nom</TableHead>
-              <TableHead className="font-medium text-gray-600">Prix</TableHead>
-              <TableHead className="font-medium text-gray-600 text-right">ROI</TableHead>
+              <TableHead className="font-medium text-gray-600">Modèle</TableHead>
+              <TableHead className="font-medium text-gray-600 text-right">Ventes</TableHead>
+              <TableHead className="font-medium text-gray-600 text-right">Part de marché</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {produits.map((produit) => (
-              <TableRow key={produit.id} className="border-t border-gray-100 hover:bg-gray-50">
-                <TableCell className="text-gray-500 font-mono">{produit.id}</TableCell>
-                <TableCell className="text-gray-800">{produit.nom}</TableCell>
-                <TableCell className="text-gray-800">${produit.prix}</TableCell>
-                <TableCell className="text-right">
-                  <span className={produit.roi >= 0 ? "text-emerald-500" : "text-red-500"}>
-                    {produit.roi >= 0 ? "+" : ""}
-                    {produit.roi}%
-                  </span>
-                </TableCell>
-              </TableRow>
-            ))}
+            {sortedData.map((device, index) => {
+              const totalSales = deviceSalesData.reduce((sum, item) => sum + item.sales, 0);
+              const marketShare = ((device.sales / totalSales) * 100).toFixed(1);
+
+              return (
+                <TableRow key={index} className="border-t border-gray-100 hover:bg-gray-50">
+                  <TableCell className="text-gray-800">{device.model}</TableCell>
+                  <TableCell className="text-gray-800 text-right">{device.sales} unités</TableCell>
+                  <TableCell className="text-right">
+                    <span className="text-emerald-500">
+                      {marketShare}%
+                    </span>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </CardContent>
