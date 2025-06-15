@@ -66,16 +66,22 @@ export default function RootLayout({
       <body
         className={`${futura.variable} ${montserrat.variable} antialiased font-montserrat bg-white dark:bg-black w-full transition-colors duration-300`}>
         <div className="flex min-h-screen w-full">
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            {children}
+            <Toaster
+              position="top-right"
+              reverseOrder={false}
+              toastOptions={{
+                className: "",
+                style: {
+                  background: "hsl(var(--background))",
+                  color: "hsl(var(--foreground))",
+                  border: "1px solid hsl(var(--border))",
+                },
+              }}
+            />
+          </ThemeProvider>
         </div>
-        <Toaster
-          position="top-right"
-          reverseOrder={false}
-          toastOptions={{
-            className:
-              "bg-white dark:bg-black text-black dark:text-white border border-black-10 dark:border-white/20",
-          }}
-        />
       </body>
     </html>
   );

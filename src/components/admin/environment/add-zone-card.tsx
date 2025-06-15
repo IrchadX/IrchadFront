@@ -25,7 +25,7 @@ export interface AddZoneCardProps {
 
 interface ZoneType {
   id: number;
-  title: string; // Changed from 'type' to match your API response
+  name: string;
 }
 
 const AddZoneCard = ({
@@ -47,7 +47,6 @@ const AddZoneCard = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch zone types from API
   useEffect(() => {
     const fetchZoneTypes = async () => {
       setIsLoading(true);
@@ -66,6 +65,7 @@ const AddZoneCard = ({
         }
         const data: ZoneType[] = await response.json();
         setZoneTypes(data);
+        console.log(data);
       } catch (err) {
         console.error("Error fetching zone types:", err);
         setError(err.message);
@@ -78,7 +78,6 @@ const AddZoneCard = ({
     fetchZoneTypes();
   }, []);
 
-  // Update form when selected item changes
   useEffect(() => {
     if (selectedItem) {
       setName(selectedItem.properties?.name || "");
@@ -92,9 +91,10 @@ const AddZoneCard = ({
     const selectedZoneType = zoneTypes.find(
       (zone) => zone.id.toString() === value
     );
+    console.log("SELECTED ZONE TYPE AHHAAH", selectedZoneType);
     if (selectedZoneType) {
       setZoneTypeId(selectedZoneType.id);
-      setZoneTypeName(selectedZoneType.title); // Using 'title' instead of 'type'
+      setZoneTypeName(selectedZoneType.name);
     }
   };
 
@@ -124,7 +124,6 @@ const AddZoneCard = ({
     handleSaveItem(updatedItem);
     toast.success("Zone ajoutée avec succès");
 
-    // Only reset if creating a new item
     if (!selectedItem) {
       setName("");
       setDescription("");
@@ -134,60 +133,73 @@ const AddZoneCard = ({
   };
 
   return (
-    <div className="p-6 bg-main-20 rounded-lg shadow-md max-w-md mx-auto border-main-40 border">
+    <div className="p-6 bg-main-20 dark:bg-gray-800 rounded-lg shadow-md max-w-md mx-auto border-main-40 dark:border-gray-600 border">
       <ToastContainer />
-      <Title text="Créer une zone" lineLength="0" />
+      <Title text="Créer une zone" lineLength="0" className="dark:text-white" />
 
       {/* Name */}
       <div className="mb-4 gap-2">
-        <Label htmlFor="name">Zone</Label>
+        <Label htmlFor="name" className="dark:text-gray-300">
+          Zone
+        </Label>
         {showValues ? (
-          <p className="mt-1 text-gray-700">{name}</p>
+          <p className="mt-1 text-gray-700 dark:text-gray-300">{name}</p>
         ) : (
           <Input
             id="name"
             placeholder="Nom de la zone..."
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="bg-white"
+            className="bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
           />
         )}
       </div>
 
       {/* Type (Dropdown) */}
       <div className="mb-4">
-        <Label htmlFor="type">Type</Label>
+        <Label htmlFor="type" className="dark:text-gray-300">
+          Type
+        </Label>
         {showValues ? (
-          <p className="mt-1 text-gray-700">
+          <p className="mt-1 text-gray-700 dark:text-gray-300">
             {zoneTypeName || "Aucun type sélectionné"}
           </p>
         ) : (
           <Select
             onValueChange={handleZoneTypeChange}
             value={zoneTypeId?.toString() || ""}>
-            <SelectTrigger className="mt-1">
+            <SelectTrigger className="mt-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
               <SelectValue
                 placeholder={
                   isLoading ? "Chargement..." : "Sélectionnez un type"
                 }
               />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
               {error && (
-                <SelectItem value="error" disabled>
+                <SelectItem
+                  value="error"
+                  disabled
+                  className="dark:hover:bg-gray-600">
                   Erreur de chargement
                 </SelectItem>
               )}
               {isLoading && (
-                <SelectItem value="loading" disabled>
+                <SelectItem
+                  value="loading"
+                  disabled
+                  className="dark:hover:bg-gray-600">
                   Chargement...
                 </SelectItem>
               )}
               {!isLoading &&
                 !error &&
                 zoneTypes.map((zone) => (
-                  <SelectItem key={zone.id} value={zone.id.toString()}>
-                    {zone.type} {/* Changed from zone.type to zone.title */}
+                  <SelectItem
+                    key={zone.id}
+                    value={zone.id.toString()}
+                    className="dark:hover:bg-gray-600">
+                    {zone.name}
                   </SelectItem>
                 ))}
             </SelectContent>
@@ -197,16 +209,18 @@ const AddZoneCard = ({
 
       {/* Description */}
       <div className="mb-4">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description" className="dark:text-gray-300">
+          Description
+        </Label>
         {showValues ? (
-          <p className="mt-1 text-gray-700">{description}</p>
+          <p className="mt-1 text-gray-700 dark:text-gray-300">{description}</p>
         ) : (
           <TextArea
             id="description"
             placeholder="Description de la zone..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="bg-white"
+            className="bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
           />
         )}
       </div>
@@ -214,7 +228,11 @@ const AddZoneCard = ({
       {/* Save Button */}
       <div className="items-end flex justify-end">
         {!showValues && (
-          <Button variant="secondary" onClick={handleSave} disabled={isLoading}>
+          <Button
+            variant="secondary"
+            onClick={handleSave}
+            disabled={isLoading}
+            className="dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
             {selectedItem ? "Mettre à jour" : "Ajouter la zone"}
           </Button>
         )}
