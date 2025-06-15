@@ -1,4 +1,4 @@
-"use client"; // Required for client-side interactivity
+"use client";
 
 import React, { useEffect, useState } from "react";
 import {
@@ -46,7 +46,6 @@ const AddPoiCard = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch POI categories from API
   useEffect(() => {
     const fetchPoiCategories = async () => {
       setIsLoading(true);
@@ -77,7 +76,6 @@ const AddPoiCard = ({
     fetchPoiCategories();
   }, []);
 
-  // Update form when selected item changes
   useEffect(() => {
     if (selectedItem) {
       setName(selectedItem.properties?.name || "Nom du POI");
@@ -90,7 +88,6 @@ const AddPoiCard = ({
   }, [selectedItem]);
 
   const handleCategoryChange = (value) => {
-    // Find the selected category to get both id and name
     const selectedCategory = poiCategories.find(
       (category) => category.id.toString() === value
     );
@@ -99,14 +96,16 @@ const AddPoiCard = ({
       setCategoryName(selectedCategory.category);
     }
   };
+
   const handleSave = () => {
+    console.log("poi selected item categoru", selectedItem);
     const updatedItem = {
       ...selectedItem,
       properties: {
         ...selectedItem.properties,
         name,
-        categorie: categoryName, // Changed from 'category' to 'categoryName'
-        categoryId: categoryId, // Changed from 'id' to 'categoryId'
+        categorie: categoryName,
+        categoryId: categoryId,
         description,
         id: 0,
         envId: envId,
@@ -119,63 +118,80 @@ const AddPoiCard = ({
     setCategoryId("");
     setCategoryName("");
     setDescription("");
-    console.log("Updated item:", updatedItem);
   };
+
   return (
-    <div className="p-6 bg-main-20 rounded-lg shadow-md max-w-md mx-auto border-main-40 border">
+    <div className="p-6 bg-main-20 dark:bg-gray-800 rounded-lg shadow-md max-w-md mx-auto border-main-40 dark:border-gray-600 border">
       <ToastContainer />
 
-      <Title text="Créer un Point d'Intérêt" lineLength="0" />
+      <Title
+        text="Créer un Point d'Intérêt"
+        lineLength="0"
+        className="dark:text-white"
+      />
 
       {/* Name */}
       <div className="mb-4 gap-2">
-        <Label htmlFor="name">Nom</Label>
+        <Label htmlFor="name" className="dark:text-gray-300">
+          Nom
+        </Label>
         {showValues ? (
-          <p className="mt-1 text-gray-700">{name}</p>
+          <p className="mt-1 text-gray-700 dark:text-gray-300">{name}</p>
         ) : (
           <Input
             id="name"
             placeholder="Nom du POI..."
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="bg-white"
+            className="bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
           />
         )}
       </div>
 
       {/* Catégorie (Dropdown) */}
       <div className="mb-4">
-        <Label htmlFor="categorie">Catégorie</Label>
+        <Label htmlFor="categorie" className="dark:text-gray-300">
+          Catégorie
+        </Label>
         {showValues ? (
-          <p className="mt-1 text-gray-700">
+          <p className="mt-1 text-gray-700 dark:text-gray-300">
             {categoryName || "Aucune catégorie sélectionnée"}
           </p>
         ) : (
           <Select
             onValueChange={handleCategoryChange}
             value={categoryId?.toString()}>
-            <SelectTrigger className="mt-1">
+            <SelectTrigger className="mt-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
               <SelectValue
                 placeholder={
                   isLoading ? "Chargement..." : "Sélectionnez une catégorie"
                 }
               />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
               {error && (
-                <SelectItem value="error" disabled>
+                <SelectItem
+                  value="error"
+                  disabled
+                  className="dark:hover:bg-gray-600">
                   Erreur de chargement
                 </SelectItem>
               )}
               {isLoading && (
-                <SelectItem value="loading" disabled>
+                <SelectItem
+                  value="loading"
+                  disabled
+                  className="dark:hover:bg-gray-600">
                   Chargement...
                 </SelectItem>
               )}
               {!isLoading &&
                 !error &&
                 poiCategories.map((category) => (
-                  <SelectItem key={category.id} value={category.id.toString()}>
+                  <SelectItem
+                    key={category.id}
+                    value={category.id.toString()}
+                    className="dark:hover:bg-gray-600">
                     {category.category}
                   </SelectItem>
                 ))}
@@ -186,24 +202,30 @@ const AddPoiCard = ({
 
       {/* Description */}
       <div className="mb-4">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description" className="dark:text-gray-300">
+          Description
+        </Label>
         {showValues ? (
-          <p className="mt-1 text-gray-700">{description}</p>
+          <p className="mt-1 text-gray-700 dark:text-gray-300">{description}</p>
         ) : (
           <TextArea
             id="description"
             placeholder="Description du POI..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="bg-white"
+            className="bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
           />
         )}
       </div>
 
-      {/* Save Button (Only visible in edit mode) */}
+      {/* Save Button */}
       <div className="items-end flex justify-end">
         {!showValues && (
-          <Button variant="secondary" onClick={handleSave} disabled={isLoading}>
+          <Button
+            variant="secondary"
+            onClick={handleSave}
+            disabled={isLoading}
+            className="dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
             Ajouter le POI
           </Button>
         )}

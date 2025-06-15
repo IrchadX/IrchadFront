@@ -85,7 +85,7 @@ const FilterButton = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute z-10 mt-2 w-[250px] bg-white border border-black-5 rounded shadow-lg">
+            className="absolute z-10 mt-2 w-[250px] bg-white dark:bg-black border border-black-5 rounded shadow-lg">
             {filterSections.map(({ label, key, options }) => (
               <div
                 key={key}
@@ -133,7 +133,7 @@ const FilterButton = ({
 
             <div className="p-2 flex gap-2">
               <button
-                className="flex-1 bg-main/10 text-gray-800 rounded px-3 py-1 text-sm hover:bg-gray-300"
+                className="flex-1 bg-main/10 dark:text-gray-100 text-gray-800 rounded px-3 py-1 text-sm hover:bg-gray-300"
                 onClick={clearFilters}>
                 Clear
               </button>

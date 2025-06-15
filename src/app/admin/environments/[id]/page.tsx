@@ -13,6 +13,7 @@ import { useParams, useSearchParams, useRouter } from "next/navigation";
 import ZonesSwiper from "@/components/admin/environment/zone-swiper";
 import POIsSwiper from "@/components/admin/environment/poi-swiper";
 import Link from "next/link";
+import LoadingSpinner from "@/components/shared/loading";
 
 const DynamicMap = dynamic(
   () => import("@/components/admin/environment/editable-map"),
@@ -101,6 +102,7 @@ const Page = () => {
   const id = params.id as string;
   const isPending = searchParams.get("pending") === "true";
 
+  const [isLoading, setIsLoading] = useState(true);
   const [isFileUploaded, setIsFileUploaded] = useState(false);
   const [geoJSON, setGeoJSON] = useState<GeoJSONData | null>(null);
   const [environmentInfo, setEnvironmentInfo] = useState<EnvironmentInfo>({
@@ -231,6 +233,7 @@ const Page = () => {
   useEffect(() => {
     if (id) {
       const fetchEnvironmentData = async () => {
+        setIsLoading(true);
         try {
           const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/environments/${id}`,
@@ -286,6 +289,8 @@ const Page = () => {
         } catch (error) {
           console.error("Error fetching environment:", error);
           toast.error("Failed to load environment data");
+        } finally {
+          setIsLoading(false);
         }
       };
 
@@ -305,7 +310,7 @@ const Page = () => {
             );
 
             const data = await response.json();
-            console.log(data);
+            console.log("ZONES DATA >>> ", data);
             setZones(data);
           } catch (error) {
             console.error("Error fetching zones:", error);
@@ -392,7 +397,7 @@ const Page = () => {
             name: zone.name,
             description: zone.description,
             type: "zone",
-            typeId: "zone",
+            typeId: zone.zone_type_zone_type_idTozone_type,
             id: zone.id,
             color: zoneColor,
           },
@@ -429,7 +434,7 @@ const Page = () => {
             coordinates,
           },
           properties: {
-            color: "#FF0000", // Default color for POIs
+            color: "#FF0000",
             name: poi.name,
             description: poi.description,
             type: "poi",
@@ -456,6 +461,7 @@ const Page = () => {
       },
     };
   };
+
   const saveGeoJSONToFile = async () => {
     if (!geoJSON) {
       toast.error("No data to save.");
@@ -537,6 +543,7 @@ const Page = () => {
       setIsSaving(false);
     }
   };
+
   const handleDeleteItem = (leafletIds: number[]) => {
     if (!geoJSON) {
       console.error("Cannot delete item: geoJSON is null");
@@ -685,6 +692,16 @@ const Page = () => {
     };
     reader.readAsText(file);
   };
+
+  // Show loading component while fetching environment data
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col w-full">
       <div className="grid grid-cols-[2fr,1fr] gap-4 w-full">
