@@ -1,4 +1,5 @@
-// Enhanced EditableMap.tsx with tile rotation and grid
+// Updated EditableMap.tsx - Fixed Wall Display Issue
+
 "use client";
 
 import dynamic from "next/dynamic";
@@ -76,6 +77,9 @@ interface EditableMapProps {
   setSelectedItem: (item: MapLayer | null) => void;
   handleDeleteItem?: (layerIds: number[]) => void;
   onLayersDeleted?: (deletedLayerData: any[]) => void;
+  // ADD THESE NEW PROPS
+  onLayerCreated?: (layer: any) => void;
+  onLayerUpdated?: (layer: any) => void;
 }
 
 export default function EditableMap({
@@ -86,11 +90,13 @@ export default function EditableMap({
   setSelectedItem,
   handleDeleteItem,
   onLayersDeleted,
+  // ADD THESE NEW PROPS
+  onLayerCreated,
+  onLayerUpdated,
 }: EditableMapProps) {
   const [drawingMode, setDrawingMode] = useState<string | null>(null);
   const [map, setMap] = useState<LeafletMap | null>(null);
   const [mapLayer, setMapLayer] = useState<MapLayer[]>([]);
-  const [rotation, setRotation] = useState(0);
   const [showGrid, setShowGrid] = useState(false);
   const [gridSize, setGridSize] = useState(50);
   const [isRotating, setIsRotating] = useState(false);
@@ -117,80 +123,17 @@ export default function EditableMap({
     console.log("Current mapLayer state:", mapLayer);
   }, [mapLayer]);
 
-  // Apply tile rotation using CSS - multiple approaches
-  useEffect(() => {
-    if (map) {
-      const applyRotation = () => {
-        // Method 1: Try to rotate the tile pane
-        const tilePane = map.getPane("tilePane");
-        if (tilePane) {
-          tilePane.style.transform = `rotate(${rotation}deg)`;
-          tilePane.style.transformOrigin = "center center";
-          tilePane.style.transition =
-            "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)";
-        }
-
-        // Method 2: Try to rotate tile layers directly
-        map.eachLayer((layer: any) => {
-          if (layer.options && layer.options.attribution && layer._container) {
-            layer._container.style.transform = `rotate(${rotation}deg)`;
-            layer._container.style.transformOrigin = "center center";
-            layer._container.style.transition =
-              "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)";
-          }
-        });
-
-        // Method 3: Use CSS to target tile layers
-        const mapContainer = map.getContainer();
-        if (mapContainer) {
-          const tileContainers = mapContainer.querySelectorAll(
-            ".leaflet-tile-container"
-          );
-          tileContainers.forEach((container: any) => {
-            container.style.transform = `rotate(${rotation}deg)`;
-            container.style.transformOrigin = "center center";
-            container.style.transition =
-              "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)";
-          });
-
-          const tileLayers = mapContainer.querySelectorAll(".leaflet-layer");
-          tileLayers.forEach((layer: any) => {
-            layer.style.transform = `rotate(${rotation}deg)`;
-            layer.style.transformOrigin = "center center";
-            layer.style.transition =
-              "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)";
-          });
-        }
-      };
-
-      // Apply rotation immediately if map is ready, otherwise wait
-      if (map._loaded) {
-        applyRotation();
-      } else {
-        map.whenReady(applyRotation);
-      }
-    }
-  }, [rotation, map]);
-
-  // Handle rotation
-  const handleRotation = (angle: number) => {
-    setRotation((prev) => {
-      const newRotation = (prev + angle) % 360;
-      return newRotation < 0 ? newRotation + 360 : newRotation;
-    });
-  };
-
-  const resetRotation = () => {
-    setRotation(0);
-  };
-
-  // Handle drawing mode selection
   const handleDrawingMode = (mode: string) => {
+    console.log("Drawing mode clicked:", mode);
+    console.log("Current drawing mode:", drawingMode);
+
     if (drawingMode === mode) {
+      console.log("Turning off drawing mode");
       setDrawingMode(null);
       setIsPoiFormOpen(false);
       setIsZoneFormOpen(false);
     } else {
+      console.log("Setting drawing mode to:", mode);
       setDrawingMode(mode);
       if (mode === "poi") {
         setIsPoiFormOpen(true);
@@ -198,28 +141,43 @@ export default function EditableMap({
       } else if (mode === "zone") {
         setIsZoneFormOpen(true);
         setIsPoiFormOpen(false);
+      } else {
+        setIsPoiFormOpen(false);
+        setIsZoneFormOpen(false);
       }
     }
   };
 
+  const getDrawingDashArray = (): string | undefined => {
+    switch (drawingMode) {
+      case "environment":
+        return "5, 5";
+      case "zone":
+        return "10, 10";
+      default:
+        return undefined;
+    }
+  };
+
+  // FIXED _onCreate function:
+
   const _onCreate = (e: any) => {
     const { layerType, layer } = e;
 
+    // Simple validation - only prevent polyline when specifically in polygon mode
     if (layerType === "polyline" && drawingMode === "polygon") {
       layer.remove();
       return;
     }
 
-    if (
-      !drawingMode ||
-      (drawingMode === "polygon" && layerType !== "polygon")
-    ) {
-      return;
-    }
+    // If no drawing mode is selected, use a default
+    const effectiveDrawingMode = drawingMode || "zone";
 
     const properties = {
-      type: drawingMode || "",
+      type: effectiveDrawingMode,
+      typeId: effectiveDrawingMode, // Add typeId for backend compatibility
       id: `new-${Date.now()}-${Math.random()}`,
+      color: getDefaultColor(effectiveDrawingMode),
     };
 
     const newLayer: MapLayer = {
@@ -229,17 +187,128 @@ export default function EditableMap({
       _leaflet_id: layer._leaflet_id,
     };
 
+    // Update local state
     setMapLayer((prevLayers) => {
       const updated = [...prevLayers, newLayer];
       console.log("Added new layer, updated mapLayer:", updated);
       return updated;
     });
 
+    // Convert to GeoJSON format and notify parent
+    const geoJSONFeature = {
+      type: "Feature",
+      geometry: newLayer.geometry,
+      properties: newLayer.properties,
+    };
+
+    // Notify parent component about the new layer
+    if (onLayerCreated) {
+      console.log("Notifying parent about new layer:", geoJSONFeature);
+      onLayerCreated(geoJSONFeature);
+    }
+
     setSelectedItem(newLayer);
     console.log("New layer added:", newLayer);
-    toast.success(`${layerType} added successfully!`);
+    toast.success(`${effectiveDrawingMode} ${layerType} added successfully!`);
   };
 
+  // SOLUTION: Update the getDefaultColor function to include door:
+
+  const getDefaultColor = (drawingMode: string): string => {
+    const colorMap = {
+      environment: "#95a5a6",
+      wall: "#2c3e50",
+      door: "#27ae60", // <-- ADD THIS LINE
+      window: "#2B7A78",
+      zone: "#9b59b6",
+      poi: "#e67e22",
+    };
+    return colorMap[drawingMode] || "#9b59b6";
+  };
+
+  // Also update the getColorForMode function to ensure consistency:
+
+  const getColorForMode = (mode: string) => {
+    const colors = {
+      environment: "#95a5a6",
+      wall: "#2c3e50",
+      window: "#2B7A78",
+      door: "#27ae60", // <-- MAKE SURE THIS MATCHES
+      zone: "#17252A",
+      poi: "#e67e22",
+    };
+    return colors[mode] || "#17252A";
+  };
+
+  const getButtonStyle = (mode: string) => ({
+    padding: "6px 12px",
+    borderRadius: "6px",
+    border: `2px solid ${getColorForMode(mode)}`,
+    backgroundColor:
+      drawingMode === mode ? getColorForMode(mode) : "transparent",
+    color: drawingMode === mode ? "#fff" : getColorForMode(mode),
+    fontSize: "14px",
+    fontWeight: "500",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    whiteSpace: "nowrap",
+  });
+
+  // And update the drawing color functions:
+
+  const getDrawingColor = (): string => {
+    switch (drawingMode) {
+      case "environment":
+        return "#95a5a6";
+      case "wall":
+        return "#2c3e50";
+      case "door":
+        return "#27ae60"; // <-- ADD THIS CASE
+      case "window":
+        return "#2B7A78";
+      case "zone":
+        return "#9b59b6";
+      case "poi":
+        return "#e67e22";
+      default:
+        return "#9b59b6";
+    }
+  };
+
+  const getDrawingFillOpacity = (): number => {
+    switch (drawingMode) {
+      case "environment":
+        return 0.1;
+      case "wall":
+        return 0.4;
+      case "door":
+        return 0.4; // <-- ADD THIS CASE
+      case "window":
+        return 0.2;
+      case "zone":
+        return 0.3;
+      case "poi":
+        return 0.3;
+      default:
+        return 0.3;
+    }
+  };
+
+  const getDrawingWeight = (): number => {
+    switch (drawingMode) {
+      case "wall":
+        return 6;
+      case "window":
+        return 4;
+      case "door":
+        return 4; // <-- ADD THIS CASE
+      case "environment":
+        return 2;
+      default:
+        return 4;
+    }
+  };
+  // UPDATED _onEditPath function
   const _onEditPath = (e: any) => {
     const { layers } = e;
     const updatedLayers = mapLayer.map((layer) => {
@@ -249,6 +318,18 @@ export default function EditableMap({
           ...layer,
           geometry: editedLayer.toGeoJSON().geometry,
         };
+
+        // Notify parent about the updated layer
+        if (onLayerUpdated) {
+          const geoJSONFeature = {
+            type: "Feature",
+            geometry: updatedLayer.geometry,
+            properties: updatedLayer.properties,
+          };
+          console.log("Notifying parent about updated layer:", geoJSONFeature);
+          onLayerUpdated(geoJSONFeature);
+        }
+
         return updatedLayer;
       }
       return layer;
@@ -257,10 +338,6 @@ export default function EditableMap({
     setMapLayer(updatedLayers);
     console.log("Layers updated:", updatedLayers);
     toast.success("Layer updated successfully!");
-
-    if (onLayersDeleted) {
-      console.log("Layer edited, should notify parent");
-    }
   };
 
   const _onDeleted = (e: any) => {
@@ -312,7 +389,7 @@ export default function EditableMap({
     toast.success(`${deletedLayerData.length} layer(s) deleted successfully!`);
   };
 
-  // Grid overlay component
+  // Replace your GridOverlay component with this fixed version:
   const GridOverlay = () => {
     if (!showGrid) return null;
 
@@ -358,8 +435,10 @@ export default function EditableMap({
           left: 0,
           width: "100%",
           height: "100%",
-          pointerEvents: "none",
-          zIndex: 1000,
+          pointerEvents: "none", // This prevents blocking mouse events
+          zIndex: 1000, // Lower z-index to ensure it doesn't interfere with Leaflet controls
+          transformOrigin: "center center",
+          transition: "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
         }}>
         {gridLines}
       </svg>
@@ -374,151 +453,126 @@ export default function EditableMap({
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          flexDirection: "column",
+          gap: "12px",
           padding: "15px",
           backgroundColor: "#f8f9fa",
           borderRadius: "8px",
           marginBottom: "10px",
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
         }}>
-        {/* Drawing Controls */}
-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-          <span style={{ fontWeight: "600", color: "#17252A" }}>Draw:</span>
-          <button
-            onClick={() => handleDrawingMode("zone")}
-            style={{
-              padding: "8px 16px",
-              borderRadius: "6px",
-              border: "2px solid #17252A",
-              backgroundColor:
-                drawingMode === "zone" ? "#17252A" : "transparent",
-              color: drawingMode === "zone" ? "#fff" : "#17252A",
-              fontSize: "14px",
-              fontWeight: "500",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-            }}>
-            🏗️ Zone
-          </button>
-          <button
-            onClick={() => handleDrawingMode("poi")}
-            style={{
-              padding: "8px 16px",
-              borderRadius: "6px",
-              border: "2px solid #17252A",
-              backgroundColor:
-                drawingMode === "poi" ? "#17252A" : "transparent",
-              color: drawingMode === "poi" ? "#fff" : "#17252A",
-              fontSize: "14px",
-              fontWeight: "500",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-            }}>
-            📍 POI
-          </button>
-        </div>
-
-        {/* Rotation Controls */}
-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-          <span style={{ fontWeight: "600", color: "#17252A" }}>
-            Rotate Tiles:
-          </span>
-          <button
-            onClick={() => handleRotation(-15)}
-            style={{
-              padding: "8px 12px",
-              borderRadius: "6px",
-              border: "2px solid #e74c3c",
-              backgroundColor: "transparent",
-              color: "#e74c3c",
-              fontSize: "16px",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-            }}
-            title="Rotate tiles left 15°">
-            ↺
-          </button>
-          <button
-            onClick={() => handleRotation(15)}
-            style={{
-              padding: "8px 12px",
-              borderRadius: "6px",
-              border: "2px solid #e74c3c",
-              backgroundColor: "transparent",
-              color: "#e74c3c",
-              fontSize: "16px",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-            }}
-            title="Rotate tiles right 15°">
-            ↻
-          </button>
-          <button
-            onClick={resetRotation}
-            style={{
-              padding: "8px 12px",
-              borderRadius: "6px",
-              border: "2px solid #95a5a6",
-              backgroundColor: "transparent",
-              color: "#95a5a6",
-              fontSize: "12px",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-            }}
-            title="Reset tile rotation">
-            🔄
-          </button>
+        {/* Primary Drawing Tools - Top Row */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "8px",
+            alignItems: "center",
+          }}>
           <span
             style={{
-              fontSize: "12px",
-              color: "#7f8c8d",
-              minWidth: "40px",
-              textAlign: "center",
+              fontWeight: "600",
+              color: "#17252A",
+              marginRight: "8px",
             }}>
-            {rotation}°
+            Drawing Tools:
           </span>
+
+          {/* Environment & Structure Group */}
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <button
+              onClick={() => handleDrawingMode("environment")}
+              style={getButtonStyle("environment")}>
+              🌍 Environment
+            </button>
+            <button
+              onClick={() => handleDrawingMode("wall")}
+              style={getButtonStyle("wall")}>
+              🧱 Wall
+            </button>
+          </div>
+
+          {/* Openings Group */}
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <button
+              onClick={() => handleDrawingMode("window")}
+              style={getButtonStyle("window")}>
+              🪟 Window
+            </button>
+            <button
+              onClick={() => handleDrawingMode("door")}
+              style={getButtonStyle("door")}>
+              🚪 Door
+            </button>
+          </div>
+
+          {/* Zones & POIs Group */}
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <button
+              onClick={() => handleDrawingMode("zone")}
+              style={getButtonStyle("zone")}>
+              🏗️ Zone
+            </button>
+            <button
+              onClick={() => handleDrawingMode("poi")}
+              style={getButtonStyle("poi")}>
+              📍 POI
+            </button>
+          </div>
         </div>
 
-        {/* Grid Controls */}
-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-          <span style={{ fontWeight: "600", color: "#17252A" }}>Grid:</span>
-          <button
-            onClick={() => setShowGrid(!showGrid)}
-            style={{
-              padding: "8px 12px",
-              borderRadius: "6px",
-              border: "2px solid #3498db",
-              backgroundColor: showGrid ? "#3498db" : "transparent",
-              color: showGrid ? "#fff" : "#3498db",
-              fontSize: "14px",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-            }}>
-            {showGrid ? "🔲" : "⬜"} {showGrid ? "ON" : "OFF"}
-          </button>
-          {showGrid && (
-            <>
-              <input
-                type="range"
-                min="20"
-                max="100"
-                value={gridSize}
-                onChange={(e) => setGridSize(Number(e.target.value))}
+        {/* Secondary Controls - Bottom Row */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "12px",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}>
+          {/* Grid Controls */}
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <span style={{ fontWeight: "600", color: "#17252A" }}>Grid:</span>
+            <button
+              onClick={() => setShowGrid(!showGrid)}
+              style={{
+                padding: "6px 12px",
+                borderRadius: "6px",
+                border: "2px solid #2B7A78",
+                backgroundColor: showGrid ? "#2B7A78" : "transparent",
+                color: showGrid ? "#fff" : "#2B7A78",
+                fontSize: "14px",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+              }}>
+              {showGrid ? "🔲 ON" : "⬜ OFF"}
+            </button>
+            {showGrid && (
+              <div
                 style={{
-                  width: "80px",
-                  accentColor: "#3498db",
-                }}
-                title={`Grid size: ${gridSize}px`}
-              />
-              <span style={{ fontSize: "12px", color: "#7f8c8d" }}>
-                {gridSize}px
-              </span>
-            </>
-          )}
+                  display: "flex",
+                  gap: "8px",
+                  alignItems: "center",
+                }}>
+                <input
+                  type="range"
+                  min="20"
+                  max="100"
+                  value={gridSize}
+                  onChange={(e) => setGridSize(Number(e.target.value))}
+                  style={{
+                    width: "80px",
+                    accentColor: "#2B7A78",
+                  }}
+                />
+                <span style={{ fontSize: "12px", color: "#7f8c8d" }}>
+                  {gridSize}px
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
       {/* Map Container */}
       <div
         ref={mapContainerRef}
@@ -534,76 +588,12 @@ export default function EditableMap({
         {/* Grid Overlay */}
         <GridOverlay />
 
-        {/* Rotation Indicator */}
-        {rotation !== 0 && (
-          <div
-            style={{
-              position: "absolute",
-              top: "10px",
-              right: "10px",
-              backgroundColor: "rgba(0, 0, 0, 0.7)",
-              color: "white",
-              padding: "5px 10px",
-              borderRadius: "15px",
-              fontSize: "12px",
-              zIndex: 1001,
-              fontWeight: "600",
-            }}>
-            🔄 Tiles: {rotation}°
-          </div>
-        )}
-
         <MapContainer
           center={[geoData.lat, geoData.lng]}
           zoom={18}
           maxZoom={24}
           style={{ height: "100%", width: "100%" }}
           whenCreated={setMap}>
-          {/* Custom Drawing Controls */}
-          <div
-            style={{
-              zIndex: 1000,
-              position: "absolute",
-              bottom: "20px",
-              left: "20px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px",
-              alignItems: "flex-start",
-            }}>
-            {/* Status Indicator */}
-            {drawingMode && (
-              <div
-                style={{
-                  padding: "8px 12px",
-                  borderRadius: "20px",
-                  backgroundColor: "rgba(23, 37, 42, 0.9)",
-                  color: "white",
-                  fontSize: "12px",
-                  fontWeight: "600",
-                  backdropFilter: "blur(10px)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  animation: "pulse 2s infinite",
-                }}>
-                ✏️ Drawing {drawingMode.toUpperCase()} mode
-              </div>
-            )}
-
-            {/* Layer Count */}
-            <div
-              style={{
-                padding: "6px 10px",
-                borderRadius: "15px",
-                backgroundColor: "rgba(52, 152, 219, 0.9)",
-                color: "white",
-                fontSize: "11px",
-                fontWeight: "500",
-                backdropFilter: "blur(5px)",
-              }}>
-              📊 {mapLayer.length} layers
-            </div>
-          </div>
-
           <TileLayer
             ref={tileLayerRef}
             zIndex={0}
@@ -620,6 +610,8 @@ export default function EditableMap({
               const geom = layer?.geometry;
               const coords = geom?.coordinates;
 
+              console.log(`Rendering layer ${index}:`, { props, geom, coords });
+
               if (!props || !geom || !coords) return null;
 
               const toLatLng = (coord: [number, number]): [number, number] => {
@@ -630,7 +622,9 @@ export default function EditableMap({
                 color: string,
                 title: string,
                 name?: string,
-                fillOpacity: number = 0.4
+                fillOpacity: number = 0.4,
+                weight: number = 3,
+                dashArray?: string
               ) => {
                 if (!Array.isArray(coords[0]) || !Array.isArray(coords[0][0]))
                   return null;
@@ -642,8 +636,8 @@ export default function EditableMap({
                     pathOptions={{
                       color,
                       fillOpacity,
-                      weight: 3,
-                      dashArray: props.type === "zone" ? "10, 10" : undefined,
+                      weight,
+                      dashArray,
                     }}>
                     <Popup>
                       <div style={{ maxWidth: "200px" }}>
@@ -666,7 +660,11 @@ export default function EditableMap({
                 );
               };
 
-              const renderPolyline = (color: string, title: string) => {
+              const renderPolyline = (
+                color: string,
+                title: string,
+                weight: number = 4
+              ) => {
                 if (!Array.isArray(coords[0]) || coords[0].length !== 2)
                   return null;
 
@@ -674,7 +672,7 @@ export default function EditableMap({
                   <Polyline
                     key={`polyline-${index}-${layer._leaflet_id}`}
                     positions={coords.map(toLatLng)}
-                    pathOptions={{ color, weight: 4 }}>
+                    pathOptions={{ color, weight }}>
                     <Popup>
                       <div style={{ maxWidth: "200px" }}>
                         <strong style={{ color: color }}>{title}</strong>
@@ -718,9 +716,38 @@ export default function EditableMap({
                 );
               };
 
+              // FIXED WALL RENDERING - Handle both geometry types
               switch (props.type) {
                 case "wall":
-                  return renderPolygon("#2c3e50", "🧱 Wall");
+                  console.log(
+                    "Rendering wall with geometry type:",
+                    geom.type?.toLowerCase()
+                  );
+                  switch (geom.type?.toLowerCase()) {
+                    case "linestring":
+                      return renderPolyline("#2c3e50", "🧱 Wall", 6);
+                    case "polygon":
+                      return renderPolygon(
+                        "#2c3e50",
+                        "🧱 Wall",
+                        props.name,
+                        0.4,
+                        6
+                      );
+                    default:
+                      // Fallback - try to render as polyline if coordinates are available
+                      if (Array.isArray(coords) && coords.length >= 2) {
+                        return renderPolyline("#2c3e50", "🧱 Wall", 6);
+                      }
+                      return renderPolygon(
+                        "#2c3e50",
+                        "🧱 Wall",
+                        props.name,
+                        0.4,
+                        6
+                      );
+                  }
+
                 case "environment":
                   return (
                     Array.isArray(coords[0]) &&
@@ -746,10 +773,26 @@ export default function EditableMap({
                       </Polygon>
                     )
                   );
+
                 case "door":
-                  return renderPolyline("#27ae60", "🚪 Door");
+                  return renderPolyline("#27ae60", "🚪 Door", 4);
+
                 case "window":
-                  return renderPolyline("#3498db", "🪟 Window");
+                  switch (geom.type?.toLowerCase()) {
+                    case "linestring":
+                      return renderPolyline("#2B7A78", "🪟 Window", 4);
+                    case "polygon":
+                      return renderPolygon(
+                        "#2B7A78",
+                        "🪟 Window",
+                        props.name,
+                        0.2,
+                        4
+                      );
+                    default:
+                      return renderPolyline("#2B7A78", "🪟 Window", 4);
+                  }
+
                 case "poi":
                   switch (geom.type?.toLowerCase()) {
                     case "point":
@@ -761,6 +804,7 @@ export default function EditableMap({
                     default:
                       return null;
                   }
+
                 case "zone":
                   const zoneColor = props.color || "#9b59b6";
                   switch (geom.type?.toLowerCase()) {
@@ -776,16 +820,21 @@ export default function EditableMap({
                         zoneColor,
                         "🏗️ Zone",
                         props.name,
-                        0.3
+                        0.3,
+                        3,
+                        "10, 10"
                       );
                     default:
                       return renderPolygon(
                         zoneColor,
                         "🏗️ Zone",
                         props.name,
-                        0.3
+                        0.3,
+                        3,
+                        "10, 10"
                       );
                   }
+
                 default:
                   return renderPolygon("#9b59b6", "🏗️ Zone", props.name, 0.3);
               }
@@ -799,30 +848,31 @@ export default function EditableMap({
               draw={{
                 rectangle: {
                   shapeOptions: {
-                    color: drawingMode === "zone" ? "#9b59b6" : "#f39c12",
-                    fillOpacity: 0.3,
+                    color: getDrawingColor(),
+                    fillOpacity: getDrawingFillOpacity(),
                   },
                 },
                 circle: {
                   shapeOptions: {
-                    color: drawingMode === "zone" ? "#9b59b6" : "#f39c12",
-                    fillOpacity: 0.3,
+                    color: getDrawingColor(),
+                    fillOpacity: getDrawingFillOpacity(),
                   },
                 },
                 circlemarker: {
-                  color: drawingMode === "zone" ? "#9b59b6" : "#f39c12",
+                  color: getDrawingColor(),
                 },
                 marker: true,
                 polyline: {
                   shapeOptions: {
-                    color: drawingMode === "zone" ? "#9b59b6" : "#e67e22",
-                    weight: 4,
+                    color: getDrawingColor(),
+                    weight: getDrawingWeight(),
                   },
                 },
                 polygon: {
                   shapeOptions: {
-                    color: drawingMode === "zone" ? "#9b59b6" : "#f39c12",
-                    fillOpacity: 0.3,
+                    color: getDrawingColor(),
+                    fillOpacity: getDrawingFillOpacity(),
+                    dashArray: getDrawingDashArray(),
                   },
                 },
               }}
@@ -830,52 +880,6 @@ export default function EditableMap({
           </FeatureGroup>
         </MapContainer>
       </div>
-
-      <style jsx>{`
-        @keyframes pulse {
-          0%,
-          100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.7;
-          }
-        }
-
-        /* Enhanced button hover effects */
-        button:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        button:active {
-          transform: translateY(0);
-        }
-
-        /* Smooth transitions for all interactive elements */
-        * {
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Tile rotation styles */
-        :global(.leaflet-tile-pane) {
-          transform: rotate(${rotation}deg);
-          transform-origin: center center;
-          transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        :global(.leaflet-layer) {
-          transform: rotate(${rotation}deg);
-          transform-origin: center center;
-          transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        :global(.leaflet-tile-container) {
-          transform: rotate(${rotation}deg);
-          transform-origin: center center;
-          transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-      `}</style>
     </div>
   );
 }

@@ -20,6 +20,26 @@ const DynamicMap = dynamic(
   { ssr: false }
 );
 
+// Add delimiter interface to your existing interfaces
+interface Delimiter {
+  id?: string;
+  type: string;
+  coordinates: number[][][];
+}
+
+interface BackendData {
+  zones?: Zone[];
+  pois?: Poi[];
+  delimiters?: Delimiter[];
+  environment: {
+    name: string;
+    description: string;
+    address?: string;
+    user_id: number | null;
+    is_public: boolean;
+  };
+}
+
 interface GeoJSONData {
   type: string;
   features: BaseFeature[];
@@ -112,6 +132,113 @@ const Page = () => {
     userId: null,
     address: "",
   });
+  // Handler for when a new layer is created
+  const handleLayerCreated = (newLayerFeature: any) => {
+    console.log("New layer created:", newLayerFeature);
+
+    // Check if the new layer is an environment type
+    if (newLayerFeature.properties.type === "environment") {
+      console.log("Environment layer detected, handling separately");
+
+      // For environment layers, you can:
+      // 1. Store them in a separate state
+      // 2. Send them directly to your backend
+      // 3. Handle them differently from other layer types
+
+      // Example: Store environment layers separately
+      setEnvironmentLayers((prev) => [...prev, newLayerFeature]);
+
+      // Optional: Send to backend immediately
+      // saveEnvironmentLayer(newLayerFeature);
+
+      toast.success("Environment boundary added successfully!");
+      return;
+    }
+
+    // For non-environment layers, add them to the geoJSON state
+    if (geoJSON) {
+      const updatedGeoJSON = {
+        ...geoJSON,
+        features: [...geoJSON.features, newLayerFeature],
+      };
+
+      console.log("Adding non-environment layer to geoJSON:", newLayerFeature);
+      setGeoJSON(updatedGeoJSON);
+    }
+  };
+
+  // Handler for when a layer is updated
+  const handleLayerUpdated = (updatedLayerFeature: any) => {
+    console.log("Layer updated:", updatedLayerFeature);
+
+    // Check if the updated layer is an environment type
+    if (updatedLayerFeature.properties.type === "environment") {
+      console.log("Environment layer updated");
+
+      // Update environment layers state
+      setEnvironmentLayers((prev) =>
+        prev.map((layer) =>
+          layer.properties.id === updatedLayerFeature.properties.id
+            ? updatedLayerFeature
+            : layer
+        )
+      );
+
+      toast.success("Environment boundary updated successfully!");
+      return;
+    }
+
+    // For non-environment layers, update them in the geoJSON state
+    if (geoJSON) {
+      const updatedFeatures = geoJSON.features.map((feature) =>
+        feature.properties.id === updatedLayerFeature.properties.id
+          ? updatedLayerFeature
+          : feature
+      );
+
+      const updatedGeoJSON = {
+        ...geoJSON,
+        features: updatedFeatures,
+      };
+
+      console.log(
+        "Updating non-environment layer in geoJSON:",
+        updatedLayerFeature
+      );
+      setGeoJSON(updatedGeoJSON);
+    }
+  };
+
+  // Add this state to store environment layers separately (add this near your other useState declarations)
+  const [environmentLayers, setEnvironmentLayers] = useState<BaseFeature[]>([]);
+
+  // Optional: Function to save environment layer to backend immediately
+  const saveEnvironmentLayer = async (environmentLayer: any) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/environments/${id}/environment-boundaries`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(environmentLayer),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to save environment boundary");
+      }
+
+      const result = await response.json();
+      console.log("Environment boundary saved:", result);
+    } catch (error) {
+      console.error("Error saving environment boundary:", error);
+      toast.error("Failed to save environment boundary");
+    }
+  };
+
   const [zones, setZones] = useState([]);
   const [pois, setPois] = useState([]);
   const [lat, setLat] = useState(36.704661);
@@ -121,7 +248,6 @@ const Page = () => {
   const [selectedItem, setSelectedItem] = useState<MapLayer | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Updated handleLayersDeleted function for your Page component
   const handleLayersDeleted = (deletedLayerData: any[]) => {
     console.log("handleLayersDeleted called with:", deletedLayerData);
 
@@ -130,18 +256,13 @@ const Page = () => {
       return;
     }
 
-    // Start with current features
     let updatedFeatures = [...geoJSON.features];
     console.log("Initial features count:", updatedFeatures.length);
-
-    // Process each deleted layer
     deletedLayerData.forEach((deletedItem, index) => {
       console.log(`Processing deleted item ${index}:`, deletedItem);
 
-      // Try multiple strategies to identify and remove the feature
       let removed = false;
 
-      // Strategy 1: Match by ID (most reliable)
       if (deletedItem.id && !removed) {
         const initialCount = updatedFeatures.length;
         updatedFeatures = updatedFeatures.filter(
@@ -257,19 +378,24 @@ const Page = () => {
             name: data.environment.name,
             description: data.environment.description || "",
             isPublic: data.environment.is_public,
-            userId: data.environment.env_user[0].user_id,
+            userId: data.environment.env_user[0]?.user_id || null,
             address: data.environment.address || "",
           });
 
           // If it's not a pending environment, reconstruct GeoJSON from the data
           if (!isPending) {
-            const reconstructedGeoJSON = reconstructGeoJSON(data);
+            // Add delimiters to the data object
+            const reconstructedData = {
+              ...data,
+              delimiters: data.environment.env_delimiter || [],
+            };
+
+            const reconstructedGeoJSON = reconstructGeoJSON(reconstructedData);
             console.log("Reconstructed GeoJSON:", reconstructedGeoJSON);
             setGeoJSON(reconstructedGeoJSON);
             setIsFileUploaded(true);
           } else {
             // For pending environments, create an empty GeoJSON structure
-            // This ensures the map component has something to work with
             const emptyGeoJSON: GeoJSONData = {
               type: "FeatureCollection",
               features: [],
@@ -284,7 +410,6 @@ const Page = () => {
               },
             };
             setGeoJSON(emptyGeoJSON);
-            // We don't set isFileUploaded to true here because we still want the user to upload a file
           }
         } catch (error) {
           console.error("Error fetching environment:", error);
@@ -293,53 +418,6 @@ const Page = () => {
           setIsLoading(false);
         }
       };
-
-      // Only fetch zones and POIs if not a pending environment
-      if (!isPending) {
-        const fetchZonesData = async () => {
-          try {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_URL}/zones/env/${id}`,
-              {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                credentials: "include",
-              }
-            );
-
-            const data = await response.json();
-            console.log("ZONES DATA >>> ", data);
-            setZones(data);
-          } catch (error) {
-            console.error("Error fetching zones:", error);
-          }
-        };
-
-        const fetchPoisData = async () => {
-          try {
-            const response = await fetch(
-              `${process.env.NEXT_PUBLIC_API_URL}/pois/env/${id}`,
-              {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                credentials: "include",
-              }
-            );
-
-            const data = await response.json();
-            setPois(data);
-          } catch (error) {
-            console.error("Error fetching POIs:", error);
-          }
-        };
-
-        fetchZonesData();
-        fetchPoisData();
-      }
 
       fetchEnvironmentData();
     }
@@ -354,6 +432,7 @@ const Page = () => {
   const reconstructGeoJSON = (data: {
     zones?: Zone[];
     pois?: Poi[];
+    delimiters?: Delimiter[]; // Add this line
     environment: {
       name: string;
       description: string;
@@ -366,6 +445,8 @@ const Page = () => {
 
     console.log("Reconstructing GeoJSON with data:", data);
     console.log("Zones data:", data.zones);
+    console.log("POIs data:", data.pois);
+    console.log("Delimiters data:", data.delimiters);
 
     // Add zones as Polygon features with both type and typeId
     if (data.zones && data.zones.length > 0) {
@@ -445,6 +526,77 @@ const Page = () => {
       });
     }
 
+    // Add delimiters (wall, window, environment) as features
+    if (data.delimiters && data.delimiters.length > 0) {
+      data.delimiters.forEach((delimiter: Delimiter, index: number) => {
+        console.log(`Processing delimiter ${index}:`, delimiter);
+
+        const coordinates = delimiter.coordinates;
+
+        let geometryType = "Polygon";
+
+        if (
+          delimiter.type === "wall" ||
+          delimiter.type === "window" ||
+          delimiter.type === "door"
+        ) {
+          geometryType = "LineString";
+        } else if (delimiter.type === "environment") {
+          geometryType = "Polygon";
+        }
+
+        // Override based on coordinate structure if needed
+        if (
+          Array.isArray(coordinates) &&
+          Array.isArray(coordinates[0]) &&
+          typeof coordinates[0][0] === "number"
+        ) {
+          geometryType = "LineString";
+        } else if (
+          Array.isArray(coordinates) &&
+          Array.isArray(coordinates[0]) &&
+          Array.isArray(coordinates[0][0])
+        ) {
+          geometryType = "Polygon";
+        }
+
+        let delimiterColor = "#000000";
+        switch (delimiter.type) {
+          case "wall":
+            delimiterColor = "#8B4513";
+            break;
+          case "door":
+            delimiterColor = "#8B4513";
+            break;
+          case "window":
+            delimiterColor = "#87CEEB";
+            break;
+          case "environment":
+            delimiterColor = "#32CD32";
+            break;
+          default:
+            delimiterColor = "#000000";
+        }
+
+        features.push({
+          type: "Feature",
+          geometry: {
+            type: geometryType,
+            coordinates,
+          },
+          properties: {
+            color: delimiterColor,
+            name:
+              delimiter.type.charAt(0).toUpperCase() + delimiter.type.slice(1), // Capitalize first letter
+            description: `${delimiter.type} delimiter`,
+            type: delimiter.type,
+            typeId: delimiter.type,
+            id: delimiter.id,
+          },
+        });
+      });
+    }
+
     console.log("Final reconstructed features:", features);
 
     return {
@@ -461,7 +613,6 @@ const Page = () => {
       },
     };
   };
-
   const saveGeoJSONToFile = async () => {
     if (!geoJSON) {
       toast.error("No data to save.");
@@ -471,11 +622,11 @@ const Page = () => {
     setIsSaving(true);
 
     try {
-      // Ensure all features have both type and typeId for backend compatibility
-      const processedFeatures = geoJSON.features.map((feature) => {
+      const allFeatures = [...geoJSON.features, ...environmentLayers];
+
+      const processedFeatures = allFeatures.map((feature) => {
         const updatedProperties = { ...feature.properties };
 
-        // Make sure both type and typeId are set consistently
         if (updatedProperties.type && !updatedProperties.typeId) {
           updatedProperties.typeId = updatedProperties.type;
         } else if (updatedProperties.typeId && !updatedProperties.type) {
@@ -503,12 +654,11 @@ const Page = () => {
         },
       };
 
-      // For pending environments, we need to mark them as not pending anymore
       const endpoint = isPending
         ? `${process.env.NEXT_PUBLIC_API_URL}/environments/${id}/finalize`
         : `${process.env.NEXT_PUBLIC_API_URL}/environments/${id}`;
 
-      console.log("Saving data:", dataToExport);
+      console.log("Saving data with environment layers:", dataToExport);
       const response = await fetch(endpoint, {
         method: "PUT",
         headers: {
@@ -530,7 +680,6 @@ const Page = () => {
       toast.success("Environnement enregistré avec succès");
       console.log("Saved environment:", result);
 
-      // If this was a pending environment, redirect to non-pending view
       if (isPending) {
         router.push(`/admin/environments/${id}`);
       }
@@ -693,7 +842,6 @@ const Page = () => {
     reader.readAsText(file);
   };
 
-  // Show loading component while fetching environment data
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -766,6 +914,8 @@ const Page = () => {
               setSelectedItem={setSelectedItem}
               handleDeleteItem={handleDeleteItem}
               onLayersDeleted={handleLayersDeleted}
+              onLayerCreated={handleLayerCreated}
+              onLayerUpdated={handleLayerUpdated}
             />
           ) : (
             <div className="bg-[#DEDEDE] flex flex-col items-center justify-center h-[75vh] gap-4">
@@ -805,7 +955,6 @@ const Page = () => {
               !isFileUploaded && !isPending ? "#f0f0f0" : "transparent",
             cursor: !isFileUploaded && !isPending ? "not-allowed" : "auto",
           }}>
-          {/* Content for the right column */}
           {!isPoiFormOpen && !isZoneFormOpen && (
             <AddEnvCard
               showValues={false}
@@ -834,7 +983,6 @@ const Page = () => {
         <ToastContainer />
       </div>
 
-      {/* Only show zones and POIs if not pending and file is uploaded */}
       {!isPending && isFileUploaded && (
         <>
           <Title text="Zones" lineLength="40px" />
