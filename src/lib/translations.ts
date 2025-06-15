@@ -29,7 +29,7 @@ export interface TranslationStrings {
     offers: string;
   };
 
-  // Settings (from your existing settings page)
+  // Settings
   settings: {
     title: string;
     subtitle: string;
@@ -168,6 +168,78 @@ export interface TranslationStrings {
     minutesAgo: string;
     secondsAgo: string;
     never: string;
+  };
+
+  // Sales Management Section
+  sales: {
+    title: string;
+    subtitle: string;
+    // Purchase History
+    purchaseHistory: {
+      title: string;
+      noPurchases: string;
+      date: string;
+      customer: string;
+      device: string;
+      type: string;
+      status: string;
+      amount: string;
+      details: string;
+    };
+    // Statistics
+    statistics: {
+      title: string;
+      dailySales: string;
+      monthlySales: string;
+      yearlySales: string;
+      byDeviceType: string;
+      byRegion: string;
+      revenue: string;
+      expenses: string;
+      profit: string;
+      margin: string;
+    };
+    // Market Analysis
+    marketAnalysis: {
+      title: string;
+      penetration: string;
+      potential: string;
+      current: string;
+      growth: string;
+      trends: string;
+      forecast: string;
+    };
+    // Financial Metrics
+    financial: {
+      title: string;
+      revenue: string;
+      cogs: string;
+      grossMargin: string;
+      netMargin: string;
+      expenses: string;
+      profit: string;
+      period: string;
+    };
+    // Actions
+    actions: {
+      addPurchase: string;
+      editPurchase: string;
+      deletePurchase: string;
+      exportData: string;
+      generateReport: string;
+      filter: string;
+      search: string;
+    };
+    // Messages
+    messages: {
+      purchaseAdded: string;
+      purchaseUpdated: string;
+      purchaseDeleted: string;
+      exportSuccess: string;
+      exportError: string;
+      reportGenerated: string;
+      noData: string;
+    };
   };
 }
 
@@ -330,6 +402,71 @@ export const translations: Record<string, TranslationStrings> = {
       secondsAgo: "secondes",
       never: "jamais",
     },
+
+    sales: {
+      title: "Gestion des Ventes",
+      subtitle: "Analysez et gérez vos ventes et performances commerciales",
+      purchaseHistory: {
+        title: "Historique des Achats",
+        noPurchases: "Aucun achat trouvé",
+        date: "Date",
+        customer: "Client",
+        device: "Appareil",
+        type: "Type",
+        status: "Statut",
+        amount: "Montant",
+        details: "Détails"
+      },
+      statistics: {
+        title: "Statistiques",
+        dailySales: "Ventes Journalières",
+        monthlySales: "Ventes Mensuelles",
+        yearlySales: "Ventes Annuelles",
+        byDeviceType: "Par Type d'Appareil",
+        byRegion: "Par Région",
+        revenue: "Revenus",
+        expenses: "Dépenses",
+        profit: "Bénéfice",
+        margin: "Marge"
+      },
+      marketAnalysis: {
+        title: "Analyse de Marché",
+        penetration: "Pénétration du Marché",
+        potential: "Potentiel",
+        current: "Actuel",
+        growth: "Croissance",
+        trends: "Tendances",
+        forecast: "Prévisions"
+      },
+      financial: {
+        title: "Métriques Financières",
+        revenue: "Revenus",
+        cogs: "Coût des Marchandises Vendues",
+        grossMargin: "Marge Brute",
+        netMargin: "Marge Nette",
+        expenses: "Dépenses",
+        profit: "Bénéfice",
+        period: "Période"
+      },
+      actions: {
+        addPurchase: "Ajouter un Achat",
+        editPurchase: "Modifier l'Achat",
+        deletePurchase: "Supprimer l'Achat",
+        exportData: "Exporter les Données",
+        generateReport: "Générer un Rapport",
+        filter: "Filtrer",
+        search: "Rechercher"
+      },
+      messages: {
+        purchaseAdded: "Achat ajouté avec succès",
+        purchaseUpdated: "Achat mis à jour avec succès",
+        purchaseDeleted: "Achat supprimé avec succès",
+        exportSuccess: "Données exportées avec succès",
+        exportError: "Erreur lors de l'exportation",
+        reportGenerated: "Rapport généré avec succès",
+        noData: "Aucune donnée disponible"
+      }
+    },
   },
 
   en: {
@@ -489,6 +626,71 @@ export const translations: Record<string, TranslationStrings> = {
       secondsAgo: "seconds ago",
       never: "never",
     },
+
+    sales: {
+      title: "Sales Management",
+      subtitle: "Analyze and manage your sales and business performance",
+      purchaseHistory: {
+        title: "Purchase History",
+        noPurchases: "No purchases found",
+        date: "Date",
+        customer: "Customer",
+        device: "Device",
+        type: "Type",
+        status: "Status",
+        amount: "Amount",
+        details: "Details"
+      },
+      statistics: {
+        title: "Statistics",
+        dailySales: "Daily Sales",
+        monthlySales: "Monthly Sales",
+        yearlySales: "Yearly Sales",
+        byDeviceType: "By Device Type",
+        byRegion: "By Region",
+        revenue: "Revenue",
+        expenses: "Expenses",
+        profit: "Profit",
+        margin: "Margin"
+      },
+      marketAnalysis: {
+        title: "Market Analysis",
+        penetration: "Market Penetration",
+        potential: "Potential",
+        current: "Current",
+        growth: "Growth",
+        trends: "Trends",
+        forecast: "Forecast"
+      },
+      financial: {
+        title: "Financial Metrics",
+        revenue: "Revenue",
+        cogs: "Cost of Goods Sold",
+        grossMargin: "Gross Margin",
+        netMargin: "Net Margin",
+        expenses: "Expenses",
+        profit: "Profit",
+        period: "Period"
+      },
+      actions: {
+        addPurchase: "Add Purchase",
+        editPurchase: "Edit Purchase",
+        deletePurchase: "Delete Purchase",
+        exportData: "Export Data",
+        generateReport: "Generate Report",
+        filter: "Filter",
+        search: "Search"
+      },
+      messages: {
+        purchaseAdded: "Purchase added successfully",
+        purchaseUpdated: "Purchase updated successfully",
+        purchaseDeleted: "Purchase deleted successfully",
+        exportSuccess: "Data exported successfully",
+        exportError: "Error exporting data",
+        reportGenerated: "Report generated successfully",
+        noData: "No data available"
+      }
+    },
   },
 
   ar: {
@@ -646,6 +848,71 @@ export const translations: Record<string, TranslationStrings> = {
       minutesAgo: "دقائق مضت",
       secondsAgo: "ثواني مضت",
       never: "أبداً",
+    },
+
+    sales: {
+      title: "إدارة المبيعات",
+      subtitle: "تحليل وإدارة مبيعاتك وأداء عملك",
+      purchaseHistory: {
+        title: "سجل المشتريات",
+        noPurchases: "لم يتم العثور على مشتريات",
+        date: "التاريخ",
+        customer: "العميل",
+        device: "الجهاز",
+        type: "النوع",
+        status: "الحالة",
+        amount: "المبلغ",
+        details: "التفاصيل"
+      },
+      statistics: {
+        title: "الإحصائيات",
+        dailySales: "المبيعات اليومية",
+        monthlySales: "المبيعات الشهرية",
+        yearlySales: "المبيعات السنوية",
+        byDeviceType: "حسب نوع الجهاز",
+        byRegion: "حسب المنطقة",
+        revenue: "الإيرادات",
+        expenses: "المصروفات",
+        profit: "الربح",
+        margin: "الهامش"
+      },
+      marketAnalysis: {
+        title: "تحليل السوق",
+        penetration: "اختراق السوق",
+        potential: "الإمكانات",
+        current: "الحالي",
+        growth: "النمو",
+        trends: "الاتجاهات",
+        forecast: "التوقعات"
+      },
+      financial: {
+        title: "المقاييس المالية",
+        revenue: "الإيرادات",
+        cogs: "تكلفة البضائع المباعة",
+        grossMargin: "الهامش الإجمالي",
+        netMargin: "صافي الهامش",
+        expenses: "المصروفات",
+        profit: "الربح",
+        period: "الفترة"
+      },
+      actions: {
+        addPurchase: "إضافة شراء",
+        editPurchase: "تعديل الشراء",
+        deletePurchase: "حذف الشراء",
+        exportData: "تصدير البيانات",
+        generateReport: "إنشاء تقرير",
+        filter: "تصفية",
+        search: "بحث"
+      },
+      messages: {
+        purchaseAdded: "تمت إضافة الشراء بنجاح",
+        purchaseUpdated: "تم تحديث الشراء بنجاح",
+        purchaseDeleted: "تم حذف الشراء بنجاح",
+        exportSuccess: "تم تصدير البيانات بنجاح",
+        exportError: "خطأ في تصدير البيانات",
+        reportGenerated: "تم إنشاء التقرير بنجاح",
+        noData: "لا توجد بيانات متاحة"
+      }
     },
   },
 };
