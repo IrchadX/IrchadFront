@@ -1,7 +1,7 @@
 import { HorizontalMenu } from "@/components/commercial/dashboard/horizontal-menu";
-import {BarChartComponent} from "@/components/commercial/dashboard/zones/sales-zone-chart";
-import {MarketPenetrationComponent} from "@/components/commercial/dashboard/zones/market-penetration-chart";
-import {PieChartComponent} from "@/components/commercial/dashboard/zones/dev-potential-chart";
+import { BarChartComponent } from "@/components/commercial/dashboard/zones/sales-zone-chart";
+import { MarketPenetrationComponent } from "@/components/commercial/dashboard/zones/market-penetration-chart";
+import { PieChartComponent } from "@/components/commercial/dashboard/zones/dev-potential-chart";
 
 export default function ZonesPage() {
   return (
@@ -10,20 +10,22 @@ export default function ZonesPage() {
         <HorizontalMenu />
       </div>
 
-      <div className="w-full flex flex-row gap-16 md:grid-cols-2 lg:grid-cols-4">
-        {/* Bar Chart */}
-        <div className="w-full flex flex-col gap-12">
-          <div className="bg-white shadow-md rounded-lg p-4">
+      {/* Two column grid layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Bar Chart Section */}
+        <div className="bg-white  dark:bg-gray-900 justify-center items-center flex shadow-md rounded-lg p-6 border border-gray-200 dark:border-gray-700">
           <BarChartComponent />
-          </div>
         </div>
 
-        {/* Market penetration component */}
-        <div className="w-full flex flex-col bg-white shadow-md rounded-lg p-4">
-          <div className="bg-white shadow-md rounded-lg p-4">
+        {/* Market Penetration Section */}
+        <div className="bg-white  dark:bg-gray-900 justify-center items-center flex shadow-md rounded-lg p-6 border border-gray-200 dark:border-gray-700">
           <MarketPenetrationComponent />
-          </div>
         </div>
+      </div>
+
+      {/* Full width section for development potential chart if needed */}
+      <div className="bg-white  dark:bg-gray-900 shadow-md rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+        <PieChartComponent />
       </div>
     </div>
   );
