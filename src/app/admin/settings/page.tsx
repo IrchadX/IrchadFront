@@ -9,7 +9,6 @@ import {
   AlertCircle,
   Info,
 } from "lucide-react";
-import Link from "next/link";
 import { logService } from "@/app/api/logs";
 
 interface SettingsData {
