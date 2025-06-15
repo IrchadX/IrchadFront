@@ -92,7 +92,7 @@ const ZoneCard = ({ zone, onEdit, onDelete }) => {
           <div
             style={{ backgroundColor: zoneColor }}
             className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold">
-            {zone.name.charAt(0)}
+            {zone.name && zone.name.charAt(0)}
           </div>
         </div>
 

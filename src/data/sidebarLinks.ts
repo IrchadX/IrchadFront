@@ -22,7 +22,7 @@ export interface SidebarLink {
 export const getAdminSidebarLinks = (t: TranslationStrings): SidebarLink[] => [
   {
     nameKey: t.navigation.dashboard,
-    href: "/admin/dashboard",
+    href: "/admin/dashboard/performance",
     Icon: MdOutlineDashboard,
   },
   {

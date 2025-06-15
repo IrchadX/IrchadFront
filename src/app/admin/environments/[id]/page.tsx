@@ -132,6 +132,7 @@ const Page = () => {
     userId: null,
     address: "",
   });
+
   // Handler for when a new layer is created
   const handleLayerCreated = (newLayerFeature: any) => {
     console.log("New layer created:", newLayerFeature);
@@ -418,6 +419,53 @@ const Page = () => {
           setIsLoading(false);
         }
       };
+
+      // Only fetch zones and POIs if not a pending environment
+      if (!isPending) {
+        const fetchZonesData = async () => {
+          try {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_URL}/zones/env/${id}`,
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                credentials: "include",
+              }
+            );
+
+            const data = await response.json();
+            console.log("ZONES DATA >>> ", data);
+            setZones(data);
+          } catch (error) {
+            console.error("Error fetching zones:", error);
+          }
+        };
+
+        const fetchPoisData = async () => {
+          try {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_API_URL}/pois/env/${id}`,
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                credentials: "include",
+              }
+            );
+
+            const data = await response.json();
+            setPois(data);
+          } catch (error) {
+            console.error("Error fetching POIs:", error);
+          }
+        };
+
+        fetchZonesData();
+        fetchPoisData();
+      }
 
       fetchEnvironmentData();
     }
