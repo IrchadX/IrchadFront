@@ -60,7 +60,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="text-foreground bg-background">
+    <div className="text-foreground  ">
       <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
         <Table>
           <TableHeader className="bg-[#2B7A78] dark:bg-[#1E4D4B] text-white">
@@ -112,7 +112,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <Pagination className="mt-3 py-4 flex justify-end">
+      <Pagination className="mt-3 py-4 flex justify-end  ">
         <PaginationContent className="flex items-center space-x-1">
           <PaginationItem>
             <PaginationPrevious

@@ -1,4 +1,5 @@
 "use client";
+
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -11,22 +12,21 @@ const buttonVariants = cva(
       variant: {
         default:
           "bg-main text-white shadow hover:bg-main/90 " +
-          "dark:bg-main-80 dark:hover:bg-main-70",
+          "dark:bg-main-80 dark:text-white dark:hover:bg-main-70",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 " +
-          "dark:bg-destructive-80 dark:hover:bg-destructive-70",
+          "bg-red-600 text-white shadow-sm hover:bg-red-700 " +
+          "dark:bg-red-700 dark:hover:bg-red-800",
         outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground " +
-          "dark:border-input-dark dark:bg-background-dark dark:hover:bg-accent-dark dark:hover:text-accent-foreground-dark",
+          "border border-gray-300 bg-transparent shadow-sm hover:bg-gray-50 hover:text-gray-900 " +
+          "dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white",
         secondary:
-          "bg-black text-white shadow-sm hover:bg-opacity-80 " +
-          "dark:bg-white dark:text-black dark:hover:bg-opacity-90",
+          "bg-gray-100 text-gray-900 shadow-sm hover:bg-gray-200 " +
+          "dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700",
         ghost:
-          "hover:bg-accent hover:text-accent-foreground " +
-          "dark:hover:bg-accent-dark dark:hover:text-accent-foreground-dark",
+          "hover:bg-gray-100 hover:text-gray-900 " +
+          "dark:hover:bg-gray-800 dark:hover:text-gray-100",
         link:
-          "text-primary underline-offset-4 hover:underline " +
-          "dark:text-primary-dark",
+          "text-main underline-offset-4 hover:underline " + "dark:text-main-70",
       },
       size: {
         default: "h-9 px-4 py-2",

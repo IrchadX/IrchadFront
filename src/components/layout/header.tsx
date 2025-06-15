@@ -188,15 +188,6 @@ const Header = () => {
               <ThemeIcon className="w-5 h-5 text-black-50 dark:text-white/70 group-hover:text-black dark:group-hover:text-white transition-colors duration-200" />
             </button>
 
-            {/* Notification */}
-            <Image
-              src="/assets/layout/notif.png"
-              width={50}
-              height={50}
-              alt={t.navigation.profile}
-              className=" scale-75"
-            />
-
             {/* Avatar */}
             <Image
               src="/assets/layout/avatar.svg"

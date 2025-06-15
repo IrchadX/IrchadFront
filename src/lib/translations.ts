@@ -59,6 +59,17 @@ export interface TranslationStrings {
     seconds: string;
     minute: string;
     minutes: string;
+    logsSection: string;
+    downloadLogs: string;
+    downloadAllLogs: string;
+    viewLogList: string;
+    downloadByType: string;
+    downloadErrorLogs: string;
+    downloadWarnLogs: string;
+    downloadInfoLogs: string;
+    downloadAllTextLogs: string;
+    downloadSuccess: string;
+    downloadError: string;
   };
 
   // Environments page
@@ -158,6 +169,23 @@ export interface TranslationStrings {
     reports: string;
   };
 
+  addEnvCard: {
+    title: string;
+    nameLabel: string;
+    namePlaceholder: string;
+    descriptionLabel: string;
+    descriptionPlaceholder: string;
+    addressLabel: string;
+    addressPlaceholder: string;
+    visibilityLabel: string;
+    visibilityPublic: string;
+    userLabel: string;
+    userPlaceholder: string;
+    loadingUsers: string;
+    noUserSelected: string;
+    unknownUser: string;
+  };
+
   // Date/Time formatting
   dateTime: {
     now: string;
@@ -245,6 +273,23 @@ export interface TranslationStrings {
 
 export const translations: Record<string, TranslationStrings> = {
   fr: {
+    addEnvCard: {
+      title: "Informations",
+      nameLabel: "Nom",
+      namePlaceholder: "Nom de l'environnement...",
+      descriptionLabel: "Description",
+      descriptionPlaceholder: "Description de l'environnement...",
+      addressLabel: "Adresse",
+      addressPlaceholder: "Adresse de l'environnement",
+      visibilityLabel: "Visibilité",
+      visibilityPublic: "Public",
+      userLabel: "Utilisateur",
+      userPlaceholder: "Sélectionnez un utilisateur",
+      loadingUsers: "Chargement des utilisateurs...",
+      noUserSelected: "Aucun utilisateur sélectionné",
+      unknownUser: "Utilisateur inconnu",
+    },
+
     // Common/Shared
     loading: "Chargement...",
     error: "Erreur",
@@ -276,6 +321,17 @@ export const translations: Record<string, TranslationStrings> = {
     },
 
     settings: {
+      logsSection: "Gestion des journaux",
+      downloadLogs: "Télécharger les journaux",
+      downloadAllLogs: "Télécharger tous les journaux (ZIP)",
+      viewLogList: "Voir la liste des journaux",
+      downloadByType: "Télécharger par type",
+      downloadErrorLogs: "Journaux d'erreur",
+      downloadWarnLogs: "Journaux d'avertissement",
+      downloadInfoLogs: "Journaux d'information",
+      downloadAllTextLogs: "Tous les journaux (texte)",
+      downloadSuccess: "Téléchargement réussi",
+      downloadError: "Erreur de téléchargement",
       title: "Paramètres",
       subtitle: "Configurez vos préférences d'administration",
       languageSection: "Langue de l'interface",
@@ -470,6 +526,22 @@ export const translations: Record<string, TranslationStrings> = {
   },
 
   en: {
+    addEnvCard: {
+      title: "Information",
+      nameLabel: "Name",
+      namePlaceholder: "Environment name...",
+      descriptionLabel: "Description",
+      descriptionPlaceholder: "Environment description...",
+      addressLabel: "Address",
+      addressPlaceholder: "Environment address",
+      visibilityLabel: "Visibility",
+      visibilityPublic: "Public",
+      userLabel: "User",
+      userPlaceholder: "Select a user",
+      loadingUsers: "Loading users...",
+      noUserSelected: "No user selected",
+      unknownUser: "Unknown user",
+    },
     // Common/Shared
     loading: "Loading...",
     error: "Error",
@@ -501,6 +573,17 @@ export const translations: Record<string, TranslationStrings> = {
     },
 
     settings: {
+      logsSection: "Log Management",
+      downloadLogs: "Download Log Files",
+      downloadAllLogs: "Download All Logs (ZIP)",
+      viewLogList: "View Available Logs",
+      downloadByType: "Download by Log Type",
+      downloadErrorLogs: "Error Logs",
+      downloadWarnLogs: "Warning Logs",
+      downloadInfoLogs: "Info Logs",
+      downloadAllTextLogs: "All Logs (Text)",
+      downloadSuccess: "Download successful",
+      downloadError: "Download failed",
       title: "Settings",
       subtitle: "Configure your administration preferences",
       languageSection: "Interface Language",
@@ -694,6 +777,22 @@ export const translations: Record<string, TranslationStrings> = {
   },
 
   ar: {
+    addEnvCard: {
+      title: "المعلومات",
+      nameLabel: "الاسم",
+      namePlaceholder: "اسم البيئة...",
+      descriptionLabel: "الوصف",
+      descriptionPlaceholder: "وصف البيئة...",
+      addressLabel: "العنوان",
+      addressPlaceholder: "عنوان البيئة",
+      visibilityLabel: "الرؤية",
+      visibilityPublic: "عام",
+      userLabel: "المستخدم",
+      userPlaceholder: "اختر مستخدم",
+      loadingUsers: "جاري تحميل المستخدمين...",
+      noUserSelected: "لا يوجد مستخدم محدد",
+      unknownUser: "مستخدم غير معروف",
+    },
     // Common/Shared
     loading: "جاري التحميل...",
     error: "خطأ",
@@ -725,6 +824,17 @@ export const translations: Record<string, TranslationStrings> = {
     },
 
     settings: {
+      logsSection: "إدارة السجلات",
+      downloadLogs: "تحميل ملفات السجل",
+      downloadAllLogs: "تحميل جميع السجلات (ZIP)",
+      viewLogList: "عرض السجلات المتاحة",
+      downloadByType: "تحميل حسب النوع",
+      downloadErrorLogs: "سجلات الأخطاء",
+      downloadWarnLogs: "سجلات التحذيرات",
+      downloadInfoLogs: "سجلات المعلومات",
+      downloadAllTextLogs: "جميع السجلات (نص)",
+      downloadSuccess: "تم التحميل بنجاح",
+      downloadError: "فشل التحميل",
       title: "الإعدادات",
       subtitle: "قم بتكوين تفضيلات الإدارة الخاصة بك",
       languageSection: "لغة الواجهة",
