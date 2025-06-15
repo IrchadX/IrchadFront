@@ -5,11 +5,12 @@ import Title from "@/components/shared/title";
 const AddUserPage: React.FC = () => {
 
   const userTypes = [
-    { id: "1", label: "Admin" },
-    { id: "2", label: "Commercial" },
-    { id: "3", label: "Décideur" },
-    { id: "4", label: "Client" },
-    { id: "5", label: "Aidant" },
+    { id: "13", label: "Admin" },
+    { id: "14", label: "Malvoyant" },
+    { id: "15", label: "Maintenancier" },
+    { id: "16", label: "Aidant" },
+    { id: "17", label: "Décideur" },
+    { id: "18", label: "Commercial" },
   ];
 
   return (

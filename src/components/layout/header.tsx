@@ -44,6 +44,8 @@ const Header = () => {
       return t.pageTitle.reports;
     } else if (pathname.startsWith("/decideur/settings")) {
       return t.settings.title;
+    } else if (pathname.startsWith("/commercial/dashboard")) {
+      return "Tableau de bord";
     } else if (pathname.startsWith("/commercial/clients")) {
       return t.pageTitle.clientManagement;
     } else if (pathname.startsWith("/commercial/sales")) {

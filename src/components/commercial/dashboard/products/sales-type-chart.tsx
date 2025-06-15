@@ -6,12 +6,14 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell } from "recharts"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
-// Données de ventes par modèle
-const chartData = [
-  { modele: "Modèle A", ventes: 186 },
-  { modele: "Modèle B", ventes: 305 },
-  { modele: "Modèle C", ventes: 237 },
-]
+interface DeviceSalesData {
+  model: string;
+  sales: number;
+}
+
+interface BarChartComponentProps {
+  deviceSalesData: DeviceSalesData[];
+}
 
 // Couleurs pour chaque modèle
 const COLORS = ["#9F9FF8", "#94E9B8", "#AEC7ED"]
@@ -20,18 +22,28 @@ const COLORS = ["#9F9FF8", "#94E9B8", "#AEC7ED"]
 const chartConfig = {
   ventes: {
     label: "Ventes",
-    color: "#9F9FF8", // Cette couleur sera remplacée par les couleurs personnalisées
+    color: "#9F9FF8",
   },
 } satisfies ChartConfig
 
-export function BarChartComponent() {
+export function BarChartComponent({ deviceSalesData }: BarChartComponentProps) {
+  const chartData = deviceSalesData.map(item => ({
+    modele: item.model,
+    ventes: item.sales
+  }));
+
+  // Trouver le modèle le plus vendu
+  const bestSeller = chartData.reduce((max, current) => 
+    current.ventes > max.ventes ? current : max
+  , chartData[0]);
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Ventes par Modèle</CardTitle>
-        <CardDescription>Nombre de ventes par type de modèle</CardDescription>
+    <Card className="h-[400px]">
+      <CardHeader className="py-4">
+        <CardTitle className="text-lg">Ventes par Modèle</CardTitle>
+        <CardDescription className="text-sm">Nombre de ventes par type de modèle</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="h-[250px]">
         <ChartContainer config={chartConfig}>
           <BarChart accessibilityLayer data={chartData} barCategoryGap={20}>
             <CartesianGrid vertical={false} />
@@ -49,11 +61,22 @@ export function BarChartComponent() {
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Le Modèle B est le plus vendu <TrendingUp className="h-4 w-4" />
+      <CardFooter className="py-3">
+        <div className="flex w-full items-start gap-2 text-sm">
+          <div className="grid gap-1">
+            <div className="flex gap-2 font-medium leading-none">
+              {bestSeller && (
+                <>
+                  Le {bestSeller.modele} est le plus vendu avec {bestSeller.ventes} unités{" "}
+                  <TrendingUp className="h-4 w-4" />
+                </>
+              )}
+            </div>
+            <div className="leading-none text-muted-foreground text-xs">
+              Affichage du total des ventes par modèle
+            </div>
+          </div>
         </div>
-        <div className="leading-none text-muted-foreground">Affichage du total des ventes par modèle</div>
       </CardFooter>
     </Card>
   )

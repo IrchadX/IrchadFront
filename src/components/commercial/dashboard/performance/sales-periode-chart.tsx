@@ -1,48 +1,14 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
-import { useState } from "react"
+import { TrendingUp, TrendingDown } from "lucide-react"
+import { useState, useEffect } from "react"
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts"
 
 import { Button } from "@/components/shared/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-
-// Sample data for different time periods
-const yearlyData = [
-  { period: "2019", devices: 1250 },
-  { period: "2020", devices: 1850 },
-  { period: "2021", devices: 2340 },
-  { period: "2022", devices: 2780 },
-  { period: "2023", devices: 3120 },
-  { period: "2024", devices: 2890 },
-]
-
-const monthlyData = [
-  { period: "Janvier", devices: 186 },
-  { period: "Février", devices: 305 },
-  { period: "Mars", devices: 237 },
-  { period: "Avril", devices: 173 },
-  { period: "Mai", devices: 209 },
-  { period: "Juin", devices: 214 },
-  { period: "Juillet", devices: 253 },
-  { period: "Août", devices: 187 },
-  { period: "Septembre", devices: 291 },
-  { period: "Octobre", devices: 312 },
-  { period: "Novembre", devices: 284 },
-  { period: "Décembre", devices: 327 },
-]
-
-const dailyData = [
-  { period: "Lun", devices: 42 },
-  { period: "Mar", devices: 53 },
-  { period: "Mer", devices: 37 },
-  { period: "Jeu", devices: 45 },
-  { period: "Ven", devices: 58 },
-  { period: "Sam", devices: 76 },
-  { period: "Dim", devices: 39 },
-]
+import { fetchDailySales, fetchMonthlySales, fetchYearlySales } from "@/app/api/statistics"
 
 const chartConfig = {
   devices: {
@@ -55,19 +21,58 @@ type TimePeriod = "année" | "mois" | "jour"
 
 export function LineChartComponent() {
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("mois")
+  const [chartData, setChartData] = useState<{ period: string; devices: number }[]>([])
+  const [growthRate, setGrowthRate] = useState<number>(0)
 
-  // Select data based on time period
-  const getChartData = () => {
-    switch (timePeriod) {
-      case "année":
-        return yearlyData
-      case "jour":
-        return dailyData
-      case "mois":
-      default:
-        return monthlyData
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let data: { period: string; devices: number }[] = []
+        const currentDate = new Date()
+
+        switch (timePeriod) {
+          case "année": {
+            const yearlyData = await fetchYearlySales()
+            data = yearlyData.map((item: any) => ({
+              period: item.year.toString(),
+              devices: item.count
+            }))
+            break
+          }
+          case "mois": {
+            const monthlyData = await fetchMonthlySales(currentDate.getFullYear())
+            data = monthlyData.map((item: any) => ({
+              period: new Date(0, item.month - 1).toLocaleString('fr-FR', { month: 'long' }),
+              devices: item.count
+            }))
+            break
+          }
+          case "jour": {
+            const dailyData = await fetchDailySales(currentDate.toISOString().split('T')[0])
+            data = dailyData.map((item: any) => ({
+              period: new Date(item.date).toLocaleString('fr-FR', { weekday: 'short' }),
+              devices: item.count
+            }))
+            break
+          }
+        }
+
+        // Calculate growth rate
+        if (data.length >= 2) {
+          const current = data[data.length - 1].devices
+          const previous = data[data.length - 2].devices
+          const growth = ((current - previous) / previous) * 100
+          setGrowthRate(growth)
+        }
+
+        setChartData(data)
+      } catch (error) {
+        console.error("Error fetching sales data:", error)
+      }
     }
-  }
+
+    fetchData()
+  }, [timePeriod])
 
   // Get title based on time period
   const getTitle = () => {
@@ -84,9 +89,10 @@ export function LineChartComponent() {
 
   // Get description based on time period
   const getDescription = () => {
+    const currentDate = new Date()
     switch (timePeriod) {
       case "année":
-        return "2019 - 2024"
+        return `${currentDate.getFullYear() - 5} - ${currentDate.getFullYear()}`
       case "jour":
         return "Dernière semaine"
       case "mois":
@@ -117,7 +123,7 @@ export function LineChartComponent() {
         <ChartContainer config={chartConfig}>
           <LineChart
             accessibilityLayer
-            data={getChartData()}
+            data={chartData}
             margin={{
               left: 12,
               right: 12,
@@ -132,9 +138,19 @@ export function LineChartComponent() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-medium leading-none">
-          Tendance à la hausse de 5.2%{" "}
-          {timePeriod === "mois" ? "ce mois" : timePeriod === "année" ? "cette année" : "aujourd'hui"}{" "}
-          <TrendingUp className="h-4 w-4" />
+          {growthRate >= 0 ? (
+            <>
+              Tendance à la hausse de {growthRate.toFixed(1)}%{" "}
+              {timePeriod === "mois" ? "ce mois" : timePeriod === "année" ? "cette année" : "aujourd'hui"}{" "}
+              <TrendingUp className="h-4 w-4" />
+            </>
+          ) : (
+            <>
+              Tendance à la baisse de {Math.abs(growthRate).toFixed(1)}%{" "}
+              {timePeriod === "mois" ? "ce mois" : timePeriod === "année" ? "cette année" : "aujourd'hui"}{" "}
+              <TrendingDown className="h-4 w-4" />
+            </>
+          )}
         </div>
         <div className="leading-none text-muted-foreground">
           Affichage du nombre total de dispositifs vendus par {timePeriod}
