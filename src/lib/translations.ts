@@ -29,7 +29,7 @@ export interface TranslationStrings {
     offers: string;
   };
 
-  // Settings (from your existing settings page)
+  // Settings
   settings: {
     title: string;
     subtitle: string;
@@ -196,6 +196,230 @@ export interface TranslationStrings {
     minutesAgo: string;
     secondsAgo: string;
     never: string;
+  };
+
+  // Sales Management Section
+  sales: {
+    title: string;
+    subtitle: string;
+    // Purchase History
+    purchaseHistory: {
+      title: string;
+      noPurchases: string;
+      date: string;
+      customer: string;
+      device: string;
+      type: string;
+      status: string;
+      amount: string;
+      details: string;
+    };
+    // Statistics
+    statistics: {
+      title: string;
+      dailySales: string;
+      monthlySales: string;
+      yearlySales: string;
+      byDeviceType: string;
+      byRegion: string;
+      revenue: string;
+      expenses: string;
+      profit: string;
+      margin: string;
+    };
+    // Market Analysis
+    marketAnalysis: {
+      title: string;
+      penetration: string;
+      potential: string;
+      current: string;
+      growth: string;
+      trends: string;
+      forecast: string;
+    };
+    // Financial Metrics
+    financial: {
+      title: string;
+      revenue: string;
+      cogs: string;
+      grossMargin: string;
+      netMargin: string;
+      expenses: string;
+      profit: string;
+      period: string;
+    };
+    // Actions
+    actions: {
+      addPurchase: string;
+      editPurchase: string;
+      deletePurchase: string;
+      exportData: string;
+      generateReport: string;
+      filter: string;
+      search: string;
+    };
+    // Messages
+    messages: {
+      purchaseAdded: string;
+      purchaseUpdated: string;
+      purchaseDeleted: string;
+      exportSuccess: string;
+      exportError: string;
+      reportGenerated: string;
+      noData: string;
+    };
+  };
+
+  // Client Management
+  clientManagement: {
+    title: string;
+    addClient: string;
+    editClient: string;
+    invalidUserId: string;
+  };
+
+  // Sales Management
+  salesManagement: {
+    title: string;
+    getQuote: string;
+    notAvailable: string;
+  };
+
+  // Dashboard
+  dashboard: {
+    dataForPeriod: string;
+    grossMargin: string;
+    netMargin: string;
+    costOfSales: string;
+    expenses: string;
+    productsSold: string;
+  };
+
+  // Sales Components
+  salesComponents: {
+    // Columns
+    columns: {
+      id: string;
+      type: string;
+      saleDate: string;
+      totalAmount: string;
+      userId: string;
+      lastName: string;
+      firstName: string;
+      city: string;
+      details: string;
+      offerDetails: string;
+    };
+    // Charts
+    charts: {
+      salesByPeriod: {
+        title: string;
+        description: string;
+        byYear: string;
+        byMonth: string;
+        byDay: string;
+        lastWeek: string;
+        currentYear: string;
+        lastFiveYears: string;
+        growth: string;
+        decline: string;
+        thisMonth: string;
+        thisYear: string;
+        today: string;
+        totalDevicesSold: string;
+      };
+      revenue: {
+        title: string;
+        description: string;
+        lastSixMonths: string;
+        increase: string;
+        decrease: string;
+        thisMonth: string;
+      };
+      salesByType: {
+        title: string;
+        description: string;
+        bestSeller: string;
+        units: string;
+        totalSalesByModel: string;
+      };
+      marketPenetration: {
+        title: string;
+        description: string;
+        loading: string;
+        customers: string;
+        potentialMarket: string;
+      };
+      salesByZone: {
+        title: string;
+        description: string;
+        bestRegion: string;
+        totalSalesByRegion: string;
+      };
+    };
+    // Menu
+    menu: {
+      commercialPerformance: string;
+      products: string;
+      zones: string;
+    };
+    // Offer Card
+    offerCard: {
+      title: string;
+      description: string;
+      firstName: string;
+      lastName: string;
+      device: string;
+      selectDevice: string;
+      environments: string;
+      add: string;
+      name: string;
+      environmentDescription: string;
+      surface: string;
+      address: string;
+      deleteEnvironment: string;
+      publicAccess: string;
+      save: string;
+      cancel: string;
+      loadingDevices: string;
+      errorLoadingDevices: string;
+      atLeastOneEnvironment: string;
+      totalPriceEstimated: string;
+      errorCalculatingPrice: string;
+      fillNameLastName: string;
+      userNotFound: string;
+      environmentsCreated: string;
+      deviceAssigned: string;
+      purchaseHistoryCreated: string;
+      environmentsConfirmed: string;
+      errorConfirmingEnvironments: string;
+    };
+    // Devis Card
+    devisCard: {
+      title: string;
+      description: string;
+      amount: string;
+      cancel: string;
+      confirmOffer: string;
+    };
+    // Sale Details
+    saleDetails: {
+      title: string;
+      loading: string;
+      noDetails: string;
+      clientInfo: string;
+      nameAndFirstName: string;
+      saleDate: string;
+      device: string;
+      environments: string;
+      address: string;
+      surface: string;
+      totalEnvironments: string;
+      publicEnvironmentsAccess: string;
+      yes: string;
+      no: string;
+      totalAmount: string;
+    };
   };
 }
 
@@ -386,6 +610,213 @@ export const translations: Record<string, TranslationStrings> = {
       secondsAgo: "secondes",
       never: "jamais",
     },
+
+    sales: {
+      title: "Gestion des Ventes",
+      subtitle: "Analysez et gérez vos ventes et performances commerciales",
+      purchaseHistory: {
+        title: "Historique des Achats",
+        noPurchases: "Aucun achat trouvé",
+        date: "Date",
+        customer: "Client",
+        device: "Appareil",
+        type: "Type",
+        status: "Statut",
+        amount: "Montant",
+        details: "Détails"
+      },
+      statistics: {
+        title: "Statistiques",
+        dailySales: "Ventes Journalières",
+        monthlySales: "Ventes Mensuelles",
+        yearlySales: "Ventes Annuelles",
+        byDeviceType: "Par Type d'Appareil",
+        byRegion: "Par Région",
+        revenue: "Revenus",
+        expenses: "Dépenses",
+        profit: "Bénéfice",
+        margin: "Marge"
+      },
+      marketAnalysis: {
+        title: "Analyse de Marché",
+        penetration: "Pénétration du Marché",
+        potential: "Potentiel",
+        current: "Actuel",
+        growth: "Croissance",
+        trends: "Tendances",
+        forecast: "Prévisions"
+      },
+      financial: {
+        title: "Métriques Financières",
+        revenue: "Revenus",
+        cogs: "Coût des Marchandises Vendues",
+        grossMargin: "Marge Brute",
+        netMargin: "Marge Nette",
+        expenses: "Dépenses",
+        profit: "Bénéfice",
+        period: "Période"
+      },
+      actions: {
+        addPurchase: "Ajouter un Achat",
+        editPurchase: "Modifier l'Achat",
+        deletePurchase: "Supprimer l'Achat",
+        exportData: "Exporter les Données",
+        generateReport: "Générer un Rapport",
+        filter: "Filtrer",
+        search: "Rechercher"
+      },
+      messages: {
+        purchaseAdded: "Achat ajouté avec succès",
+        purchaseUpdated: "Achat mis à jour avec succès",
+        purchaseDeleted: "Achat supprimé avec succès",
+        exportSuccess: "Données exportées avec succès",
+        exportError: "Erreur lors de l'exportation",
+        reportGenerated: "Rapport généré avec succès",
+        noData: "Aucune donnée disponible"
+      }
+    },
+
+    clientManagement: {
+      title: "Gestion des clients",
+      addClient: "Ajouter un client",
+      editClient: "Modifier un client",
+      invalidUserId: "ID utilisateur invalide"
+    },
+
+    salesManagement: {
+      title: "Gestion des ventes",
+      getQuote: "Obtenir un devis",
+      notAvailable: "N/A"
+    },
+
+    dashboard: {
+      dataForPeriod: "Données pour {period}",
+      grossMargin: "Marge brute",
+      netMargin: "Marge nette",
+      costOfSales: "Coût de ventes",
+      expenses: "Charges",
+      productsSold: "Produits vendus"
+    },
+
+    salesComponents: {
+      columns: {
+        id: "ID",
+        type: "Type",
+        saleDate: "Date de vente",
+        totalAmount: "Montant total",
+        userId: "ID utilisateur",
+        lastName: "Nom",
+        firstName: "Prénom",
+        city: "Ville",
+        details: "Détails",
+        offerDetails: "Détails de l'offre"
+      },
+      charts: {
+        salesByPeriod: {
+          title: "Ventes par Période",
+          description: "Nombre de ventes par période",
+          byYear: "Par année",
+          byMonth: "Par mois",
+          byDay: "Par jour",
+          lastWeek: "Dernière semaine",
+          currentYear: "Année courante",
+          lastFiveYears: "5 dernières années",
+          growth: "Tendance à la hausse de {rate}%",
+          decline: "Tendance à la baisse de {rate}%",
+          thisMonth: "ce mois",
+          thisYear: "cette année",
+          today: "aujourd'hui",
+          totalDevicesSold: "Affichage du nombre total de dispositifs vendus par {period}"
+        },
+        revenue: {
+          title: "Évolution du Chiffre d'Affaires",
+          description: "Chiffre d'affaires total des 6 derniers mois",
+          lastSixMonths: "6 derniers mois",
+          increase: "Hausse de {rate}% ce mois-ci",
+          decrease: "Baisse de {rate}% ce mois-ci",
+          thisMonth: "ce mois-ci"
+        },
+        salesByType: {
+          title: "Ventes par Modèle",
+          description: "Number of sales by model type",
+          bestSeller: "{model} is the best seller with {sales} units",
+          units: "units",
+          totalSalesByModel: "Displaying total sales by model"
+        },
+        marketPenetration: {
+          title: "Pénétration du marché par région",
+          description: "Taux de pénétration du marché par région",
+          loading: "Chargement des données...",
+          customers: "clients",
+          potentialMarket: "marché potentiel"
+        },
+        salesByZone: {
+          title: "Ventes par Région",
+          description: "Number of sales by geographical region",
+          bestRegion: "{region} is the region with the most sales ({sales} units)",
+          totalSalesByRegion: "Displaying total sales by region"
+        }
+      },
+      menu: {
+        commercialPerformance: "Performance Commerciale",
+        products: "Produits",
+        zones: "Zones"
+      },
+      offerCard: {
+        title: "Formulaire d'inscription",
+        description: "Veuillez remplir tous les champs pour continuer",
+        firstName: "Prénom",
+        lastName: "Nom",
+        device: "Dispositif",
+        selectDevice: "Sélectionner un dispositif",
+        environments: "Environnements",
+        add: "Ajouter",
+        name: "Nom",
+        environmentDescription: "Description",
+        surface: "Surface",
+        address: "Adresse",
+        deleteEnvironment: "Supprimer cet environnement",
+        publicAccess: "Autoriser l'accès aux environnements publics",
+        save: "Enregistrer",
+        cancel: "Annuler",
+        loadingDevices: "Chargement des dispositifs...",
+        errorLoadingDevices: "Erreur lors du chargement des dispositifs",
+        atLeastOneEnvironment: "Veuillez saisir au moins un environnement",
+        totalPriceEstimated: "Prix total estimé avec succès !",
+        errorCalculatingPrice: "Erreur lors du calcul du prix total",
+        fillNameLastName: "Veuillez remplir le prénom et le nom",
+        userNotFound: "Utilisateur introuvable ou non valide",
+        environmentsCreated: "Les environnements ont été créés avec succès !",
+        deviceAssigned: "Dispositif assigné avec succès !",
+        purchaseHistoryCreated: "Historique d'achat créé avec succès !",
+        environmentsConfirmed: "Les environnements ont été confirmés avec succès !",
+        errorConfirmingEnvironments: "Une erreur s'est produite lors de la confirmation des environnements"
+      },
+      devisCard: {
+        title: "Devis",
+        description: "Résumé de votre devis",
+        amount: "Montant",
+        cancel: "Annuler",
+        confirmOffer: "Confirmer l'offre"
+      },
+      saleDetails: {
+        title: "Détails de l'offre",
+        loading: "Chargement des détails de l'offre...",
+        noDetails: "Aucun détail d'offre disponible",
+        clientInfo: "Informations client",
+        nameAndFirstName: "Nom & Prénom",
+        saleDate: "Date de vente",
+        device: "Dispositif",
+        environments: "Environnements",
+        address: "Adresse",
+        surface: "Surface",
+        totalEnvironments: "Total des environnements",
+        publicEnvironmentsAccess: "Accès aux environnements publics",
+        yes: "Oui",
+        no: "Non",
+        totalAmount: "Montant total"
+      }
+    },
   },
 
   en: {
@@ -572,6 +1003,213 @@ export const translations: Record<string, TranslationStrings> = {
       secondsAgo: "seconds ago",
       never: "never",
     },
+
+    sales: {
+      title: "Sales Management",
+      subtitle: "Analyze and manage your sales and business performance",
+      purchaseHistory: {
+        title: "Purchase History",
+        noPurchases: "No purchases found",
+        date: "Date",
+        customer: "Customer",
+        device: "Device",
+        type: "Type",
+        status: "Status",
+        amount: "Amount",
+        details: "Details"
+      },
+      statistics: {
+        title: "Statistics",
+        dailySales: "Daily Sales",
+        monthlySales: "Monthly Sales",
+        yearlySales: "Yearly Sales",
+        byDeviceType: "By Device Type",
+        byRegion: "By Region",
+        revenue: "Revenue",
+        expenses: "Expenses",
+        profit: "Profit",
+        margin: "Margin"
+      },
+      marketAnalysis: {
+        title: "Market Analysis",
+        penetration: "Market Penetration",
+        potential: "Potential",
+        current: "Current",
+        growth: "Growth",
+        trends: "Trends",
+        forecast: "Forecast"
+      },
+      financial: {
+        title: "Financial Metrics",
+        revenue: "Revenue",
+        cogs: "Cost of Goods Sold",
+        grossMargin: "Gross Margin",
+        netMargin: "Net Margin",
+        expenses: "Expenses",
+        profit: "Profit",
+        period: "Period"
+      },
+      actions: {
+        addPurchase: "Add Purchase",
+        editPurchase: "Edit Purchase",
+        deletePurchase: "Delete Purchase",
+        exportData: "Export Data",
+        generateReport: "Generate Report",
+        filter: "Filter",
+        search: "Search"
+      },
+      messages: {
+        purchaseAdded: "Purchase added successfully",
+        purchaseUpdated: "Purchase updated successfully",
+        purchaseDeleted: "Purchase deleted successfully",
+        exportSuccess: "Data exported successfully",
+        exportError: "Error exporting data",
+        reportGenerated: "Report generated successfully",
+        noData: "No data available"
+      }
+    },
+
+    clientManagement: {
+      title: "Client Management",
+      addClient: "Add Client",
+      editClient: "Edit Client",
+      invalidUserId: "Invalid User ID"
+    },
+
+    salesManagement: {
+      title: "Sales Management",
+      getQuote: "Get Quote",
+      notAvailable: "N/A"
+    },
+
+    dashboard: {
+      dataForPeriod: "Data for {period}",
+      grossMargin: "Gross Margin",
+      netMargin: "Net Margin",
+      costOfSales: "Cost of Sales",
+      expenses: "Expenses",
+      productsSold: "Products Sold"
+    },
+
+    salesComponents: {
+      columns: {
+        id: "ID",
+        type: "Type",
+        saleDate: "Sale Date",
+        totalAmount: "Total Amount",
+        userId: "User ID",
+        lastName: "Last Name",
+        firstName: "First Name",
+        city: "City",
+        details: "Details",
+        offerDetails: "Offer Details"
+      },
+      charts: {
+        salesByPeriod: {
+          title: "Sales by Period",
+          description: "Number of sales by period",
+          byYear: "By Year",
+          byMonth: "By Month",
+          byDay: "By Day",
+          lastWeek: "Last Week",
+          currentYear: "Current Year",
+          lastFiveYears: "Last 5 Years",
+          growth: "Growth trend of {rate}%",
+          decline: "Decline trend of {rate}%",
+          thisMonth: "this month",
+          thisYear: "this year",
+          today: "today",
+          totalDevicesSold: "Displaying total number of devices sold by {period}"
+        },
+        revenue: {
+          title: "Revenue Evolution",
+          description: "Total revenue for the last 6 months",
+          lastSixMonths: "Last 6 months",
+          increase: "Increase of {rate}% this month",
+          decrease: "Decrease of {rate}% this month",
+          thisMonth: "this month"
+        },
+        salesByType: {
+          title: "Sales by Model",
+          description: "Number of sales by model type",
+          bestSeller: "{model} is the best seller with {sales} units",
+          units: "units",
+          totalSalesByModel: "Displaying total sales by model"
+        },
+        marketPenetration: {
+          title: "Market Penetration by Region",
+          description: "Market penetration rate by region",
+          loading: "Loading data...",
+          customers: "customers",
+          potentialMarket: "potential market"
+        },
+        salesByZone: {
+          title: "Sales by Region",
+          description: "Number of sales by geographical region",
+          bestRegion: "{region} is the region with the most sales ({sales} units)",
+          totalSalesByRegion: "Displaying total sales by region"
+        }
+      },
+      menu: {
+        commercialPerformance: "Commercial Performance",
+        products: "Products",
+        zones: "Zones"
+      },
+      offerCard: {
+        title: "Registration Form",
+        description: "Please fill in all fields to continue",
+        firstName: "First Name",
+        lastName: "Last Name",
+        device: "Device",
+        selectDevice: "Select a device",
+        environments: "Environments",
+        add: "Add",
+        name: "Name",
+        environmentDescription: "Description",
+        surface: "Surface",
+        address: "Address",
+        deleteEnvironment: "Delete this environment",
+        publicAccess: "Allow access to public environments",
+        save: "Save",
+        cancel: "Cancel",
+        loadingDevices: "Loading devices...",
+        errorLoadingDevices: "Error loading devices",
+        atLeastOneEnvironment: "Please enter at least one environment",
+        totalPriceEstimated: "Total price estimated successfully!",
+        errorCalculatingPrice: "Error calculating total price",
+        fillNameLastName: "Please fill in first name and last name",
+        userNotFound: "User not found or invalid",
+        environmentsCreated: "Environments created successfully!",
+        deviceAssigned: "Device assigned successfully!",
+        purchaseHistoryCreated: "Purchase history created successfully!",
+        environmentsConfirmed: "Environments confirmed successfully!",
+        errorConfirmingEnvironments: "An error occurred while confirming environments"
+      },
+      devisCard: {
+        title: "Quote",
+        description: "Summary of your quote",
+        amount: "Amount",
+        cancel: "Cancel",
+        confirmOffer: "Confirm Offer"
+      },
+      saleDetails: {
+        title: "Offer Details",
+        loading: "Loading offer details...",
+        noDetails: "No offer details available",
+        clientInfo: "Client Information",
+        nameAndFirstName: "Name & First Name",
+        saleDate: "Sale Date",
+        device: "Device",
+        environments: "Environments",
+        address: "Address",
+        surface: "Surface",
+        totalEnvironments: "Total Environments",
+        publicEnvironmentsAccess: "Public Environments Access",
+        yes: "Yes",
+        no: "No",
+        totalAmount: "Total Amount"
+      }
+    },
   },
 
   ar: {
@@ -756,6 +1394,213 @@ export const translations: Record<string, TranslationStrings> = {
       minutesAgo: "دقائق مضت",
       secondsAgo: "ثواني مضت",
       never: "أبداً",
+    },
+
+    sales: {
+      title: "إدارة المبيعات",
+      subtitle: "تحليل وإدارة مبيعاتك وأداء عملك",
+      purchaseHistory: {
+        title: "سجل المشتريات",
+        noPurchases: "لم يتم العثور على مشتريات",
+        date: "التاريخ",
+        customer: "العميل",
+        device: "الجهاز",
+        type: "النوع",
+        status: "الحالة",
+        amount: "المبلغ",
+        details: "التفاصيل"
+      },
+      statistics: {
+        title: "الإحصائيات",
+        dailySales: "المبيعات اليومية",
+        monthlySales: "المبيعات الشهرية",
+        yearlySales: "المبيعات السنوية",
+        byDeviceType: "حسب نوع الجهاز",
+        byRegion: "حسب المنطقة",
+        revenue: "الإيرادات",
+        expenses: "المصروفات",
+        profit: "الربح",
+        margin: "الهامش"
+      },
+      marketAnalysis: {
+        title: "تحليل السوق",
+        penetration: "اختراق السوق",
+        potential: "الإمكانات",
+        current: "الحالي",
+        growth: "النمو",
+        trends: "الاتجاهات",
+        forecast: "التوقعات"
+      },
+      financial: {
+        title: "المقاييس المالية",
+        revenue: "الإيرادات",
+        cogs: "تكلفة البضائع المباعة",
+        grossMargin: "الهامش الإجمالي",
+        netMargin: "صافي الهامش",
+        expenses: "المصروفات",
+        profit: "الربح",
+        period: "الفترة"
+      },
+      actions: {
+        addPurchase: "إضافة شراء",
+        editPurchase: "تعديل الشراء",
+        deletePurchase: "حذف الشراء",
+        exportData: "تصدير البيانات",
+        generateReport: "إنشاء تقرير",
+        filter: "تصفية",
+        search: "بحث"
+      },
+      messages: {
+        purchaseAdded: "تمت إضافة الشراء بنجاح",
+        purchaseUpdated: "تم تحديث الشراء بنجاح",
+        purchaseDeleted: "تم حذف الشراء بنجاح",
+        exportSuccess: "تم تصدير البيانات بنجاح",
+        exportError: "خطأ في تصدير البيانات",
+        reportGenerated: "تم إنشاء التقرير بنجاح",
+        noData: "لا توجد بيانات متاحة"
+      }
+    },
+
+    clientManagement: {
+      title: "إدارة العملاء",
+      addClient: "إضافة عميل",
+      editClient: "تعديل العميل",
+      invalidUserId: "معرف المستخدم غير صالح"
+    },
+
+    salesManagement: {
+      title: "إدارة المبيعات",
+      getQuote: "الحصول على عرض سعر",
+      notAvailable: "غير متوفر"
+    },
+
+    dashboard: {
+      dataForPeriod: "البيانات للفترة {period}",
+      grossMargin: "الهامش الإجمالي",
+      netMargin: "صافي الهامش",
+      costOfSales: "تكلفة المبيعات",
+      expenses: "المصروفات",
+      productsSold: "المنتجات المباعة"
+    },
+
+    salesComponents: {
+      columns: {
+        id: "المعرف",
+        type: "النوع",
+        saleDate: "تاريخ البيع",
+        totalAmount: "المبلغ الإجمالي",
+        userId: "معرف المستخدم",
+        lastName: "الاسم",
+        firstName: "الاسم الأول",
+        city: "المدينة",
+        details: "التفاصيل",
+        offerDetails: "تفاصيل العرض"
+      },
+      charts: {
+        salesByPeriod: {
+          title: "المبيعات حسب الفترة",
+          description: "عدد المبيعات حسب الفترة",
+          byYear: "حسب السنة",
+          byMonth: "حسب الشهر",
+          byDay: "حسب اليوم",
+          lastWeek: "الأسبوع الماضي",
+          currentYear: "السنة الحالية",
+          lastFiveYears: "السنوات الخمس الماضية",
+          growth: "اتجاه النمو بنسبة {rate}%",
+          decline: "اتجاه الانخفاض بنسبة {rate}%",
+          thisMonth: "هذا الشهر",
+          thisYear: "هذه السنة",
+          today: "اليوم",
+          totalDevicesSold: "عرض العدد الإجمالي للأجهزة المباعة حسب {period}"
+        },
+        revenue: {
+          title: "تطور الإيرادات",
+          description: "إجمالي الإيرادات للستة أشهر الماضية",
+          lastSixMonths: "الستة أشهر الماضية",
+          increase: "زيادة بنسبة {rate}% هذا الشهر",
+          decrease: "انخفاض بنسبة {rate}% هذا الشهر",
+          thisMonth: "هذا الشهر"
+        },
+        salesByType: {
+          title: "المبيعات حسب النموذج",
+          description: "عدد المبيعات حسب نوع النموذج",
+          bestSeller: "{model} هو الأكثر مبيعاً مع {sales} وحدة",
+          units: "وحدات",
+          totalSalesByModel: "عرض إجمالي المبيعات حسب النموذج"
+        },
+        marketPenetration: {
+          title: "اختراق السوق حسب المنطقة",
+          description: "معدل اختراق السوق حسب المنطقة",
+          loading: "جاري تحميل البيانات...",
+          customers: "العملاء",
+          potentialMarket: "السوق المحتمل"
+        },
+        salesByZone: {
+          title: "المبيعات حسب المنطقة",
+          description: "عدد المبيعات حسب المنطقة الجغرافية",
+          bestRegion: "{region} هي المنطقة ذات أكبر عدد مبيعات ({sales} وحدة)",
+          totalSalesByRegion: "عرض إجمالي المبيعات حسب المنطقة"
+        }
+      },
+      menu: {
+        commercialPerformance: "الأداء التجاري",
+        products: "المنتجات",
+        zones: "المناطق"
+      },
+      offerCard: {
+        title: "نموذج التسجيل",
+        description: "يرجى ملء جميع الحقون للمتابعة",
+        firstName: "الاسم الأول",
+        lastName: "الاسم",
+        device: "الجهاز",
+        selectDevice: "اختر جهازاً",
+        environments: "البيئات",
+        add: "إضافة",
+        name: "الاسم",
+        environmentDescription: "الوصف",
+        surface: "المساحة",
+        address: "العنوان",
+        deleteEnvironment: "حذف هذه البيئة",
+        publicAccess: "السماح بالوصول إلى البيئات العامة",
+        save: "حفظ",
+        cancel: "إلغاء",
+        loadingDevices: "جاري تحميل الأجهزة...",
+        errorLoadingDevices: "خطأ في تحميل الأجهزة",
+        atLeastOneEnvironment: "يرجى إدخال بيئة واحدة على الأقل",
+        totalPriceEstimated: "تم تقدير السعر الإجمالي بنجاح!",
+        errorCalculatingPrice: "خطأ في حساب السعر الإجمالي",
+        fillNameLastName: "يرجى ملء الاسم الأول والاسم",
+        userNotFound: "المستخدم غير موجود أو غير صالح",
+        environmentsCreated: "تم إنشاء البيئات بنجاح!",
+        deviceAssigned: "تم تعيين الجهاز بنجاح!",
+        purchaseHistoryCreated: "تم إنشاء سجل الشراء بنجاح!",
+        environmentsConfirmed: "تم تأكيد البيئات بنجاح!",
+        errorConfirmingEnvironments: "حدث خطأ أثناء تأكيد البيئات"
+      },
+      devisCard: {
+        title: "عرض السعر",
+        description: "ملخص عرض السعر الخاص بك",
+        amount: "المبلغ",
+        cancel: "إلغاء",
+        confirmOffer: "تأكيد العرض"
+      },
+      saleDetails: {
+        title: "تفاصيل العرض",
+        loading: "جاري تحميل تفاصيل العرض...",
+        noDetails: "لا توجد تفاصيل متاحة للعرض",
+        clientInfo: "معلومات العميل",
+        nameAndFirstName: "الاسم والاسم الأول",
+        saleDate: "تاريخ البيع",
+        device: "الجهاز",
+        environments: "البيئات",
+        address: "العنوان",
+        surface: "المساحة",
+        totalEnvironments: "إجمالي البيئات",
+        publicEnvironmentsAccess: "الوصول إلى البيئات العامة",
+        yes: "نعم",
+        no: "لا",
+        totalAmount: "المبلغ الإجمالي"
+      }
     },
   },
 };
