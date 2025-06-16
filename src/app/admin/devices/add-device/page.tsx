@@ -91,20 +91,24 @@ export default function DeviceForm() {
           <FormItem className="flex-1">
             <FormLabel>Type d'appareil</FormLabel>
             <Select 
-              onValueChange={field.onChange}
-              value={field.value}
-            >
-              <SelectTrigger className="py-7 w-full bg-main/5 rounded-[8px] border border-black/30 focus:outline-none">
-                <SelectValue placeholder="Sélectionner un type" />
-              </SelectTrigger>
-              <SelectContent>
-                {deviceTypes.map((type) => (
-                  <SelectItem key={type.id} value={type.id.toString()}>
-                    {type.type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+  onValueChange={field.onChange}
+  value={field.value}
+>
+  <SelectTrigger className="py-7 w-full bg-main/5 dark:bg-main/10 rounded-[8px] border border-black/30 dark:border-gray-600 dark:text-white focus:outline-none">
+    <SelectValue placeholder="Sélectionner un type" />
+  </SelectTrigger>
+  <SelectContent className="dark:bg-black dark:border-gray-600 max-h-[200px] overflow-y-auto">
+    {deviceTypes.map((type) => (
+      <SelectItem 
+        key={type.id} 
+        value={type.id.toString()}
+        className="dark:text-white dark:hover:bg-gray-900 dark:focus:bg-gray-900 py-1 min-h-[28px] text-sm"
+      >
+        {type.type}
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>
             <FormMessage />
           </FormItem>
         )}
@@ -117,7 +121,7 @@ export default function DeviceForm() {
           <FormItem className="flex-1">
             <FormLabel>Version du logiciel</FormLabel>
             <FormControl>
-              <Input placeholder="1.1" {...field} className="py-7 bg-main/5 rounded-[8px] border border-black/30 w-full" />
+              <Input placeholder="1.1" {...field} className="py-7 bg-main/5 dark:bg-main/10 rounded-[8px] border border-black/30 dark:border-gray-600 dark:text-white w-full" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -139,7 +143,7 @@ export default function DeviceForm() {
                 <Input
                   type="date"
                   {...field}
-                  className="py-7 w-full bg-main/5 rounded-[8px] border border-black/30"
+                  className="py-7 w-full bg-main/5 dark:bg-main/10 rounded-[8px] border border-black/30 dark:border-gray-600 dark:text-white"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
                   📅
@@ -161,12 +165,16 @@ export default function DeviceForm() {
               onValueChange={field.onChange}
               value={field.value}
             >
-              <SelectTrigger className="py-7 w-full bg-main/5 rounded-[8px] border border-black/30 focus:outline-none">
+              <SelectTrigger className="py-7 w-full bg-main/5 dark:bg-main/10 rounded-[8px] border border-black/30 dark:border-gray-600 dark:text-white focus:outline-none">
                 <SelectValue placeholder="Sélectionner un état" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="dark:bg-black dark:border-gray-600 max-h-[200px] overflow-y-auto">
                 {deviceStates.map((state) => (
-                  <SelectItem key={state.id} value={state.id.toString()}>
+                  <SelectItem 
+                    key={state.id} 
+                    value={state.id.toString()}
+                    className="dark:text-white dark:hover:bg-gray-900 dark:focus:bg-gray-900 py-1 min-h-[28px] text-sm"
+                  >
                     {state.state}
                   </SelectItem>
                 ))}
@@ -191,7 +199,7 @@ export default function DeviceForm() {
               <Input  
                 placeholder="xx-xx-xx-xx-xx-xx"  
                 {...field}
-                className="py-7 w-full bg-main/5 rounded-[8px] border border-black/30"
+                className="py-7 w-full bg-main/5 dark:bg-main/10 rounded-[8px] border border-black/30 dark:border-gray-600 dark:text-white"
               />
             </FormControl>
             <FormMessage />
@@ -209,7 +217,7 @@ export default function DeviceForm() {
               <Input  
                 placeholder="5000 mAh"  
                 {...field}
-                className="py-7 w-full bg-main/5 rounded-[8px] border border-black/30"
+                className="py-7 w-full bg-main/5 dark:bg-main/10 rounded-[8px] border border-black/30 dark:border-gray-600 dark:text-white"
               />
             </FormControl>
             <FormMessage />
@@ -228,23 +236,24 @@ export default function DeviceForm() {
           <FormItem className="flex-1">
             <FormLabel>Associer à un utilisateur (Optionnel)</FormLabel>
             <Select 
-              onValueChange={field.onChange}
-              value={field.value}
-            >
-              <SelectTrigger className="py-7 w-full bg-main/5 rounded-[8px] border border-black/30 focus:outline-none">
-                <SelectValue placeholder="Sélectionner un utilisateur" />
-              </SelectTrigger>
-              <SelectContent>
-               
-                {users.length >0 && users.map((user) => (
-                  <SelectItem key={user.id} value={user.id.toString()}>
-                    {user.family_name}
-                    {user.first_name }
-
-                    </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+  onValueChange={field.onChange}
+  value={field.value}
+>
+  <SelectTrigger className="py-7 w-full bg-main/5 dark:bg-main/10 rounded-[8px] border border-black/30 dark:border-gray-600 dark:text-white focus:outline-none">
+    <SelectValue placeholder="Sélectionner un utilisateur" />
+  </SelectTrigger>
+  <SelectContent className="dark:bg-black dark:border-gray-600 max-h-[200px] overflow-y-auto">
+    {users.length > 0 && users.map((user) => (
+      <SelectItem 
+        key={user.id} 
+        value={user.id.toString()}
+        className="dark:text-white dark:hover:bg-gray-900 dark:focus:bg-gray-900 py-1 min-h-[28px] text-sm"
+      >
+        {user.family_name} {user.first_name}
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>
             <FormMessage />
           </FormItem>
         )}
