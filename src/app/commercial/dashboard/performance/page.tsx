@@ -9,12 +9,14 @@ import { LineChartComponent } from "@/components/commercial/dashboard/performanc
 import { PieChartComponent } from "@/components/commercial/dashboard/performance/sales-cycle-chart";
 import { useEffect, useState } from "react";
 import { fetchGrossMargin, fetchNetMargin } from "@/app/api/statistics";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function PerformancePage() {
   const [grossMarginData, setGrossMarginData] = useState<any>(null);
   const [netMarginData, setNetMarginData] = useState<any>(null);
   const [period, setPeriod] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { settings } = useLanguage();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,7 +50,17 @@ export default function PerformancePage() {
     };
 
     fetchData();
-  }, []);
+
+    // Add auto-refresh if enabled
+    let intervalId: NodeJS.Timeout;
+    if (settings.autoRefreshInterval > 0) {
+      intervalId = setInterval(fetchData, settings.autoRefreshInterval * 1000);
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [settings.autoRefreshInterval]);
 
   // Fonction pour formater les montants en dinars algériens
   const formatCurrency = (amount: number) => {

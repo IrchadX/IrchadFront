@@ -39,10 +39,22 @@ const KpiCards = () => {
   }, []);
 
   const kpis = [
-    { title: "Utilisateurs", value: stats.users,  icon: "/assets/UserIcon.png" },
-    { title: "Devices activées ", value: stats.devices, icon: "/assets/DeviceIcon.png" },
-    { title: "Alertes signalées", value: stats.alerts, icon: "/assets/CourbeIcon.png" },
-    { title: "% Interventions techniques", value: `${stats.technicalPercentage}%`, icon: "/assets/TimeIcon.png"},
+    { title: "Utilisateurs", value: stats.users, icon: "/assets/UserIcon.png" },
+    {
+      title: "Devices activées ",
+      value: stats.devices,
+      icon: "/assets/DeviceIcon.png",
+    },
+    {
+      title: "Alertes signalées",
+      value: stats.alerts,
+      icon: "/assets/CourbeIcon.png",
+    },
+    {
+      title: "% Interventions techniques",
+      value: `${stats.technicalPercentage}%`,
+      icon: "/assets/TimeIcon.png",
+    },
   ];
 
   return (

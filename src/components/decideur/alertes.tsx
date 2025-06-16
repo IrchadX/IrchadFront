@@ -42,7 +42,7 @@ const Alerts = () => {
       case "critique":
         return "text-red-600";
       case "modere":
-        return "text-orange-500"; 
+        return "text-orange-500";
       case "mineur":
         return "text-green-600";
       default:
@@ -70,7 +70,12 @@ const Alerts = () => {
 
           <div className="divide-y divide-gray-200">
             {currentAlerts.map((alert, index) => {
-              const levelClass = getLevelColorClass(alert.level);
+              const levelClass =
+                alert.level === "Critique"
+                  ? "text-red-600"
+                  : alert.level === "Modéré"
+                  ? "text-yellow-600"
+                  : "text-green-600";
               return (
                 <div key={index} className="grid grid-cols-3 px-4 py-3 text-sm">
                   <div>
@@ -88,8 +93,10 @@ const Alerts = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-medium text-gray-800">{alert.status}</div>
-                    <div className={`text-xs font-semibold ${levelClass}`}>{alert.level}</div>
+                    <div className="font-medium text-gray-800">
+                      {alert.status}
+                    </div>
+                    <div className={`text-xs ${levelClass}`}>{alert.level}</div>
                   </div>
                 </div>
               );
@@ -97,7 +104,10 @@ const Alerts = () => {
           </div>
 
           <div className="flex justify-between items-center px-4 py-3 border-t">
-        
+            <div className="text-sm text-gray-500">
+              {indexOfFirstItem + 1} -{" "}
+              {Math.min(indexOfLastItem, alerts.length)} de {alerts.length}
+            </div>
             <div className="flex space-x-1">
               <button
                 onClick={() => paginate(currentPage - 1)}
