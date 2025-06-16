@@ -209,7 +209,6 @@ export default function EditableMap({
 
     setSelectedItem(newLayer);
     console.log("New layer added:", newLayer);
-    toast.success(`${effectiveDrawingMode} ${layerType} added successfully!`);
   };
 
   // SOLUTION: Update the getDefaultColor function to include door:
@@ -337,7 +336,6 @@ export default function EditableMap({
 
     setMapLayer(updatedLayers);
     console.log("Layers updated:", updatedLayers);
-    toast.success("Layer updated successfully!");
   };
 
   const _onDeleted = (e: any) => {
@@ -385,8 +383,6 @@ export default function EditableMap({
       console.log("Notifying parent component about deletions");
       onLayersDeleted(deletedLayerData);
     }
-
-    toast.success(`${deletedLayerData.length} layer(s) deleted successfully!`);
   };
 
   // Replace your GridOverlay component with this fixed version:
