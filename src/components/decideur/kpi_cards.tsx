@@ -7,15 +7,23 @@ const KpiCards = () => {
     users: 0,
     devices: 0,
     alerts: 0,
-  technicalPercentage: 0,
+    technicalPercentage: 0,
   });
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:3001/statistics/users-count").then((res) => res.json()),
-      fetch("http://localhost:3001/statistics/device-count").then((res) => res.json()),
-      fetch("http://localhost:3001/statistics/alerts-count").then((res) => res.json()),
-      fetch("http://localhost:3001/statistics/interventions").then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/statistics/users-count`, {
+        credentials: "include",
+      }).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/statistics/device-count`, {
+        credentials: "include",
+      }).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/statistics/alerts-count`, {
+        credentials: "include",
+      }).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/statistics/interventions`, {
+        credentials: "include",
+      }).then((res) => res.json()),
     ])
       .then(([usersData, devicesData, alertsData, techInterventionData]) => {
         setStats({
@@ -25,9 +33,11 @@ const KpiCards = () => {
           technicalPercentage: techInterventionData.percentage || 0,
         });
       })
-      .catch((err) => console.error("Erreur de chargement des statistiques :", err));
+      .catch((err) =>
+        console.error("Erreur de chargement des statistiques :", err)
+      );
   }, []);
-  
+
   const kpis = [
     { title: "Utilisateurs", value: stats.users,  icon: "/assets/UserIcon.png" },
     { title: "Devices activées ", value: stats.devices, icon: "/assets/DeviceIcon.png" },
@@ -43,7 +53,13 @@ const KpiCards = () => {
             <h3 className="text-gray-500">{title}</h3>
             <p className="text-xl font-bold">{value}</p>
           </div>
-          <Image src={icon} alt={title} width={50} height={50} className="self-start mt-2" />
+          <Image
+            src={icon}
+            alt={title}
+            width={50}
+            height={50}
+            className="self-start mt-2"
+          />
         </div>
       ))}
     </div>

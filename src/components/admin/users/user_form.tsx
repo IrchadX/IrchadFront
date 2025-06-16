@@ -10,6 +10,8 @@ import { Button } from "@/components/shared/button";
 import { Calendar } from "@/components/shared/calendar";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 
+import {createUser} from "@/app/api/users"; 
+
 import {
   Form,
   FormControl,
@@ -68,20 +70,13 @@ const formSchema = z.object({
     .nonempty("La confirmation du mot de passe est requise"),
   city: z.string().nonempty("La ville est requise"),
   street: z.string().nonempty("L'adresse est requise"),
-  userTypeId: z.string().nonempty("Le type est requis"),
+  //userTypeId: z.string().nonempty("Le type est requis"),
+  userTypeId: z.number().min(1, "Le type est requis"),
 }).refine((data) => data.password === data.confirm_password, {
   message: "Les mots de passe ne correspondent pas",
   path: ["confirm_password"],
 });
 
-// Map your form types to user types
-const userTypeMap = {
-  "admin": 2,
-  "commercial": 3,
-  "decidor": 4,
-  "aidant": 5,
-  "client": 6,
-};
 
 interface UserFormProps {
   userTypes: { id: string; label: string }[]; // Define the structure of the user types
@@ -102,7 +97,7 @@ export function UserForm({ userTypes }: UserFormProps) {
       confirm_password: "",
       city: "",
       street: "",
-      userTypeId: "",
+      userTypeId: undefined,
     },
   });
 
@@ -123,6 +118,9 @@ export function UserForm({ userTypes }: UserFormProps) {
       // Format the date as YYYY-MM-DD
       const formattedDate = values.birth_date.toISOString().split("T")[0];
 
+      console.log("Submitted values:", values);
+      console.log("userTypeId type:", typeof values.userTypeId, "value:", values.userTypeId);
+
       // Prepare data according to your backend API structure
       const userData = {
         firstName: values.first_name,
@@ -130,29 +128,16 @@ export function UserForm({ userTypes }: UserFormProps) {
         email: values.email,
         phoneNumber: values.phone_number,
         password: values.password,
-        userTypeId: userTypeMap[values.userTypeId as keyof typeof userTypeMap] || null,
+        //userTypeId: userTypeMap[values.userTypeId as keyof typeof userTypeMap],
+        userTypeId: Number(values.userTypeId),
         birthDate: formattedDate,
         sex: values.sex,
         city: values.city,
         street: values.street,
       };
 
-      // Make the API call to create user
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to create user");
-      }
-
-      const data = await response.json();
-      console.log("User created successfully:", data);
+      const response = await createUser(userData);
+      console.log("User created successfully:", response);
       setSubmitSuccess(true);
 
       // Optional: Reset the form after successful submission
@@ -375,29 +360,31 @@ export function UserForm({ userTypes }: UserFormProps) {
                 )}
               />
 
-            <FormField
-              control={form.control}
-              name="userTypeId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700 font-medium">Type</FormLabel>
-                  <FormControl>
-                    <select
-                      className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
-                      {...field}
-                    >
-                      <option value="">Sélectionner un type</option>
-                      {userTypes.map((type) => (
-                        <option key={type.id} value={type.id}>
-                          {type.label}
-                        </option>
-                      ))}
-                    </select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={form.control}
+            name="userTypeId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-700 font-medium">Type d'utilisateur</FormLabel>
+                <FormControl>
+                  <select
+                    {...field}
+                    className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
+                  >
+                    <option value="">Sélectionner un type</option>
+                    {userTypes.map((type) => (
+                      <option key={type.id} value={type.id}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+
 
               {/* Empty div to align with "Adresse" in the first column */}
               <div></div>

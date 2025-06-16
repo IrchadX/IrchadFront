@@ -20,7 +20,7 @@ export default function Courbe() {
   useEffect(() => {
     const fetchSales = async () => {
       try {
-        const res = await fetch('http://localhost:3001/analysis/sales');
+const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/analysis/sales`);
         if (!res.ok) throw new Error(`Erreur HTTP: ${res.status}`);
         const data = await res.json();
         setSalesData(data);
@@ -36,7 +36,7 @@ export default function Courbe() {
   useEffect(() => {
     const fetchPredictions = async () => {
       try {
-        const res = await fetch('http://localhost:3001/analysis/predict');
+const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/analysis/predict`);
         if (!res.ok) throw new Error(`Erreur HTTP: ${res.status}`);
         const data = await res.json();
         setPredictionData(data);
@@ -64,7 +64,8 @@ export default function Courbe() {
 
   const handleDownloadCSV = () => {
     const link = document.createElement('a');
-    link.href = 'http://localhost:3001/analysis/export-monthly-stats';
+
+link.href = `${process.env.NEXT_PUBLIC_API_URL}/analysis/export-monthly-stats`;
     link.setAttribute('download', 'stats_mensuelles.csv');
     document.body.appendChild(link);
     link.click();

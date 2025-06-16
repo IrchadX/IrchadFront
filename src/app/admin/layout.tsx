@@ -8,16 +8,15 @@ export default function AuthLayout({
 }) {
   return (
     <div
-      className={`flex min-h-screen
-antialiased font-montserrat bg-white`}>
-      <div className="flex min-h-screen">
+      className={`flex min-h-screen w-full
+antialiased font-montserrat `}>
+      <div className="flex min-h-screen w-full">
         <div className=" h-screen overflow-hidden sticky top-0">
-          <Sidebar userRole="admin" />
+          <Sidebar />
         </div>
-
-        <div className="flex-1 flex flex-col px-8 xl:px-10">
+        <div className="flex-1 flex flex-col px-8 xl:px-10 w-full">
           <Header />
-          <main className="flex-1 overflow-y-auto ">{children}</main>
+          <main className="flex-1 overflow-y-auto w-full">{children}</main>
         </div>
       </div>
     </div>

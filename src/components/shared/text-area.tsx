@@ -2,17 +2,18 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-interface InputProps extends React.ComponentProps<"textarea"> {
+interface TextAreaProps
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   icon?: React.ReactNode;
 }
 
-const TextArea = React.forwardRef<HTMLInputElement, InputProps>(
+const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
   ({ className, icon, ...props }, ref) => {
     return (
-      <div className="relative ">
+      <div className="relative">
         <textarea
           className={cn(
-            "flex h-16 w-full bg-main-5 border-[1px] border-black-5  rounded-[6px] px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none  disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+            "flex min-h-[64px] w-full bg-main-5 dark:bg-gray-700 border-[1px] border-black-5 dark:border-gray-600 rounded-[6px] px-3 py-2 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus:ring-2 focus:ring-main dark:focus:ring-main-400 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:text-white dark:placeholder-gray-400",
             icon && "pl-10",
             className
           )}
@@ -20,7 +21,7 @@ const TextArea = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {icon && (
-          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
             {icon}
           </div>
         )}
@@ -28,7 +29,5 @@ const TextArea = React.forwardRef<HTMLInputElement, InputProps>(
     );
   }
 );
-
-TextArea.displayName = "Input";
-
+TextArea.displayName = "TextArea";
 export { TextArea };
