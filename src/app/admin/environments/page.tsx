@@ -242,13 +242,6 @@ const Page = () => {
           text={t.environments.title || "Environnements en attente"}
           lineLength="150px"
         />
-        <Link href="/admin/environments/create_environment" passHref>
-          <ButtonSecondary
-            disabled={false}
-            title={t.add || "Ajouter"}
-            onClick={() => console.log("Navigating to add environment page")}
-          />
-        </Link>
       </div>
 
       {isLoading ? (
