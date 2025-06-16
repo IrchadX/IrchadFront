@@ -9,6 +9,7 @@ import FilterButton, { Filters } from "@/components/shared/filter-button";
 import { fetchUsers } from "@/app/api/users";
 import { ButtonSecondary } from "@/components/shared/secondary-button";
 import LoadingSpinner from "@/components/shared/loading";
+import { useLanguage } from "@/hooks/use-language";
 
 const filterSections: {
   label: string;
@@ -92,11 +93,23 @@ const filterSections: {
   },
 ];
 
+interface DebugInfo {
+  requestTime: string;
+  searchTerm: string;
+  requestFilters: Record<string, string>;
+  selectedFilters: Filters;
+  responseReceived?: boolean;
+  resultCount?: number;
+  error?: boolean;
+  errorMessage?: string;
+}
+
 export default function Page() {
   const [data, setData] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<any>(null);
+  const [debugInfo, setDebugInfo] = useState<DebugInfo | null>(null);
+  const { settings } = useLanguage();
 
   // Initialize filters with empty arrays for each category
   const [filters, setFilters] = useState<Filters>({
@@ -128,7 +141,7 @@ export default function Page() {
       const apiFilters = convertFiltersForApi();
 
       // Store debug info
-      const debugObj = {
+      const debugObj: DebugInfo = {
         requestTime: new Date().toISOString(),
         searchTerm,
         requestFilters: apiFilters,
@@ -153,6 +166,8 @@ export default function Page() {
         errorMessage: error instanceof Error ? error.message : "Unknown error",
         requestFilters: convertFiltersForApi(),
         selectedFilters: { ...filters },
+        requestTime: new Date().toISOString(),
+        searchTerm
       });
     } finally {
       setLoading(false);
@@ -167,7 +182,17 @@ export default function Page() {
   // Fetch initial data on load or when search term changes
   useEffect(() => {
     fetchData();
-  }, [searchTerm]);
+
+    // Add auto-refresh if enabled
+    let intervalId: NodeJS.Timeout;
+    if (settings.autoRefreshInterval > 0) {
+      intervalId = setInterval(fetchData, settings.autoRefreshInterval * 1000);
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [searchTerm, settings.autoRefreshInterval]);
 
   return (
     <div>

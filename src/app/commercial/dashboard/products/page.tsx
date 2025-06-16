@@ -10,11 +10,13 @@ import {
   fetchMonthlyProductsSold,
   fetchSalesByDeviceType,
 } from "@/app/api/statistics";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function ProductsPage() {
   const [productsData, setProductsData] = useState<any>(null);
   const [deviceSalesData, setDeviceSalesData] = useState<any[]>([]);
   const [period, setPeriod] = useState<string>("");
+  const { settings } = useLanguage();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,7 +46,17 @@ export default function ProductsPage() {
     };
 
     fetchData();
-  }, []);
+
+    // Add auto-refresh if enabled
+    let intervalId: NodeJS.Timeout;
+    if (settings.autoRefreshInterval > 0) {
+      intervalId = setInterval(fetchData, settings.autoRefreshInterval * 1000);
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [settings.autoRefreshInterval]);
 
   return (
     <div className="container mx-auto p-4 flex flex-col gap-8">
