@@ -20,9 +20,9 @@ const Heatmap = () => {
         script.onload = resolve;
         script.onerror = () => reject(new Error("Erreur plugin heatmap"));
         document.head.appendChild(script);
-      console.log("Leaflet disponible :", window.L);
-console.log("heatLayer dispo :", window.L?.heatLayer);
-});
+        console.log("Leaflet disponible :", window.L);
+        console.log("heatLayer dispo :", window.L?.heatLayer);
+      });
     };
 
     const initMap = async () => {
@@ -47,7 +47,9 @@ console.log("heatLayer dispo :", window.L?.heatLayer);
 
       await loadHeatPlugin();
 
-      const res = await fetch("http://localhost:3001/zones/centers");
+      const res = await fetch(
+        "https://apigateway-production-b99d.up.railway.app/api/v1/web/zones/centers"
+      );
       const data = await res.json();
 
       const heatData = data
@@ -86,7 +88,6 @@ console.log("heatLayer dispo :", window.L?.heatLayer);
         mapRef.current._leaflet_id = null;
       }
     };
-    
   }, []);
 
   return (
@@ -98,7 +99,6 @@ console.log("heatLayer dispo :", window.L?.heatLayer);
       )}
       <div id="heatmap" ref={mapRef} className="w-full h-full rounded-lg" />
     </div>
-    
   );
 };
 
