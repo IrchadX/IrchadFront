@@ -73,15 +73,6 @@ export const AddPoiCategoryModal: React.FC<AddPoiCategoryModalProps> = ({
                 required
               />
             </div>
-            <div className="grid grid-cols-[1fr,2fr] items-center gap-4">
-              <label htmlFor="color">Couleur</label>
-              <Input
-                id="color"
-                type="color"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
-              />
-            </div>
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>

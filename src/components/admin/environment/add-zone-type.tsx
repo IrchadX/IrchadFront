@@ -58,9 +58,8 @@ export const AddZoneTypeModal: React.FC<AddZoneTypeModalProps> = ({
           credentials: "include",
           body: JSON.stringify({
             name,
-            type,
+            type: name,
             color,
-            icon,
             description,
             priority,
             accessible,
@@ -98,23 +97,7 @@ export const AddZoneTypeModal: React.FC<AddZoneTypeModalProps> = ({
                 required
               />
             </div>
-            <div className="grid grid-cols-[1fr,2fr] items-center gap-4">
-              <label htmlFor="type">Type</label>
-              <Input
-                id="type"
-                value={type}
-                onChange={(e) => setType(e.target.value)}
-                required
-              />
-            </div>
-            <div className="grid grid-cols-[1fr,2fr] items-center gap-4">
-              <label htmlFor="icon">Icône</label>
-              <Input
-                id="icon"
-                value={icon}
-                onChange={(e) => setIcon(e.target.value)}
-              />
-            </div>
+
             <div className="grid grid-cols-[1fr,2fr] items-center gap-4">
               <label htmlFor="color">Couleur</label>
               <Input
