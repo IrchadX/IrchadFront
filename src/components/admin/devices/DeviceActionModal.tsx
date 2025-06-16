@@ -210,12 +210,12 @@ export function DeviceActionModal({
                       value={editableDevice.type_id?.toString() || ""}
                       onValueChange={(value) => handleSelectChange("type_id", value)}
                     >
-                      <SelectTrigger className="w-full bg-main/5 rounded-[8px] border border-black/30">
+                      <SelectTrigger className="w-full bg-main/5 dark:bg-main/10 rounded-[8px] border border-black/30 dark:border-gray-600 dark:text-white">
                         <SelectValue placeholder="Sélectionner un type" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="dark:bg-black dark:border-gray-600">
                         {deviceTypes.map((type) => (
-                          <SelectItem key={type.id} value={type.id.toString()}>
+                          <SelectItem key={type.id} value={type.id.toString()} className="dark:text-white dark:hover:bg-gray-900 dark:focus:bg-gray-900">
                             {type.type}
                           </SelectItem>
                         ))}
@@ -229,7 +229,7 @@ export function DeviceActionModal({
                       name="software_version" 
                       value={editableDevice.software_version} 
                       onChange={handleInputChange} 
-                      className="bg-main/5 rounded-[8px] border border-black/30"
+                      className="bg-main/5 dark:bg-main/10 rounded-[8px] border border-black/30 dark:border-gray-600 dark:text-white"
                     />
                   </div>
                 </div>
@@ -243,7 +243,7 @@ export function DeviceActionModal({
                       type="date"
                       value={editableDevice.date_of_service} 
                       onChange={handleInputChange} 
-                      className="bg-main/5 rounded-[8px] border border-black/30"
+                      className="bg-main/5 dark:bg-main/10 rounded-[8px] border border-black/30 dark:border-gray-600 dark:text-white"
                     />
                   </div>
                   <div className="space-y-2">
@@ -252,12 +252,12 @@ export function DeviceActionModal({
                       value={editableDevice.state_type_id?.toString() || ""}
                       onValueChange={(value) => handleSelectChange("state_type_id", value)}
                     >
-                      <SelectTrigger className="w-full bg-main/5 rounded-[8px] border border-black/30">
+                      <SelectTrigger className="w-full bg-main/5 dark:bg-main/10 rounded-[8px] border border-black/30 dark:border-gray-600 dark:text-white">
                         <SelectValue placeholder="Sélectionner un état" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="dark:bg-black dark:border-gray-600">
                         {deviceStates.map((state) => (
-                          <SelectItem key={state.id} value={state.id.toString()}>
+                          <SelectItem key={state.id} value={state.id.toString()} className="dark:text-white dark:hover:bg-gray-900 dark:focus:bg-gray-900">
                             {state.state}
                           </SelectItem>
                         ))}
@@ -274,7 +274,7 @@ export function DeviceActionModal({
                       name="mac_address" 
                       value={editableDevice.mac_address} 
                       onChange={handleInputChange} 
-                      className="bg-main/5 rounded-[8px] border border-black/30"
+                      className="bg-main/5 dark:bg-main/10 rounded-[8px] border border-black/30 dark:border-gray-600 dark:text-white"
                     />
                   </div>
                   <div className="space-y-2">
@@ -284,7 +284,7 @@ export function DeviceActionModal({
                       name="battery_capacity" 
                       value={editableDevice.battery_capacity} 
                       onChange={handleInputChange} 
-                      className="bg-main/5 rounded-[8px] border border-black/30"
+                      className="bg-main/5 dark:bg-main/10 rounded-[8px] border border-black/30 dark:border-gray-600 dark:text-white"
                     />
                   </div>
                 </div>
@@ -306,21 +306,27 @@ export function DeviceActionModal({
                 <div className="space-y-2">
                   <Label htmlFor="user_id">Sélectionner un utilisateur</Label>
                   <Select
-                    value={selectedUserId}
-                    onValueChange={handleUserSelect}
-                  >
-                    <SelectTrigger className="w-full bg-main/5 rounded-[8px] border border-black/30">
-                      <SelectValue placeholder="Sélectionner un utilisateur" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">Aucun utilisateur</SelectItem>
-                      {users.map((user) => (
-                        <SelectItem key={user.id} value={user.id.toString()}>
-                          {user.family_name + " " + user.first_name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+  value={selectedUserId}
+  onValueChange={handleUserSelect}
+>
+  <SelectTrigger className="w-full bg-main/5 dark:bg-main/10 rounded-[8px] border border-black/30 dark:border-gray-600 dark:text-white h-12">
+    <SelectValue placeholder="Sélectionner un utilisateur" />
+  </SelectTrigger>
+  <SelectContent className="dark:bg-black dark:border-gray-600 max-h-[200px] overflow-y-auto">
+    <SelectItem value="none" className="dark:text-white dark:hover:bg-gray-900 py-1 min-h-[28px] text-sm">
+      Aucun utilisateur
+    </SelectItem>
+    {users.map((user) => (
+      <SelectItem 
+        key={user.id} 
+        value={user.id.toString()}
+        className="dark:text-white dark:hover:bg-gray-900 dark:focus:bg-gray-900 py-1 min-h-[28px] text-sm"
+      >
+        {user.family_name + " " + user.first_name}
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>
                 </div>
                 <div className="text-sm text-gray-500">
                   Appareil: {editableDevice.mac_address || `ID: ${device.id}`}
