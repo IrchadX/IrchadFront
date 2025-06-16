@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "environment",
+        "name": "Main Zone",
+        "description": "Primary zone in the environment"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [3.174925622564217, 36.70482089179268],
+            [3.175000907795976, 36.70479696606411],
+            [3.1749712910830397, 36.70473787673252],
+            [3.1748973623428753, 36.70476270875817],
+            [3.174925848647007, 36.704821026192846],
+            [3.1749270221137635, 36.704821026192846],
+            [3.174925622564217, 36.70482089179268]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "poi",
+        "name": "Point of Interest",
+        "description": "Sample POI in the environment",
+        "image": "https://example.com/images/poi.jpg"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [3.174925622564217, 36.70482089179268],
+            [3.175000907795976, 36.70479696606411],
+            [3.1749712910830397, 36.70473787673252],
+            [3.1748973623428753, 36.70476270875817],
+            [3.174925848647007, 36.704821026192846],
+            [3.1749270221137635, 36.704821026192846],
+            [3.174925622564217, 36.70482089179268]
+          ]
+        ]
+      }
+    }
+  ],
+  "properties": {
+    "environment": {
+      "name": "Algiers Location",
+      "description": "",
+      "isPublic": true,
+      "userId": 123,
+      "address": "Algiers, Algeria"
+    }
+  }
+}

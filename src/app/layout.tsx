@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
-import Sidebar from "@/components/layout/decideursidebar";
-import Header from "@/components/layout/header";
+import { Toaster } from "react-hot-toast";
+import { ThemeProvider } from "@/providers/theme-provider";
 
 const futura = localFont({
   src: "../../public/fonts/futura/futur.ttf",
@@ -14,9 +14,6 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
 });
-
-//user role is specified here for testing purposes
-const userRole = "admin";
 
 export const metadata: Metadata = {
   title: "Irchad",
@@ -29,10 +26,62 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const savedSettings = localStorage.getItem('adminSettings');
+                  let theme = 'light';
+                  
+                  if (savedSettings) {
+                    const settings = JSON.parse(savedSettings);
+                    theme = settings.theme || 'light';
+                  }
+                  
+                  const root = document.documentElement;
+                  
+                  if (theme === 'dark') {
+                    root.classList.add('dark');
+                  } else if (theme === 'light') {
+                    root.classList.remove('dark');
+                  } else if (theme === 'system') {
+                    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    if (systemPrefersDark) {
+                      root.classList.add('dark');
+                    } else {
+                      root.classList.remove('dark');
+                    }
+                  }
+                } catch (error) {
+                  console.error('Theme initialization error:', error);
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
-        className={`${futura.variable} ${montserrat.variable} antialiased font-montserrat bg-white`}>
-        <div className="flex min-h-screen">{children}</div>
+        className={`${futura.variable} ${montserrat.variable} antialiased font-montserrat bg-white dark:bg-black w-full transition-colors duration-300`}>
+        <div className="flex min-h-screen w-full">
+          <ThemeProvider>
+            {children}
+            <Toaster
+              position="top-right"
+              reverseOrder={false}
+              toastOptions={{
+                className: "",
+                style: {
+                  background: "hsl(var(--background))",
+                  color: "hsl(var(--foreground))",
+                  border: "1px solid hsl(var(--border))",
+                },
+              }}
+            />
+          </ThemeProvider>
+        </div>
       </body>
     </html>
   );

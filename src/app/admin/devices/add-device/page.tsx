@@ -47,9 +47,15 @@ export default function DeviceForm() {
       setDeviceTypes(types);
       setDeviceStates(states);
       setUsers(usersList);
+      console.log("deviceStates from backend:", states); // 🔍 What does this print?
+      console.log("usersList from backend:", usersList); // 🔍 What does this print?
+      console.log("deviceTypes from backend:", types); // 🔍 What does this print?
     };
+    console.log('hrrrrrrrrrrrrrrrrrrre') ;
+    console.log(deviceTypes) ;
     
     loadFormData();
+    console.log(deviceTypes) ;
   }, []);
 
   // Form submission handler
@@ -229,7 +235,8 @@ export default function DeviceForm() {
                 <SelectValue placeholder="Sélectionner un utilisateur" />
               </SelectTrigger>
               <SelectContent>
-                {users.map((user) => (
+               
+                {users.length >0 && users.map((user) => (
                   <SelectItem key={user.id} value={user.id.toString()}>
                     {user.family_name}
                     {user.first_name }

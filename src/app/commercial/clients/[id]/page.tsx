@@ -9,7 +9,7 @@ export default function UserModificationPage() {
 
   const userTypes = [
     { id: "5", label: "Aidant" },
-    { id: "6", label: "Client" },
+    { id: "7", label: "Malvoyant" },
   ];
 
   if (!userId) {

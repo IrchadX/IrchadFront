@@ -1,4 +1,3 @@
-// FilterButton.tsx
 "use client";
 import * as React from "react";
 import { IoFilter } from "react-icons/io5";
@@ -11,6 +10,7 @@ interface FilterSection {
 }
 
 export interface Filters {
+  visibility: string[];
   sex: string[];
   userType: string[];
   city: string[];
@@ -19,13 +19,14 @@ export interface Filters {
 
 interface FilterButtonProps {
   filters: Filters;
-  setFilters: (filters: Filters) => void;
-  onApply: () => void;
+  setFilters: React.Dispatch<React.SetStateAction<Filters>>;
+  onApply: (newFilters: Filters) => void;
   filterSections: FilterSection[];
 }
 
 const FilterButton = ({
   filters = {
+    visibility: [],
     sex: [],
     userType: [],
     city: [],
@@ -39,12 +40,12 @@ const FilterButton = ({
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleOptionClick = (sectionKey: keyof Filters, option: string) => {
-    setFilters({
-      ...filters,
-      [sectionKey]: filters[sectionKey].includes(option)
-        ? filters[sectionKey].filter((item) => item !== option)
-        : [...filters[sectionKey], option],
-    });
+    setFilters((prev) => ({
+      ...prev,
+      [sectionKey]: prev[sectionKey].includes(option)
+        ? prev[sectionKey].filter((item) => item !== option)
+        : [...prev[sectionKey], option],
+    }));
   };
 
   // Count total active filters
@@ -55,6 +56,7 @@ const FilterButton = ({
 
   const clearFilters = () => {
     setFilters({
+      visibility: [],
       sex: [],
       userType: [],
       city: [],
@@ -83,7 +85,7 @@ const FilterButton = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute z-10 mt-2 w-[250px] bg-white border border-black-5 rounded shadow-lg">
+            className="absolute z-10 mt-2 w-[250px] bg-white dark:bg-black border border-black-5 rounded shadow-lg">
             {filterSections.map(({ label, key, options }) => (
               <div
                 key={key}
@@ -131,7 +133,7 @@ const FilterButton = ({
 
             <div className="p-2 flex gap-2">
               <button
-                className="flex-1 bg-main/10 text-gray-800 rounded px-3 py-1 text-sm hover:bg-gray-300"
+                className="flex-1 bg-main/10 dark:text-gray-100 text-gray-800 rounded px-3 py-1 text-sm hover:bg-gray-300"
                 onClick={clearFilters}>
                 Clear
               </button>
@@ -139,7 +141,7 @@ const FilterButton = ({
                 className="flex-1 bg-main text-white rounded px-3 py-1 text-sm hover:bg-blue-600"
                 onClick={() => {
                   setIsOpen(false);
-                  onApply();
+                  onApply(filters);
                 }}>
                 Apply
               </button>

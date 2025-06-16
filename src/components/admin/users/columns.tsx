@@ -1,20 +1,20 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { ActionMenu } from "@/components/shared/action-menu"
+import { ColumnDef } from "@tanstack/react-table";
+import { ActionMenu } from "@/components/shared/action-menu";
 
 export type User = {
-  id: string
-  firstname: string
-  lastname: string
-  city: string
-  phone: string
-  email: string
-  sexe: string
-  age: string
-  type: string
-  registrationDate: string 
-}
+  id: string;
+  firstname: string;
+  lastname: string;
+  city: string;
+  phone: string;
+  email: string;
+  sexe: string;
+  age: string;
+  type: string;
+  registrationDate: string;
+};
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -59,7 +59,13 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     id: "actions",
-    header: "Actions",
-    cell: ({ row }) => <ActionMenu entityId={row.original.id} basePath="/admin/users" apiEndpoint="/users"/>, 
+    header: "",
+    cell: ({ row }) => (
+      <ActionMenu
+        entityId={row.original.id}
+        basePath="/admin/users"
+        apiEndpoint="/users"
+      />
+    ),
   },
 ];

@@ -6,7 +6,7 @@ export type Device={
     actual_state : string ,
     client_name:string ,
     client_family_name:string ,
-
+    comm_state?:boolean ,
 }
 
 

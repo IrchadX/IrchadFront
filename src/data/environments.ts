@@ -582,13 +582,128 @@ const environments = [
           },
           id: "feature-1741737662434",
         },
+        {
+          type: "polygon",
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [3.175116, 36.704618],
+                [3.175068, 36.704616],
+                [3.175094, 36.70456],
+                [3.17512, 36.704579],
+                [3.175116, 36.704618],
+              ],
+            ],
+          },
+          properties: {
+            type: "zone",
+            nom: "Nom de la zone",
+            description: "Description de la zone",
+          },
+          id: "feature-1742687493350",
+        },
+        {
+          type: "polygon",
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [3.17498, 36.704656],
+                [3.174858, 36.704626],
+                [3.174957, 36.704515],
+                [3.175044, 36.704511],
+                [3.175078, 36.704534],
+                [3.17504, 36.704619],
+                [3.17498, 36.704656],
+              ],
+            ],
+          },
+          properties: {
+            type: "zone",
+            nom: "Nom de la zone",
+            description: "Description de la zone",
+          },
+          id: "feature-1742687531218",
+        },
+        {
+          type: "polygon",
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [3.17498, 36.704604],
+                [3.174969, 36.704591],
+                [3.174988, 36.70456],
+                [3.175016, 36.704577],
+                [3.175016, 36.704608],
+                [3.174998, 36.704625],
+                [3.17498, 36.704604],
+              ],
+            ],
+          },
+          properties: {
+            type: "poi",
+            nom: "Nom du POI",
+            categorie: "",
+            description: "Description du POI",
+          },
+          id: "feature-1742687539965",
+        },
+        {
+          type: "polygon",
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [3.175204, 36.704523],
+                [3.17482, 36.704529],
+                [3.174923, 36.704281],
+                [3.175284, 36.704318],
+                [3.175357, 36.704413],
+                [3.175345, 36.704529],
+                [3.175204, 36.704523],
+              ],
+            ],
+          },
+          properties: {
+            type: "zone",
+            nom: "Nom de la zone",
+            description: "Description de la zone",
+          },
+          id: "feature-1742687626151",
+        },
+        {
+          type: "polygon",
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [3.175147, 36.704462],
+                [3.174965, 36.704456],
+                [3.174959, 36.704331],
+                [3.175146, 36.704353],
+                [3.175222, 36.70443],
+                [3.175147, 36.704462],
+              ],
+            ],
+          },
+          properties: {
+            type: "poi",
+            nom: "Nom du POI",
+            categorie: "",
+            description: "Description du POI",
+          },
+          id: "feature-1742687639259",
+        },
       ],
       properties: {
         environment: {
-          name: "Environment Name",
-          description: "Environment Description",
-          isPublic: true,
-          userId: null,
+          name: "ESI",
+          isPublic: false,
+          userId: "user-123",
+          address:
+            "Ecole Nationale Supérieure d'Informatique (ESI ex.INI), Alger, Oued Smar 16309",
         },
       },
     },
