@@ -15,7 +15,6 @@ import { useEffect } from "react";
 import { useLanguage } from "@/hooks/use-language";
 
 const Sidebar = () => {
-  const router = useRouter();
   const { translations: t } = useLanguage();
   const userData =
     typeof window !== "undefined"

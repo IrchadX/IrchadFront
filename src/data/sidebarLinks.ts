@@ -92,7 +92,7 @@ export const getDecideurSidebarLinks = (
   },
   {
     nameKey: t.navigation.dataAnalysis,
-    href: "/decideur/annalyse",
+    href: "/decideur/analyse",
     Icon: MdInsights,
   },
   {
