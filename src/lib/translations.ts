@@ -96,8 +96,8 @@ export interface TranslationStrings {
     allTypes: string;
 
     // Status values
-    active: string;
-    inactive: string;
+    public: string;
+    prive: string;
     maintenance: string;
     error: string;
 
@@ -535,8 +535,8 @@ export const translations: Record<string, TranslationStrings> = {
       allStatuses: "Tous les statuts",
       allTypes: "Tous les types",
 
-      active: "Actif",
-      inactive: "Inactif",
+      public: "Public",
+      prive: "Prive",
       maintenance: "Maintenance",
       error: "Erreur",
 
@@ -932,8 +932,8 @@ export const translations: Record<string, TranslationStrings> = {
       allStatuses: "All statuses",
       allTypes: "All types",
 
-      active: "Active",
-      inactive: "Inactive",
+      public: "Public",
+      prive: "Private",
       maintenance: "Maintenance",
       error: "Error",
 
@@ -1327,8 +1327,8 @@ export const translations: Record<string, TranslationStrings> = {
       allStatuses: "جميع الحالات",
       allTypes: "جميع الأنواع",
 
-      active: "نشط",
-      inactive: "غير نشط",
+      public: "نشط",
+      prive: "غير نشط",
       maintenance: "صيانة",
       error: "خطأ",
 
