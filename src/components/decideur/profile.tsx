@@ -80,9 +80,6 @@ export default function Parametres() {
           <h3 className="text-xl font-semibold">{user.firstName} {user.familyName}</h3>
           <p className="text-gray-500">{user.email}</p>
         </div>
-        <button className="ml-auto bg-teal-100 text-teal-700 px-4 py-2 rounded-md hover:bg-teal-200">
-          Modifier le profil
-        </button>
       </div>
 
       {/* Formulaire */}

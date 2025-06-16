@@ -152,7 +152,6 @@ const Page = () => {
       // Optional: Send to backend immediately
       // saveEnvironmentLayer(newLayerFeature);
 
-      toast.success("Environment boundary added successfully!");
       return;
     }
 
@@ -185,7 +184,6 @@ const Page = () => {
         )
       );
 
-      toast.success("Environment boundary updated successfully!");
       return;
     }
 
@@ -236,7 +234,6 @@ const Page = () => {
       console.log("Environment boundary saved:", result);
     } catch (error) {
       console.error("Error saving environment boundary:", error);
-      toast.error("Failed to save environment boundary");
     }
   };
 
@@ -344,10 +341,8 @@ const Page = () => {
 
       // Show success toast
       const deletedCount = geoJSON.features.length - updatedFeatures.length;
-      toast.success(`${deletedCount} élément(s) supprimé(s)`);
     } else {
       console.warn("No features were actually removed from the GeoJSON");
-      toast.warning("Aucun élément n'a pu être supprimé");
     }
   };
 

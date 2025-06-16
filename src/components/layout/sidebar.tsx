@@ -1,9 +1,11 @@
 "use client";
+
 import {
   getAdminSidebarLinks,
   getCommercialSidebarLinks,
   getDecideurSidebarLinks,
   SidebarLink,
+  decideurSidebarLinks,
 } from "@/data/sidebarLinks";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -13,7 +15,6 @@ import { useEffect } from "react";
 import { useLanguage } from "@/hooks/use-language";
 
 const Sidebar = () => {
-  const router = useRouter();
   const { translations: t } = useLanguage();
   const userData =
     typeof window !== "undefined"
@@ -22,6 +23,7 @@ const Sidebar = () => {
 
   const userRole = userData?.role || "guest";
   const pathname = usePathname();
+  const router = useRouter();
   const isAuthRoute = pathname.startsWith("/auth");
 
   const handleSignOut = async () => {

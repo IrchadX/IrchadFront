@@ -51,11 +51,6 @@ export default function ZonesPage() {
           <MarketPenetrationComponent />
         </div>
       </div>
-
-      {/* Full width section for development potential chart if needed */}
-      <div className="bg-white  dark:bg-gray-900 shadow-md rounded-lg p-6 border border-gray-200 dark:border-gray-700">
-        <PieChartComponent />
-      </div>
     </div>
   );
 }
