@@ -5,8 +5,8 @@ import Title from "@/components/shared/title";
 const AddClientPage: React.FC = () => {
 
   const userTypes = [
-    { id: "malvoyant", label: "Malvoyant" },
-    { id: "aidant", label: "Aidant" },
+    { id: 14, label: "Malvoyant" },
+    { id: 16, label: "Aidant" },
   ];
 
   return (

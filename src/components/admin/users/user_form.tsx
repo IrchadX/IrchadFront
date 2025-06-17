@@ -70,7 +70,6 @@ const formSchema = z.object({
     .nonempty("La confirmation du mot de passe est requise"),
   city: z.string().nonempty("La ville est requise"),
   street: z.string().nonempty("L'adresse est requise"),
-  //userTypeId: z.string().nonempty("Le type est requis"),
   userTypeId: z.number().min(1, "Le type est requis"),
 }).refine((data) => data.password === data.confirm_password, {
   message: "Les mots de passe ne correspondent pas",
@@ -79,7 +78,7 @@ const formSchema = z.object({
 
 
 interface UserFormProps {
-  userTypes: { id: string; label: string }[]; // Define the structure of the user types
+  userTypes: { id: number; label: string }[];
 }
 
 export function UserForm({ userTypes }: UserFormProps) {
@@ -128,8 +127,7 @@ export function UserForm({ userTypes }: UserFormProps) {
         email: values.email,
         phoneNumber: values.phone_number,
         password: values.password,
-        //userTypeId: userTypeMap[values.userTypeId as keyof typeof userTypeMap],
-        userTypeId: Number(values.userTypeId),
+        userTypeId: values.userTypeId,
         birthDate: formattedDate,
         sex: values.sex,
         city: values.city,
@@ -369,6 +367,8 @@ export function UserForm({ userTypes }: UserFormProps) {
                 <FormControl>
                   <select
                     {...field}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                    value={field.value || ""}
                     className="bg-gray-50 rounded-md border-gray-200 p-2 h-12 w-full"
                   >
                     <option value="">Sélectionner un type</option>
