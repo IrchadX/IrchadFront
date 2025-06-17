@@ -104,19 +104,6 @@ const PoiCategoryEditModal: React.FC<PoiCategoryEditModalProps> = ({
                 required
               />
             </div>
-
-            {/* Color picker - Optional field */}
-            <div className="grid grid-cols-[1fr,2fr] items-center gap-4">
-              <label htmlFor="color">Couleur</label>
-              <input
-                id="color"
-                name="color"
-                type="color"
-                value={formData.color || "#000000"}
-                onChange={handleInputChange}
-                className="w-full h-10 p-1 border border-gray-300 rounded"
-              />
-            </div>
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>

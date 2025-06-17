@@ -135,7 +135,7 @@ const FilterButton = ({
               <button
                 className="flex-1 bg-main/10 dark:text-gray-100 text-gray-800 rounded px-3 py-1 text-sm hover:bg-gray-300"
                 onClick={clearFilters}>
-                Clear
+                Effacer
               </button>
               <button
                 className="flex-1 bg-main text-white rounded px-3 py-1 text-sm hover:bg-blue-600"
@@ -143,7 +143,7 @@ const FilterButton = ({
                   setIsOpen(false);
                   onApply(filters);
                 }}>
-                Apply
+                Appliquer
               </button>
             </div>
           </motion.div>

@@ -495,11 +495,6 @@ export default function EditableMap({
               style={getButtonStyle("window")}>
               🪟 Window
             </button>
-            <button
-              onClick={() => handleDrawingMode("door")}
-              style={getButtonStyle("door")}>
-              🚪 Door
-            </button>
           </div>
 
           {/* Zones & POIs Group */}

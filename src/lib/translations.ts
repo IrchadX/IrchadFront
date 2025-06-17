@@ -96,8 +96,8 @@ export interface TranslationStrings {
     allTypes: string;
 
     // Status values
-    active: string;
-    inactive: string;
+    public: string;
+    prive: string;
     maintenance: string;
     error: string;
 
@@ -514,7 +514,7 @@ export const translations: Record<string, TranslationStrings> = {
 
     environments: {
       title: "Environnements",
-      subtitle: "Gérez et surveillez vos environnements de développement",
+      subtitle: "Environnements en attente",
       addEnvironment: "Ajouter un environnement",
       editEnvironment: "Modifier l'environnement",
       deleteEnvironment: "Supprimer l'environnement",
@@ -535,8 +535,8 @@ export const translations: Record<string, TranslationStrings> = {
       allStatuses: "Tous les statuts",
       allTypes: "Tous les types",
 
-      active: "Actif",
-      inactive: "Inactif",
+      public: "Public",
+      prive: "Prive",
       maintenance: "Maintenance",
       error: "Erreur",
 
@@ -623,7 +623,7 @@ export const translations: Record<string, TranslationStrings> = {
         type: "Type",
         status: "Statut",
         amount: "Montant",
-        details: "Détails"
+        details: "Détails",
       },
       statistics: {
         title: "Statistiques",
@@ -635,7 +635,7 @@ export const translations: Record<string, TranslationStrings> = {
         revenue: "Revenus",
         expenses: "Dépenses",
         profit: "Bénéfice",
-        margin: "Marge"
+        margin: "Marge",
       },
       marketAnalysis: {
         title: "Analyse de Marché",
@@ -644,7 +644,7 @@ export const translations: Record<string, TranslationStrings> = {
         current: "Actuel",
         growth: "Croissance",
         trends: "Tendances",
-        forecast: "Prévisions"
+        forecast: "Prévisions",
       },
       financial: {
         title: "Métriques Financières",
@@ -654,7 +654,7 @@ export const translations: Record<string, TranslationStrings> = {
         netMargin: "Marge Nette",
         expenses: "Dépenses",
         profit: "Bénéfice",
-        period: "Période"
+        period: "Période",
       },
       actions: {
         addPurchase: "Ajouter un Achat",
@@ -663,7 +663,7 @@ export const translations: Record<string, TranslationStrings> = {
         exportData: "Exporter les Données",
         generateReport: "Générer un Rapport",
         filter: "Filtrer",
-        search: "Rechercher"
+        search: "Rechercher",
       },
       messages: {
         purchaseAdded: "Achat ajouté avec succès",
@@ -672,21 +672,21 @@ export const translations: Record<string, TranslationStrings> = {
         exportSuccess: "Données exportées avec succès",
         exportError: "Erreur lors de l'exportation",
         reportGenerated: "Rapport généré avec succès",
-        noData: "Aucune donnée disponible"
-      }
+        noData: "Aucune donnée disponible",
+      },
     },
 
     clientManagement: {
       title: "Gestion des clients",
       addClient: "Ajouter un client",
       editClient: "Modifier un client",
-      invalidUserId: "ID utilisateur invalide"
+      invalidUserId: "ID utilisateur invalide",
     },
 
     salesManagement: {
       title: "Gestion des ventes",
       getQuote: "Obtenir un devis",
-      notAvailable: "N/A"
+      notAvailable: "N/A",
     },
 
     dashboard: {
@@ -695,7 +695,7 @@ export const translations: Record<string, TranslationStrings> = {
       netMargin: "Marge nette",
       costOfSales: "Coût de ventes",
       expenses: "Charges",
-      productsSold: "Produits vendus"
+      productsSold: "Produits vendus",
     },
 
     salesComponents: {
@@ -709,7 +709,7 @@ export const translations: Record<string, TranslationStrings> = {
         firstName: "Prénom",
         city: "Ville",
         details: "Détails",
-        offerDetails: "Détails de l'offre"
+        offerDetails: "Détails de l'offre",
       },
       charts: {
         salesByPeriod: {
@@ -726,7 +726,8 @@ export const translations: Record<string, TranslationStrings> = {
           thisMonth: "ce mois",
           thisYear: "cette année",
           today: "aujourd'hui",
-          totalDevicesSold: "Affichage du nombre total de dispositifs vendus par {period}"
+          totalDevicesSold:
+            "Affichage du nombre total de dispositifs vendus par {period}",
         },
         revenue: {
           title: "Évolution du Chiffre d'Affaires",
@@ -734,33 +735,34 @@ export const translations: Record<string, TranslationStrings> = {
           lastSixMonths: "6 derniers mois",
           increase: "Hausse de {rate}% ce mois-ci",
           decrease: "Baisse de {rate}% ce mois-ci",
-          thisMonth: "ce mois-ci"
+          thisMonth: "ce mois-ci",
         },
         salesByType: {
           title: "Ventes par Modèle",
           description: "Number of sales by model type",
           bestSeller: "{model} is the best seller with {sales} units",
           units: "units",
-          totalSalesByModel: "Displaying total sales by model"
+          totalSalesByModel: "Displaying total sales by model",
         },
         marketPenetration: {
           title: "Pénétration du marché par région",
           description: "Taux de pénétration du marché par région",
           loading: "Chargement des données...",
           customers: "clients",
-          potentialMarket: "marché potentiel"
+          potentialMarket: "marché potentiel",
         },
         salesByZone: {
           title: "Ventes par Région",
           description: "Number of sales by geographical region",
-          bestRegion: "{region} is the region with the most sales ({sales} units)",
-          totalSalesByRegion: "Displaying total sales by region"
-        }
+          bestRegion:
+            "{region} is the region with the most sales ({sales} units)",
+          totalSalesByRegion: "Displaying total sales by region",
+        },
       },
       menu: {
         commercialPerformance: "Performance Commerciale",
         products: "Produits",
-        zones: "Zones"
+        zones: "Zones",
       },
       offerCard: {
         title: "Formulaire d'inscription",
@@ -789,15 +791,17 @@ export const translations: Record<string, TranslationStrings> = {
         environmentsCreated: "Les environnements ont été créés avec succès !",
         deviceAssigned: "Dispositif assigné avec succès !",
         purchaseHistoryCreated: "Historique d'achat créé avec succès !",
-        environmentsConfirmed: "Les environnements ont été confirmés avec succès !",
-        errorConfirmingEnvironments: "Une erreur s'est produite lors de la confirmation des environnements"
+        environmentsConfirmed:
+          "Les environnements ont été confirmés avec succès !",
+        errorConfirmingEnvironments:
+          "Une erreur s'est produite lors de la confirmation des environnements",
       },
       devisCard: {
         title: "Devis",
         description: "Résumé de votre devis",
         amount: "Montant",
         cancel: "Annuler",
-        confirmOffer: "Confirmer l'offre"
+        confirmOffer: "Confirmer l'offre",
       },
       saleDetails: {
         title: "Détails de l'offre",
@@ -814,8 +818,8 @@ export const translations: Record<string, TranslationStrings> = {
         publicEnvironmentsAccess: "Accès aux environnements publics",
         yes: "Oui",
         no: "Non",
-        totalAmount: "Montant total"
-      }
+        totalAmount: "Montant total",
+      },
     },
   },
 
@@ -928,8 +932,8 @@ export const translations: Record<string, TranslationStrings> = {
       allStatuses: "All statuses",
       allTypes: "All types",
 
-      active: "Active",
-      inactive: "Inactive",
+      public: "Public",
+      prive: "Private",
       maintenance: "Maintenance",
       error: "Error",
 
@@ -1016,7 +1020,7 @@ export const translations: Record<string, TranslationStrings> = {
         type: "Type",
         status: "Status",
         amount: "Amount",
-        details: "Details"
+        details: "Details",
       },
       statistics: {
         title: "Statistics",
@@ -1028,7 +1032,7 @@ export const translations: Record<string, TranslationStrings> = {
         revenue: "Revenue",
         expenses: "Expenses",
         profit: "Profit",
-        margin: "Margin"
+        margin: "Margin",
       },
       marketAnalysis: {
         title: "Market Analysis",
@@ -1037,7 +1041,7 @@ export const translations: Record<string, TranslationStrings> = {
         current: "Current",
         growth: "Growth",
         trends: "Trends",
-        forecast: "Forecast"
+        forecast: "Forecast",
       },
       financial: {
         title: "Financial Metrics",
@@ -1047,7 +1051,7 @@ export const translations: Record<string, TranslationStrings> = {
         netMargin: "Net Margin",
         expenses: "Expenses",
         profit: "Profit",
-        period: "Period"
+        period: "Period",
       },
       actions: {
         addPurchase: "Add Purchase",
@@ -1056,7 +1060,7 @@ export const translations: Record<string, TranslationStrings> = {
         exportData: "Export Data",
         generateReport: "Generate Report",
         filter: "Filter",
-        search: "Search"
+        search: "Search",
       },
       messages: {
         purchaseAdded: "Purchase added successfully",
@@ -1065,21 +1069,21 @@ export const translations: Record<string, TranslationStrings> = {
         exportSuccess: "Data exported successfully",
         exportError: "Error exporting data",
         reportGenerated: "Report generated successfully",
-        noData: "No data available"
-      }
+        noData: "No data available",
+      },
     },
 
     clientManagement: {
       title: "Client Management",
       addClient: "Add Client",
       editClient: "Edit Client",
-      invalidUserId: "Invalid User ID"
+      invalidUserId: "Invalid User ID",
     },
 
     salesManagement: {
       title: "Sales Management",
       getQuote: "Get Quote",
-      notAvailable: "N/A"
+      notAvailable: "N/A",
     },
 
     dashboard: {
@@ -1088,7 +1092,7 @@ export const translations: Record<string, TranslationStrings> = {
       netMargin: "Net Margin",
       costOfSales: "Cost of Sales",
       expenses: "Expenses",
-      productsSold: "Products Sold"
+      productsSold: "Products Sold",
     },
 
     salesComponents: {
@@ -1102,7 +1106,7 @@ export const translations: Record<string, TranslationStrings> = {
         firstName: "First Name",
         city: "City",
         details: "Details",
-        offerDetails: "Offer Details"
+        offerDetails: "Offer Details",
       },
       charts: {
         salesByPeriod: {
@@ -1119,7 +1123,8 @@ export const translations: Record<string, TranslationStrings> = {
           thisMonth: "this month",
           thisYear: "this year",
           today: "today",
-          totalDevicesSold: "Displaying total number of devices sold by {period}"
+          totalDevicesSold:
+            "Displaying total number of devices sold by {period}",
         },
         revenue: {
           title: "Revenue Evolution",
@@ -1127,33 +1132,34 @@ export const translations: Record<string, TranslationStrings> = {
           lastSixMonths: "Last 6 months",
           increase: "Increase of {rate}% this month",
           decrease: "Decrease of {rate}% this month",
-          thisMonth: "this month"
+          thisMonth: "this month",
         },
         salesByType: {
           title: "Sales by Model",
           description: "Number of sales by model type",
           bestSeller: "{model} is the best seller with {sales} units",
           units: "units",
-          totalSalesByModel: "Displaying total sales by model"
+          totalSalesByModel: "Displaying total sales by model",
         },
         marketPenetration: {
           title: "Market Penetration by Region",
           description: "Market penetration rate by region",
           loading: "Loading data...",
           customers: "customers",
-          potentialMarket: "potential market"
+          potentialMarket: "potential market",
         },
         salesByZone: {
           title: "Sales by Region",
           description: "Number of sales by geographical region",
-          bestRegion: "{region} is the region with the most sales ({sales} units)",
-          totalSalesByRegion: "Displaying total sales by region"
-        }
+          bestRegion:
+            "{region} is the region with the most sales ({sales} units)",
+          totalSalesByRegion: "Displaying total sales by region",
+        },
       },
       menu: {
         commercialPerformance: "Commercial Performance",
         products: "Products",
-        zones: "Zones"
+        zones: "Zones",
       },
       offerCard: {
         title: "Registration Form",
@@ -1183,14 +1189,15 @@ export const translations: Record<string, TranslationStrings> = {
         deviceAssigned: "Device assigned successfully!",
         purchaseHistoryCreated: "Purchase history created successfully!",
         environmentsConfirmed: "Environments confirmed successfully!",
-        errorConfirmingEnvironments: "An error occurred while confirming environments"
+        errorConfirmingEnvironments:
+          "An error occurred while confirming environments",
       },
       devisCard: {
         title: "Quote",
         description: "Summary of your quote",
         amount: "Amount",
         cancel: "Cancel",
-        confirmOffer: "Confirm Offer"
+        confirmOffer: "Confirm Offer",
       },
       saleDetails: {
         title: "Offer Details",
@@ -1207,8 +1214,8 @@ export const translations: Record<string, TranslationStrings> = {
         publicEnvironmentsAccess: "Public Environments Access",
         yes: "Yes",
         no: "No",
-        totalAmount: "Total Amount"
-      }
+        totalAmount: "Total Amount",
+      },
     },
   },
 
@@ -1320,8 +1327,8 @@ export const translations: Record<string, TranslationStrings> = {
       allStatuses: "جميع الحالات",
       allTypes: "جميع الأنواع",
 
-      active: "نشط",
-      inactive: "غير نشط",
+      public: "نشط",
+      prive: "غير نشط",
       maintenance: "صيانة",
       error: "خطأ",
 
@@ -1408,7 +1415,7 @@ export const translations: Record<string, TranslationStrings> = {
         type: "النوع",
         status: "الحالة",
         amount: "المبلغ",
-        details: "التفاصيل"
+        details: "التفاصيل",
       },
       statistics: {
         title: "الإحصائيات",
@@ -1420,7 +1427,7 @@ export const translations: Record<string, TranslationStrings> = {
         revenue: "الإيرادات",
         expenses: "المصروفات",
         profit: "الربح",
-        margin: "الهامش"
+        margin: "الهامش",
       },
       marketAnalysis: {
         title: "تحليل السوق",
@@ -1429,7 +1436,7 @@ export const translations: Record<string, TranslationStrings> = {
         current: "الحالي",
         growth: "النمو",
         trends: "الاتجاهات",
-        forecast: "التوقعات"
+        forecast: "التوقعات",
       },
       financial: {
         title: "المقاييس المالية",
@@ -1439,7 +1446,7 @@ export const translations: Record<string, TranslationStrings> = {
         netMargin: "صافي الهامش",
         expenses: "المصروفات",
         profit: "الربح",
-        period: "الفترة"
+        period: "الفترة",
       },
       actions: {
         addPurchase: "إضافة شراء",
@@ -1448,7 +1455,7 @@ export const translations: Record<string, TranslationStrings> = {
         exportData: "تصدير البيانات",
         generateReport: "إنشاء تقرير",
         filter: "تصفية",
-        search: "بحث"
+        search: "بحث",
       },
       messages: {
         purchaseAdded: "تمت إضافة الشراء بنجاح",
@@ -1457,21 +1464,21 @@ export const translations: Record<string, TranslationStrings> = {
         exportSuccess: "تم تصدير البيانات بنجاح",
         exportError: "خطأ في تصدير البيانات",
         reportGenerated: "تم إنشاء التقرير بنجاح",
-        noData: "لا توجد بيانات متاحة"
-      }
+        noData: "لا توجد بيانات متاحة",
+      },
     },
 
     clientManagement: {
       title: "إدارة العملاء",
       addClient: "إضافة عميل",
       editClient: "تعديل العميل",
-      invalidUserId: "معرف المستخدم غير صالح"
+      invalidUserId: "معرف المستخدم غير صالح",
     },
 
     salesManagement: {
       title: "إدارة المبيعات",
       getQuote: "الحصول على عرض سعر",
-      notAvailable: "غير متوفر"
+      notAvailable: "غير متوفر",
     },
 
     dashboard: {
@@ -1480,7 +1487,7 @@ export const translations: Record<string, TranslationStrings> = {
       netMargin: "صافي الهامش",
       costOfSales: "تكلفة المبيعات",
       expenses: "المصروفات",
-      productsSold: "المنتجات المباعة"
+      productsSold: "المنتجات المباعة",
     },
 
     salesComponents: {
@@ -1494,7 +1501,7 @@ export const translations: Record<string, TranslationStrings> = {
         firstName: "الاسم الأول",
         city: "المدينة",
         details: "التفاصيل",
-        offerDetails: "تفاصيل العرض"
+        offerDetails: "تفاصيل العرض",
       },
       charts: {
         salesByPeriod: {
@@ -1511,7 +1518,7 @@ export const translations: Record<string, TranslationStrings> = {
           thisMonth: "هذا الشهر",
           thisYear: "هذه السنة",
           today: "اليوم",
-          totalDevicesSold: "عرض العدد الإجمالي للأجهزة المباعة حسب {period}"
+          totalDevicesSold: "عرض العدد الإجمالي للأجهزة المباعة حسب {period}",
         },
         revenue: {
           title: "تطور الإيرادات",
@@ -1519,33 +1526,33 @@ export const translations: Record<string, TranslationStrings> = {
           lastSixMonths: "الستة أشهر الماضية",
           increase: "زيادة بنسبة {rate}% هذا الشهر",
           decrease: "انخفاض بنسبة {rate}% هذا الشهر",
-          thisMonth: "هذا الشهر"
+          thisMonth: "هذا الشهر",
         },
         salesByType: {
           title: "المبيعات حسب النموذج",
           description: "عدد المبيعات حسب نوع النموذج",
           bestSeller: "{model} هو الأكثر مبيعاً مع {sales} وحدة",
           units: "وحدات",
-          totalSalesByModel: "عرض إجمالي المبيعات حسب النموذج"
+          totalSalesByModel: "عرض إجمالي المبيعات حسب النموذج",
         },
         marketPenetration: {
           title: "اختراق السوق حسب المنطقة",
           description: "معدل اختراق السوق حسب المنطقة",
           loading: "جاري تحميل البيانات...",
           customers: "العملاء",
-          potentialMarket: "السوق المحتمل"
+          potentialMarket: "السوق المحتمل",
         },
         salesByZone: {
           title: "المبيعات حسب المنطقة",
           description: "عدد المبيعات حسب المنطقة الجغرافية",
           bestRegion: "{region} هي المنطقة ذات أكبر عدد مبيعات ({sales} وحدة)",
-          totalSalesByRegion: "عرض إجمالي المبيعات حسب المنطقة"
-        }
+          totalSalesByRegion: "عرض إجمالي المبيعات حسب المنطقة",
+        },
       },
       menu: {
         commercialPerformance: "الأداء التجاري",
         products: "المنتجات",
-        zones: "المناطق"
+        zones: "المناطق",
       },
       offerCard: {
         title: "نموذج التسجيل",
@@ -1575,14 +1582,14 @@ export const translations: Record<string, TranslationStrings> = {
         deviceAssigned: "تم تعيين الجهاز بنجاح!",
         purchaseHistoryCreated: "تم إنشاء سجل الشراء بنجاح!",
         environmentsConfirmed: "تم تأكيد البيئات بنجاح!",
-        errorConfirmingEnvironments: "حدث خطأ أثناء تأكيد البيئات"
+        errorConfirmingEnvironments: "حدث خطأ أثناء تأكيد البيئات",
       },
       devisCard: {
         title: "عرض السعر",
         description: "ملخص عرض السعر الخاص بك",
         amount: "المبلغ",
         cancel: "إلغاء",
-        confirmOffer: "تأكيد العرض"
+        confirmOffer: "تأكيد العرض",
       },
       saleDetails: {
         title: "تفاصيل العرض",
@@ -1599,8 +1606,8 @@ export const translations: Record<string, TranslationStrings> = {
         publicEnvironmentsAccess: "الوصول إلى البيئات العامة",
         yes: "نعم",
         no: "لا",
-        totalAmount: "المبلغ الإجمالي"
-      }
+        totalAmount: "المبلغ الإجمالي",
+      },
     },
   },
 };
